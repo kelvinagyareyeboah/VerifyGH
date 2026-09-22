@@ -1,0 +1,32 @@
+@inherits LayoutComponentBase
+
+<div class="app-shell">
+    <aside class="sidebar-container">
+        <NavMenu />
+    </aside>
+
+    <div class="main-viewport">
+        <header class="top-header">
+            <div class="header-search">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span>Quick search projects or skills...</span>
+                <span style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace;">⌘K</span>
+            </div>
+
+            <div class="user-badge">
+                <div class="user-avatar">K</div>
+                <div class="user-info">
+                    <span class="user-name">Kelvin Yeboah</span>
+                    <span class="user-role">Project Lead</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="content-body">
+            @Body
+        </main>
+    </div>
+</div>

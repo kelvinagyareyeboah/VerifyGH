@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/VerifyGH.Client/VerifyGH.Client.csproj" />
+    <Project Path="src/VerifyGH.Server/VerifyGH.Server.csproj" />
+    <Project Path="src/VerifyGH.Shared/VerifyGH.Shared.csproj" />
+  </Folder>
+</Solution>

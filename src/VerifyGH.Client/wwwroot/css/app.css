@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+    --bg-base: #080c14;
+    --bg-surface: #0e1422;
+    --bg-surface-hover: #151d30;
+    --bg-card: rgba(14, 20, 34, 0.7);
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(0, 230, 118, 0.3);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent: #00e676;
+    --accent-dark: #00a854;
+    --accent-glow: rgba(0, 230, 118, 0.12);
+    --accent-cyan: #00e5ff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* FAANG Minimal Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Linear-style Card */
+.vg-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 24px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vg-card:hover {
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+.vg-placeholder {
+    background: radial-gradient(circle at 50% 0%, var(--accent-glow) 0%, rgba(14, 20, 34, 0.4) 70%);
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 48px 32px;
+    text-align: center;
+    transition: border-color 0.2s ease;
+}
+
+.vg-placeholder:hover {
+    border-color: var(--accent);
+}
+
+/* Badge Pill */
+.vg-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    background: var(--accent-glow);
+    color: var(--accent);
+    border: 1px solid rgba(0, 230, 118, 0.25);
+}
+
+.vg-pill-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-subtle);
+}
+
+/* Gradient Text */
+.vg-gradient-text {
+    background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.vg-gradient-accent {
+    background: linear-gradient(135deg, #00e676 0%, #00e5ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Loading Spinner */
+.loading-progress {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+}
+
+.loading-progress circle {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 4;
+}
+
+.loading-progress circle:last-child {
+    stroke: var(--accent);
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 75;
+    animation: rotate 1s linear infinite;
+    transform-origin: center;
+}
+
+@keyframes rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-progress-text {
+    display: none;
+}
