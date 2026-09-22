@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using VerifyGH.Server.Data;
 using VerifyGH.Server.Hubs;
 using VerifyGH.Server.Models;
+using VerifyGH.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,20 +18,24 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// 2. ASP.NET Identity
+// 2. ASP.NET Identity with Password Policies
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 6;
     options.User.RequireUniqueEmail = true;
+    options.SignIn.RequireConfirmedAccount = false;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// 3. JWT Authentication
+// 3. Application Services
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+// 4. JWT Authentication & Token Validation
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["Secret"] ?? "VerifyGH_Default_Secret_Key_Fallback_32chars!";
 
@@ -51,7 +57,9 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidAudience = jwtSettings["Audience"] ?? "VerifyGHClient",
         ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
+        ClockSkew = TimeSpan.Zero,
+        RoleClaimType = ClaimTypes.Role,
+        NameClaimType = ClaimTypes.Name
     };
 
     // Allow SignalR access token via query string
@@ -70,7 +78,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// 4. CORS Setup for Blazor WebAssembly & SignalR
+// 5. CORS Setup for Blazor WebAssembly & SignalR
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("VerifyGHClientPolicy", policy =>
@@ -82,14 +90,25 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 5. SignalR & Controllers
+// 6. SignalR & Controllers
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
 
-// 6. OpenAPI / Swagger
+// 7. OpenAPI / Swagger
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+// Seed Identity Roles (Student, Lecturer, Employer, Admin) and default admin
+try
+{
+    await DbInitializer.SeedRolesAndAdminAsync(app.Services);
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogWarning(ex, "An error occurred while seeding Identity roles. Please ensure database migrations have been applied.");
+}
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -108,3 +127,4 @@ app.MapControllers();
 app.MapHub<NotificationHub>("/hubs/notifications");
 
 app.Run();
+
