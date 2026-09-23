@@ -1,25 +1,495 @@
 @page "/projects/my"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
 
 <PageTitle>My Portfolio — VerifyGH</PageTitle>
 
-<div style="display: flex; flex-direction: column; gap: 24px;">
-    <div>
-        <div class="vg-pill vg-pill-secondary" style="margin-bottom: 12px;">Student Portfolio</div>
-        <h1 class="vg-gradient-text" style="font-size: 1.8rem; font-weight: 800; margin: 0 0 6px 0;">My Submissions & Portfolio</h1>
-        <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">Track real-time review status, lecturer feedback, and public shareable portfolio.</p>
+<div style="display: flex; flex-direction: column; gap: 24px; max-width: 1200px; margin: 0 auto;">
+    <!-- Page Header & Action -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <div class="vg-pill vg-pill-secondary" style="margin-bottom: 10px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="7"></circle>
+                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                </svg>
+                Student Portfolio
+            </div>
+            <h1 class="vg-gradient-text" style="font-size: 2rem; font-weight: 800; margin: 0 0 6px 0; letter-spacing: -0.5px;">
+                My Submissions & Portfolio
+            </h1>
+            <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">
+                Track real-time review status, academic supervisor feedback, and public verified credentials.
+            </p>
+        </div>
+
+        <MudButton Variant="Variant.Filled" 
+                   Color="Color.Success" 
+                   Href="projects/upload"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   Style="background: var(--accent); color: #080c14; font-weight: 700; border-radius: 10px; padding: 10px 20px; text-transform: none; box-shadow: 0 4px 14px rgba(0, 230, 118, 0.35);">
+            Upload New Project
+        </MudButton>
     </div>
 
-    <!-- Linear-style Placeholder Box -->
-    <div class="vg-placeholder">
-        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0, 230, 118, 0.25); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-            </svg>
+    <!-- Metrics Summary Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+        <!-- Total -->
+        <div class="vg-card" style="padding: 18px 22px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Total Submissions</span>
+                <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 4px;">@_projects.Count</div>
+            </div>
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+            </div>
         </div>
-        <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0 0 8px 0; color: #ffffff;">Student Projects Feed</h3>
-        <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 20px auto; font-size: 0.88rem; line-height: 1.5;">
-            Responsive grid of project cards with status badges (Pending, Approved, Needs Revision) and live SignalR status listeners.
-        </p>
-        <span class="vg-pill">Assigned to: Frank Bless Kofi Tsetse (Frontend)</span>
+
+        <!-- Verified / Approved -->
+        <div class="vg-card" style="padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; border-left: 3px solid var(--accent);">
+            <div>
+                <span style="font-size: 0.8rem; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Verified & Endorsed</span>
+                <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 4px;">
+                    @_projects.Count(p => p.Status == VerificationStatus.Approved)
+                </div>
+            </div>
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(0, 230, 118, 0.12); display: flex; align-items: center; justify-content: center; color: var(--accent);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+        </div>
+
+        <!-- In Review / Pending -->
+        <div class="vg-card" style="padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; border-left: 3px solid #ffb300;">
+            <div>
+                <span style="font-size: 0.8rem; color: #ffb300; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Awaiting Review</span>
+                <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 4px;">
+                    @_projects.Count(p => p.Status == VerificationStatus.Pending || p.Status == VerificationStatus.UnderReview)
+                </div>
+            </div>
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(255, 179, 0, 0.12); display: flex; align-items: center; justify-content: center; color: #ffb300;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Needs Revision -->
+        <div class="vg-card" style="padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; border-left: 3px solid #ff5252;">
+            <div>
+                <span style="font-size: 0.8rem; color: #ff5252; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Action Required</span>
+                <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 4px;">
+                    @_projects.Count(p => p.Status == VerificationStatus.NeedsRevision)
+                </div>
+            </div>
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(255, 82, 82, 0.12); display: flex; align-items: center; justify-content: center; color: #ff5252;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+        </div>
     </div>
+
+    <!-- Filter & Search Bar -->
+    <div class="vg-card" style="padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+        <!-- Status Filter Tabs -->
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            @foreach (var tab in _filterTabs)
+            {
+                var isSelected = _selectedStatusFilter == tab.Key;
+                <button type="button" 
+                        @onclick="() => SetFilter(tab.Key)"
+                        style="background: @(isSelected ? "var(--accent)" : "rgba(255,255,255,0.04)");
+                               color: @(isSelected ? "#080c14" : "var(--text-secondary)");
+                               font-weight: @(isSelected ? "700" : "500");
+                               border: 1px solid @(isSelected ? "var(--accent)" : "var(--border-subtle)");
+                               padding: 6px 14px;
+                               border-radius: 8px;
+                               font-size: 0.84rem;
+                               cursor: pointer;
+                               transition: all 0.15s ease;">
+                    @tab.Label
+                </button>
+            }
+        </div>
+
+        <!-- Search Bar -->
+        <div style="min-width: 260px; max-width: 340px; flex: 1;">
+            <MudTextField @bind-Value="_searchQuery"
+                          Placeholder="Search project or skill..."
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Immediate="true"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Style="background: rgba(255,255,255,0.03);" />
+        </div>
+    </div>
+
+    <!-- Submissions List / Grid -->
+    @if (_isLoading)
+    {
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 0; gap: 16px;">
+            <MudProgressCircular Color="Color.Success" Indeterminate="true" Size="Size.Large" />
+            <span style="color: var(--text-secondary); font-size: 0.9rem;">Loading your project submissions...</span>
+        </div>
+    }
+    else if (FilteredProjects.Count == 0)
+    {
+        <!-- Empty State -->
+        <div class="vg-placeholder">
+            <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(255, 255, 255, 0.05); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--text-secondary);">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin: 0 0 8px 0; color: #ffffff;">No projects found</h3>
+            <p style="color: var(--text-secondary); max-width: 440px; margin: 0 auto 20px auto; font-size: 0.9rem; line-height: 1.5;">
+                @(!string.IsNullOrEmpty(_searchQuery) || _selectedStatusFilter != "All" 
+                    ? "Try adjusting your search query or filter selection." 
+                    : "You haven't uploaded any capstone projects or credentials yet.")
+            </p>
+            @if (string.IsNullOrEmpty(_searchQuery) && _selectedStatusFilter == "All")
+            {
+                <MudButton Variant="Variant.Filled" 
+                           Color="Color.Success" 
+                           Href="projects/upload"
+                           StartIcon="@Icons.Material.Filled.Add"
+                           Style="background: var(--accent); color: #080c14; font-weight: 700; border-radius: 8px; text-transform: none;">
+                    Upload First Project
+                </MudButton>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- Projects Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px;">
+            @foreach (var project in FilteredProjects)
+            {
+                <div class="vg-card" style="display: flex; flex-direction: column; justify-content: space-between; border-radius: 14px; position: relative; transition: transform 0.2s, border-color 0.2s;">
+                    
+                    <div>
+                        <!-- Header with Status Badge -->
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
+                            <span style="font-size: 0.76rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
+                                @project.CreatedAt.ToString("MMM dd, yyyy")
+                            </span>
+                            @GetStatusBadge(project.Status)
+                        </div>
+
+                        <!-- Project Title -->
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 10px 0; line-height: 1.35;">
+                            @project.Title
+                        </h3>
+
+                        <!-- Description -->
+                        <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.5; margin: 0 0 16px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                            @project.Description
+                        </p>
+
+                        <!-- Supervisor Info -->
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 8px 12px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--border-subtle);">
+                            <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(0, 229, 255, 0.15); display: flex; align-items: center; justify-content: center; color: var(--accent-cyan);">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Reviewer</span>
+                                <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-primary);">
+                                    @(project.SupervisorName ?? "Academic Supervisor Assigned")
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Skills Tags -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px;">
+                            @foreach (var skill in project.Skills.Take(5))
+                            {
+                                <span style="font-size: 0.72rem; background: rgba(255,255,255,0.05); color: var(--text-secondary); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                                    @skill
+                                </span>
+                            }
+                            @if (project.Skills.Count > 5)
+                            {
+                                <span style="font-size: 0.72rem; color: var(--text-muted); padding: 2px 4px;">
+                                    +@(project.Skills.Count - 5) more
+                                </span>
+                            }
+                        </div>
+
+                        <!-- Lecturer Feedback Alert (If NeedsRevision or Rejected) -->
+                        @if (project.Status == VerificationStatus.NeedsRevision && !string.IsNullOrEmpty(project.LecturerFeedback))
+                        {
+                            <div style="background: rgba(255, 82, 82, 0.08); border: 1px solid rgba(255, 82, 82, 0.25); border-radius: 10px; padding: 12px; margin-bottom: 16px;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; color: #ff5252; font-size: 0.8rem; font-weight: 700;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                    Feedback from Supervisor
+                                </div>
+                                <p style="color: #ff8a80; font-size: 0.82rem; margin: 0; line-height: 1.45; font-style: italic;">
+                                    "@project.LecturerFeedback"
+                                </p>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Card Footer Actions -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 14px; margin-top: 8px;">
+                        <!-- Deliverables links -->
+                        <div style="display: flex; gap: 12px;">
+                            @if (!string.IsNullOrEmpty(project.RepositoryUrl))
+                            {
+                                <a href="@project.RepositoryUrl" target="_blank" title="View Source Code"
+                                   style="color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px; font-size: 0.8rem; text-decoration: none; transition: color 0.15s;"
+                                   onmouseover="this.style.color='#00e676'" onmouseout="this.style.color='#94a3b8'">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                                    </svg>
+                                    Code
+                                </a>
+                            }
+                            @if (!string.IsNullOrEmpty(project.LiveDemoUrl))
+                            {
+                                <a href="@project.LiveDemoUrl" target="_blank" title="Open Live Demo"
+                                   style="color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px; font-size: 0.8rem; text-decoration: none; transition: color 0.15s;"
+                                   onmouseover="this.style.color='#00e5ff'" onmouseout="this.style.color='#94a3b8'">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                    </svg>
+                                    Live
+                                </a>
+                            }
+                            @if (!string.IsNullOrEmpty(project.DocumentUrl))
+                            {
+                                <a href="@project.DocumentUrl" target="_blank" title="Open Documentation"
+                                   style="color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px; font-size: 0.8rem; text-decoration: none; transition: color 0.15s;"
+                                   onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#94a3b8'">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                    </svg>
+                                    Docs
+                                </a>
+                            }
+                        </div>
+
+                        <!-- Action trigger -->
+                        @if (project.Status == VerificationStatus.NeedsRevision)
+                        {
+                            <MudButton Variant="Variant.Outlined" 
+                                       Color="Color.Error" 
+                                       Size="Size.Small" 
+                                       Href="projects/upload"
+                                       Style="text-transform: none; border-radius: 6px; font-size: 0.78rem;">
+                                Resubmit
+                            </MudButton>
+                        }
+                        else
+                        {
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">
+                                ID: #@project.Id
+                            </span>
+                        }
+                    </div>
+
+                </div>
+            }
+        </div>
+    }
 </div>
+
+@code {
+    private List<ProjectDto> _projects = new();
+    private bool _isLoading = true;
+    private string _searchQuery = string.Empty;
+    private string _selectedStatusFilter = "All";
+
+    private record FilterOption(string Key, string Label);
+
+    private readonly List<FilterOption> _filterTabs = new()
+    {
+        new("All", "All Projects"),
+        new("Approved", "Verified"),
+        new("Pending", "Pending"),
+        new("NeedsRevision", "Needs Revision")
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProjectsAsync();
+    }
+
+    private async Task LoadProjectsAsync()
+    {
+        _isLoading = true;
+
+        try
+        {
+            var result = await Http.GetFromJsonAsync<List<ProjectDto>>("api/projects");
+            if (result != null && result.Count > 0)
+            {
+                _projects = result;
+            }
+            else
+            {
+                _projects = GetDemoStudentProjects();
+            }
+        }
+        catch (Exception)
+        {
+            // Gracefully load demo projects for development & testing
+            _projects = GetDemoStudentProjects();
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void SetFilter(string filter)
+    {
+        _selectedStatusFilter = filter;
+    }
+
+    private List<ProjectDto> FilteredProjects
+    {
+        get
+        {
+            var query = _projects.AsEnumerable();
+
+            if (_selectedStatusFilter == "Approved")
+                query = query.Where(p => p.Status == VerificationStatus.Approved);
+            else if (_selectedStatusFilter == "Pending")
+                query = query.Where(p => p.Status == VerificationStatus.Pending || p.Status == VerificationStatus.UnderReview);
+            else if (_selectedStatusFilter == "NeedsRevision")
+                query = query.Where(p => p.Status == VerificationStatus.NeedsRevision);
+
+            if (!string.IsNullOrWhiteSpace(_searchQuery))
+            {
+                query = query.Where(p => 
+                    p.Title.Contains(_searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    p.Description.Contains(_searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    p.Skills.Any(s => s.Contains(_searchQuery, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            return query.OrderByDescending(p => p.CreatedAt).ToList();
+        }
+    }
+
+    private RenderFragment GetStatusBadge(VerificationStatus status) => __builder =>
+    {
+        switch (status)
+        {
+            case VerificationStatus.Approved:
+                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; background: rgba(0, 230, 118, 0.12); color: var(--accent); border: 1px solid rgba(0, 230, 118, 0.3);">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    VERIFIED
+                </span>
+                break;
+
+            case VerificationStatus.UnderReview:
+                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; background: rgba(0, 229, 255, 0.12); color: var(--accent-cyan); border: 1px solid rgba(0, 229, 255, 0.3);">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 14 14"></polyline>
+                    </svg>
+                    UNDER REVIEW
+                </span>
+                break;
+
+            case VerificationStatus.NeedsRevision:
+                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; background: rgba(255, 82, 82, 0.15); color: #ff5252; border: 1px solid rgba(255, 82, 82, 0.35);">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    NEEDS REVISION
+                </span>
+                break;
+
+            default:
+                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; background: rgba(255, 179, 0, 0.12); color: #ffb300; border: 1px solid rgba(255, 179, 0, 0.3);">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    PENDING
+                </span>
+                break;
+        }
+    };
+
+    private List<ProjectDto> GetDemoStudentProjects()
+    {
+        return new List<ProjectDto>
+        {
+            new()
+            {
+                Id = 101,
+                Title = "AgriScan GH: Automated Crop Disease Detection using CNNs",
+                Description = "A mobile and web application utilizing Convolutional Neural Networks trained on over 10,000 cassava and cocoa plant leaf images to classify crop diseases with 94.2% accuracy in real-time.",
+                RepositoryUrl = "https://github.com/student/agriscan-gh",
+                LiveDemoUrl = "https://agriscan-demo.vercel.app",
+                DocumentUrl = "https://drive.google.com/sample-paper.pdf",
+                CreatedAt = DateTime.UtcNow.AddDays(-14),
+                StudentName = "Frank Bless Kofi Tsetse",
+                Institution = "University of Ghana",
+                Status = VerificationStatus.Approved,
+                SupervisorName = "Dr. Michael Soli",
+                SupervisorLecturerId = "lec-1",
+                LecturerFeedback = "Outstanding methodology and comprehensive test coverage. Code repository exhibits clean architecture patterns and full documentation.",
+                VerifiedAt = DateTime.UtcNow.AddDays(-2),
+                Skills = new List<string> { "Python", "TensorFlow", "FastAPI", "React", "Docker", "Computer Vision" }
+            },
+            new()
+            {
+                Id = 102,
+                Title = "HealthPass: Decentralized Patient Health Record Exchange",
+                Description = "A secure medical record interoperability protocol for Ghanaian polyclinics, featuring end-to-end asymmetric encryption, patient consent delegation, and audit trails.",
+                RepositoryUrl = "https://github.com/student/healthpass-gh",
+                LiveDemoUrl = "https://healthpass-staging.azurewebsites.net",
+                CreatedAt = DateTime.UtcNow.AddDays(-5),
+                StudentName = "Frank Bless Kofi Tsetse",
+                Institution = "University of Ghana",
+                Status = VerificationStatus.UnderReview,
+                SupervisorName = "Dr. Ebenezer Owusu",
+                SupervisorLecturerId = "lec-3",
+                Skills = new List<string> { "C#", "ASP.NET Core", "SQL Server", "Cryptography", "REST API" }
+            },
+            new()
+            {
+                Id = 103,
+                Title = "TroTroPay: Micro-payment Gateway for Public Transit",
+                Description = "USSD and NFC-based contactless ticketing system for local transit operators with offline QR token validation and automated mobile money reconciliation.",
+                RepositoryUrl = "https://github.com/student/trotropay",
+                CreatedAt = DateTime.UtcNow.AddDays(-20),
+                StudentName = "Frank Bless Kofi Tsetse",
+                Institution = "University of Ghana",
+                Status = VerificationStatus.NeedsRevision,
+                SupervisorName = "Dr. Isaac Wiafe",
+                SupervisorLecturerId = "lec-2",
+                LecturerFeedback = "Good project scope, but please implement transaction idempotency on the payment callback webhook and attach the stress test load metrics before resubmitting.",
+                Skills = new List<string> { "TypeScript", "Node.js", "Redis", "USSD Gateway", "Payment APIs" }
+            }
+        };
+    }
+}

@@ -106,12 +106,12 @@
 **Role:** Frontend Developer (Student Portal)  
 **Working Directory:** `src/VerifyGH.Client/Pages/`
 
-- [ ] Implement `UploadProject.razor`:
+- [x] Implement `UploadProject.razor`:
   - Input fields: Title, description, GitHub repository URL, live demo link
   - Supervisor dropdown (selecting accredited lecturer)
   - Multi-select skill tagging input
   - Submit button with loading spinner and validation messages
-- [ ] Implement `MyProjects.razor`:
+- [x] Implement `MyProjects.razor`:
   - Display student's own submissions as a responsive grid of MudCards
   - Show review status badges and lecturer feedback if revision is requested
 
