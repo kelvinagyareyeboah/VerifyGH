@@ -1,32 +1,33 @@
 @page "/register"
+@layout PublicLayout
 
 <PageTitle>Register — VerifyGH</PageTitle>
 
 <div style="max-width: 480px; margin: 40px auto 0 auto;">
-    <div class="vg-card" style="padding: 32px;">
+    <div class="vg-card" style="padding: 32px; background: #ffffff;">
         <div style="text-align: center; margin-bottom: 24px;">
-            <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0, 230, 118, 0.25); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: #f4f4f5; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; color: #09090b;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="8.5" cy="7" r="4"></circle>
                     <line x1="20" y1="8" x2="20" y2="14"></line>
                     <line x1="23" y1="11" x2="17" y2="11"></line>
                 </svg>
             </div>
-            <h2 style="font-size: 1.35rem; font-weight: 800; margin: 0 0 6px 0; color: #ffffff;">Create an Account</h2>
-            <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0;">Join as a Student, Lecturer, or Employer</p>
+            <h2 style="font-size: 1.35rem; font-weight: 800; margin: 0 0 6px 0; color: #09090b;">Create an Account</h2>
+            <p style="color: #52525b; font-size: 0.88rem; margin: 0;">Join as a Student, Lecturer, or Employer</p>
         </div>
 
         <!-- Linear-style Placeholder Box -->
-        <div class="vg-placeholder" style="padding: 28px 16px; margin-bottom: 20px;">
-            <p style="color: var(--text-secondary); margin: 0 0 12px 0; font-size: 0.85rem;">
+        <div class="vg-placeholder" style="padding: 28px 16px; margin-bottom: 20px; background: #fafaf9;">
+            <p style="color: #52525b; margin: 0 0 12px 0; font-size: 0.85rem;">
                 Registration form: Full Name, Email, Password, Role selector, and Student/Lecturer ID.
             </p>
             <span class="vg-pill" style="font-size: 0.7rem;">Assigned to: Anthony Gudu & Frontend</span>
         </div>
 
-        <div style="text-align: center; font-size: 0.85rem; color: var(--text-secondary);">
-            Already have an account? <a href="login" style="color: var(--accent); text-decoration: none; font-weight: 600;">Sign in here</a>
+        <div style="text-align: center; font-size: 0.85rem; color: #52525b;">
+            Already have an account? <a href="login" style="color: #92400e; text-decoration: underline; font-weight: 700;">Sign in here</a>
         </div>
     </div>
 </div>

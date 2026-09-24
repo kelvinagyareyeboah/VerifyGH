@@ -1,4 +1,12 @@
 @inherits LayoutComponentBase
+@inject UserSessionService Session
+@inject NavigationManager Navigation
+@implements IDisposable
+
+<MudThemeProvider IsDarkMode="false" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
 <div class="app-shell">
     <aside class="sidebar-container">
@@ -12,16 +20,54 @@
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <span>Quick search projects or skills...</span>
-                <span style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-family: 'JetBrains Mono', monospace;">⌘K</span>
+                <span>VerifyGH — Ghana Credential Platform</span>
             </div>
 
-            <div class="user-badge">
-                <div class="user-avatar">K</div>
-                <div class="user-info">
-                    <span class="user-name">Kelvin Yeboah</span>
-                    <span class="user-role">Project Lead</span>
+            <!-- Role Indicator & Quick Switcher -->
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="display: flex; align-items: center; gap: 6px; background: #f4f4f5; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 4px 8px;">
+                    <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">View:</span>
+                    <button type="button" 
+                            @onclick="() => SwitchRole(UserRole.Student)"
+                            style="background: @(Session.CurrentRole == UserRole.Student ? "#09090b" : "transparent");
+                                   color: @(Session.CurrentRole == UserRole.Student ? "#ffffff" : "var(--text-secondary)");
+                                   border: none; border-radius: 5px; padding: 3px 8px; font-size: 0.76rem; font-weight: 700; cursor: pointer;">
+                        Student
+                    </button>
+                    <button type="button" 
+                            @onclick="() => SwitchRole(UserRole.Lecturer)"
+                            style="background: @(Session.CurrentRole == UserRole.Lecturer ? "#09090b" : "transparent");
+                                   color: @(Session.CurrentRole == UserRole.Lecturer ? "#ffffff" : "var(--text-secondary)");
+                                   border: none; border-radius: 5px; padding: 3px 8px; font-size: 0.76rem; font-weight: 700; cursor: pointer;">
+                        Lecturer
+                    </button>
+                    <button type="button" 
+                            @onclick="() => SwitchRole(UserRole.Employer)"
+                            style="background: @(Session.CurrentRole == UserRole.Employer ? "#09090b" : "transparent");
+                                   color: @(Session.CurrentRole == UserRole.Employer ? "#ffffff" : "var(--text-secondary)");
+                                   border: none; border-radius: 5px; padding: 3px 8px; font-size: 0.76rem; font-weight: 700; cursor: pointer;">
+                        Employer
+                    </button>
                 </div>
+
+                <div class="user-badge">
+                    <div class="user-avatar" style="background: @GetAvatarColor(Session.CurrentRole);">
+                        @GetAvatarInitial(Session.CurrentSession.Name)
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">@Session.CurrentSession.Name</span>
+                        <span class="user-role">@Session.CurrentSession.Role.ToString()</span>
+                    </div>
+                </div>
+
+                <a href="" style="color: var(--text-muted); text-decoration: none; font-size: 0.8rem; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-subtle); display: inline-flex; align-items: center; gap: 4px;" title="Exit to Public Landing Page">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Exit</span>
+                </a>
             </div>
         </header>
 
@@ -30,3 +76,43 @@
         </main>
     </div>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Session.OnChange += StateHasChanged;
+    }
+
+    private void SwitchRole(UserRole role)
+    {
+        Session.SwitchRole(role);
+        switch (role)
+        {
+            case UserRole.Student:
+                Navigation.NavigateTo("projects/my");
+                break;
+            case UserRole.Lecturer:
+                Navigation.NavigateTo("verification");
+                break;
+            case UserRole.Employer:
+                Navigation.NavigateTo("search");
+                break;
+        }
+    }
+
+    private string GetAvatarInitial(string name) => 
+        string.IsNullOrWhiteSpace(name) ? "U" : name[0].ToString().ToUpper();
+
+    private string GetAvatarColor(UserRole role) => role switch
+    {
+        UserRole.Student => "var(--accent)",
+        UserRole.Lecturer => "var(--accent-cyan)",
+        UserRole.Employer => "#ffb300",
+        _ => "var(--text-muted)"
+    };
+
+    public void Dispose()
+    {
+        Session.OnChange -= StateHasChanged;
+    }
+}

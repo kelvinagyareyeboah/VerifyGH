@@ -1,0 +1,98 @@
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+@inject UserSessionService Session
+
+<MudThemeProvider IsDarkMode="false" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<div class="public-shell" style="min-height: 100vh; display: flex; flex-direction: column; background-color: #ffffff; color: var(--text-primary);">
+    
+    <!-- Editorial Top Navigation -->
+    <header style="height: 68px; border-bottom: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 100;">
+        <div style="max-width: 1140px; height: 100%; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between;">
+            
+            <!-- Brand -->
+            <a href="" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #09090b;">
+                <div style="width: 32px; height: 32px; border-radius: 6px; background: #09090b; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 900; font-size: 0.95rem;">
+                    V
+                </div>
+                <span style="font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em;">VerifyGH</span>
+                <span style="font-size: 0.7rem; color: #71717a; font-weight: 600; margin-left: 4px;">UG · DCIT 318</span>
+            </a>
+
+            <!-- Nav Links -->
+            <nav style="display: flex; align-items: center; gap: 28px;">
+                <a href="#portals" style="color: #52525b; text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: color 0.12s ease;" onmouseover="this.style.color='#09090b'" onmouseout="this.style.color='#52525b'">
+                    Portals
+                </a>
+                <a href="#how-it-works" style="color: #52525b; text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: color 0.12s ease;" onmouseover="this.style.color='#09090b'" onmouseout="this.style.color='#52525b'">
+                    Architecture
+                </a>
+                <a href="search" style="color: #52525b; text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: color 0.12s ease;" onmouseover="this.style.color='#09090b'" onmouseout="this.style.color='#52525b'">
+                    Browse Talent
+                </a>
+            </nav>
+
+            <!-- Actions -->
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <a href="login" 
+                   style="color: #09090b; text-decoration: none; font-size: 0.86rem; font-weight: 600; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--border-subtle); background: #ffffff; transition: all 0.12s ease;"
+                   onmouseover="this.style.borderColor='#a1a1aa'" onmouseout="this.style.borderColor='var(--border-subtle)'">
+                    Sign In
+                </a>
+                <a href="login" 
+                   style="background: #09090b; color: #ffffff; text-decoration: none; font-size: 0.86rem; font-weight: 700; padding: 7px 16px; border-radius: 6px; transition: opacity 0.12s ease;"
+                   onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                    Enter Portal →
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main style="flex: 1; background: #ffffff;">
+        @Body
+    </main>
+
+    <!-- Minimalist Editorial Footer -->
+    <footer style="border-top: 1px solid var(--border-subtle); background: #fafaf9; padding: 48px 24px 32px 24px;">
+        <div style="max-width: 1140px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 32px;">
+                <div style="max-width: 360px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <span style="font-weight: 800; color: #09090b; font-size: 1.05rem;">VerifyGH</span>
+                        <span style="font-size: 0.72rem; color: #71717a;">University of Ghana</span>
+                    </div>
+                    <p style="color: #52525b; font-size: 0.84rem; line-height: 1.5; margin: 0;">
+                        Verified academic credential and capstone portfolio platform for tertiary graduates.
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 40px; font-size: 0.84rem;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <span style="font-weight: 700; color: #09090b; font-size: 0.75rem; text-transform: uppercase;">Workspace</span>
+                        <a href="projects/my" style="color: #52525b; text-decoration: none;">Student Portal</a>
+                        <a href="verification" style="color: #52525b; text-decoration: none;">Lecturer Queue</a>
+                        <a href="search" style="color: #52525b; text-decoration: none;">Talent Search</a>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px; color: #71717a;">
+                        <span style="font-weight: 700; color: #09090b; font-size: 0.75rem; text-transform: uppercase;">Academic</span>
+                        <span>DCIT 318 Semester Project</span>
+                        <span>Dept. of Computer Science</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid #e5e5e5; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 0.78rem; color: #71717a;">
+                <span>© 2026 VerifyGH. University of Ghana.</span>
+                <span>ASP.NET Core Web API · Blazor WebAssembly · SQL Server</span>
+            </div>
+
+        </div>
+    </footer>
+
+</div>

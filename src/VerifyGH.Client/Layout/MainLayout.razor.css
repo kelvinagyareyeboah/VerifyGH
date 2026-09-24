@@ -32,7 +32,7 @@
     justify-content: space-between;
     padding: 0 32px;
     border-bottom: 1px solid var(--border-subtle);
-    background: rgba(8, 12, 20, 0.85);
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(12px);
     position: sticky;
     top: 0;
@@ -44,7 +44,7 @@
     align-items: center;
     gap: 8px;
     padding: 6px 12px;
-    background: rgba(255, 255, 255, 0.04);
+    background: #fafaf9;
     border: 1px solid var(--border-subtle);
     border-radius: 8px;
     color: var(--text-muted);
@@ -54,8 +54,8 @@
 }
 
 .header-search:hover {
-    border-color: rgba(255, 255, 255, 0.15);
-    color: var(--text-secondary);
+    border-color: #a1a1aa;
+    color: var(--text-primary);
 }
 
 .user-badge {
@@ -68,13 +68,13 @@
     width: 32px;
     height: 32px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #00e676, #00b0ff);
+    background: #09090b;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     font-size: 0.85rem;
-    color: #080c14;
+    color: #ffffff;
 }
 
 .user-info {

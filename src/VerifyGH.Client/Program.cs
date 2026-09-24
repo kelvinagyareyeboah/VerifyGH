@@ -17,6 +17,9 @@ builder.Services.AddBlazoredLocalStorage();
 // Authorization Core for Client-side Role Checks
 builder.Services.AddAuthorizationCore();
 
+// In-Memory Role and Session State
+builder.Services.AddScoped<VerifyGH.Client.Services.UserSessionService>();
+
 // Configure HttpClient pointing to Backend Web API
 var backendApiUrl = builder.Configuration["BackendUrl"] ?? "https://localhost:7296/";
 builder.Services.AddScoped(sp => new HttpClient

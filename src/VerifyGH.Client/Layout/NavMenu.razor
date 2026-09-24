@@ -1,93 +1,168 @@
+@inject UserSessionService Session
+@inject NavigationManager Navigation
+@implements IDisposable
+
 <div class="nav-container">
-    <div class="brand-section">
-        <div class="brand-logo">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#080c14" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    
+    <!-- Brand Header -->
+    <div class="nav-brand">
+        <div class="nav-brand-logo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
             </svg>
         </div>
-        <span class="brand-name">VerifyGH</span>
+        <div>
+            <div class="nav-brand-title">VerifyGH</div>
+            <span style="font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: @GetPortalColor(); background: @GetPortalBg(); padding: 2px 7px; border-radius: 4px; display: inline-block;">
+                @GetPortalBadge()
+            </span>
+        </div>
     </div>
 
+    <!-- Active User Mini-Profile Card -->
+    <div class="nav-profile-card">
+        <div class="nav-profile-avatar" style="color: @GetPortalColor(); background: @GetPortalBg(); border-color: @GetPortalColor();">
+            @GetInitial(Session.CurrentSession.Name)
+        </div>
+        <div style="flex: 1; min-width: 0; line-height: 1.25;">
+            <div style="font-size: 0.86rem; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                @Session.CurrentSession.Name
+            </div>
+            <div style="font-size: 0.73rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                @Session.CurrentSession.Organization
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Menu Items -->
     <div class="nav-links">
-        <div class="nav-category">Main</div>
-        <NavLink class="nav-item-link" href="" Match="NavLinkMatch.All">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7"></rect>
-                <rect x="14" y="3" width="7" height="7"></rect>
-                <rect x="14" y="14" width="7" height="7"></rect>
-                <rect x="3" y="14" width="7" height="7"></rect>
-            </svg>
-            <span>Dashboard</span>
-        </NavLink>
+        
+        @if (Session.CurrentRole == UserRole.Student)
+        {
+            <div class="nav-section-title">Student Workspace</div>
 
-        <NavLink class="nav-item-link" href="search">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <span>Search Talent</span>
-        </NavLink>
+            <NavLink class="nav-link-btn" href="projects/my" Match="NavLinkMatch.All">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span style="flex: 1;">My Projects</span>
+                <span style="font-size: 0.7rem; background: rgba(0, 230, 118, 0.2); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-weight: 700;">3</span>
+            </NavLink>
 
-        <div class="nav-category">Student Portal</div>
-        <NavLink class="nav-item-link" href="projects/upload">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="17 8 12 3 7 8"></polyline>
-                <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-            <span>Upload Project</span>
-        </NavLink>
+            <NavLink class="nav-link-btn" href="projects/upload">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span style="flex: 1;">Upload Project</span>
+                <span style="font-size: 0.7rem; background: rgba(255, 255, 255, 0.08); color: var(--text-secondary); padding: 2px 6px; border-radius: 4px; font-weight: 600;">+ New</span>
+            </NavLink>
 
-        <NavLink class="nav-item-link" href="projects/my">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-            </svg>
-            <span>My Projects</span>
-        </NavLink>
+            <NavLink class="nav-link-btn" href="credentials">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="7"></circle>
+                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                </svg>
+                <span style="flex: 1;">Verified Badges</span>
+                <span style="font-size: 0.7rem; background: rgba(0, 229, 255, 0.15); color: var(--accent-cyan); padding: 2px 6px; border-radius: 4px; font-weight: 700;">Badge</span>
+            </NavLink>
+        }
+        else if (Session.CurrentRole == UserRole.Lecturer)
+        {
+            <div class="nav-section-title">Faculty Workspace</div>
 
-        <NavLink class="nav-item-link" href="credentials">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="8" r="7"></circle>
-                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-            </svg>
-            <span>Verified Badges</span>
-        </NavLink>
+            <NavLink class="nav-link-btn" href="verification" Match="NavLinkMatch.All">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span style="flex: 1;">Review Queue</span>
+                <span style="font-size: 0.7rem; background: rgba(255, 179, 0, 0.2); color: #ffb300; padding: 2px 6px; border-radius: 4px; font-weight: 700;">2 Pending</span>
+            </NavLink>
+        }
+        else if (Session.CurrentRole == UserRole.Employer)
+        {
+            <div class="nav-section-title">Recruiter Workspace</div>
 
-        <div class="nav-category">Lecturer Portal</div>
-        <NavLink class="nav-item-link" href="verification">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-            <span>Review Queue</span>
-        </NavLink>
+            <NavLink class="nav-link-btn" href="search" Match="NavLinkMatch.All">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span style="flex: 1;">Search Talent</span>
+                <span style="font-size: 0.7rem; background: rgba(255, 179, 0, 0.2); color: #ffb300; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Directory</span>
+            </NavLink>
+        }
 
-        <div class="nav-category">Account</div>
-        <NavLink class="nav-item-link" href="login">
+        <div class="nav-section-title">Account & Exit</div>
+
+        <NavLink class="nav-link-btn" href="login">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
                 <polyline points="10 17 15 12 10 7"></polyline>
                 <line x1="15" y1="12" x2="3" y2="12"></line>
             </svg>
-            <span>Sign In</span>
+            <span>Switch Role / Login</span>
         </NavLink>
 
-        <NavLink class="nav-item-link" href="register">
+        <a class="nav-link-btn" href="">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="8.5" cy="7" r="4"></circle>
-                <line x1="20" y1="8" x2="20" y2="14"></line>
-                <line x1="23" y1="11" x2="17" y2="11"></line>
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
             </svg>
-            <span>Register</span>
-        </NavLink>
+            <span>Exit to Public Website</span>
+        </a>
+
     </div>
 
-    <div class="nav-footer">
-        <span class="status-indicator">
-            <span class="status-dot"></span>
+    <!-- Sidebar Footer -->
+    <div style="padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+        <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent);"></span>
             <span>SignalR Active</span>
-        </span>
-        <span style="font-family: 'JetBrains Mono', monospace; opacity: 0.6;">v1.0</span>
+        </div>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted);">v1.0</span>
     </div>
+
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Session.OnChange += StateHasChanged;
+    }
+
+    private string GetPortalBadge() => Session.CurrentRole switch
+    {
+        UserRole.Student => "Student Portal",
+        UserRole.Lecturer => "Faculty Portal",
+        UserRole.Employer => "Employer Portal",
+        _ => "System Portal"
+    };
+
+    private string GetPortalColor() => Session.CurrentRole switch
+    {
+        UserRole.Student => "var(--accent)",
+        UserRole.Lecturer => "var(--accent-cyan)",
+        UserRole.Employer => "#ffb300",
+        _ => "#ffffff"
+    };
+
+    private string GetPortalBg() => Session.CurrentRole switch
+    {
+        UserRole.Student => "rgba(0, 230, 118, 0.15)",
+        UserRole.Lecturer => "rgba(0, 229, 255, 0.15)",
+        UserRole.Employer => "rgba(255, 179, 0, 0.15)",
+        _ => "rgba(255, 255, 255, 0.05)"
+    };
+
+    private string GetInitial(string name) =>
+        string.IsNullOrWhiteSpace(name) ? "U" : name[0].ToString().ToUpper();
+
+    public void Dispose()
+    {
+        Session.OnChange -= StateHasChanged;
+    }
+}

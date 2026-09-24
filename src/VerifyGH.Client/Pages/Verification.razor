@@ -1,26 +1,422 @@
 @page "/verification"
+@inject ISnackbar Snackbar
+@inject UserSessionService Session
 
-<PageTitle>Lecturer Review Queue — VerifyGH</PageTitle>
+<PageTitle>Supervisor Review Queue — VerifyGH</PageTitle>
 
-<div style="display: flex; flex-direction: column; gap: 24px;">
-    <div>
-        <div class="vg-pill" style="background: rgba(0, 229, 255, 0.12); color: var(--accent-cyan); border-color: rgba(0, 229, 255, 0.25); margin-bottom: 12px;">Lecturer Portal</div>
-        <h1 class="vg-gradient-text" style="font-size: 1.8rem; font-weight: 800; margin: 0 0 6px 0;">Verification Review Queue</h1>
-        <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">Review student submissions, validate deliverables, provide feedback, and issue badges.</p>
-    </div>
-
-    <!-- Linear-style Placeholder Box -->
-    <div class="vg-placeholder">
-        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.25); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
+<div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
+    
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--accent); background: rgba(99, 102, 241, 0.12); padding: 4px 10px; border-radius: 6px; margin-bottom: 8px;">
+                Faculty Portal
+            </div>
+            <h1 style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin: 0 0 4px 0; letter-spacing: -0.02em;">
+                Supervisor Review Queue
+            </h1>
+            <p style="color: var(--text-secondary); margin: 0; font-size: 0.9rem;">
+                Review student capstone deliverables, inspect code repositories, and certify authentic Ghanaian talent.
+            </p>
         </div>
-        <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0 0 8px 0; color: #ffffff;">Supervisor Review Queue</h3>
-        <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 20px auto; font-size: 0.88rem; line-height: 1.5;">
-            Tabbed table of pending submissions, one-click approve/reject modal, and lecturer feedback comments broadcasted via SignalR.
-        </p>
-        <span class="vg-pill" style="background: rgba(0, 229, 255, 0.12); color: var(--accent-cyan); border-color: rgba(0, 229, 255, 0.25);">Assigned to: Tieku Justice (Frontend)</span>
+
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 8px 14px; border-radius: 10px; display: flex; align-items: center; gap: 10px;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(99, 102, 241, 0.2); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;">
+                MS
+            </div>
+            <div style="line-height: 1.25;">
+                <div style="font-size: 0.82rem; font-weight: 700; color: #ffffff;">Dr. Michael Soli</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Dept. of Computer Science, UG</div>
+            </div>
+        </div>
     </div>
+
+    <!-- Quick Stats Metric Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+        <div class="vg-card" style="padding: 16px 20px; border-left: 3px solid var(--accent-gold);">
+            <div style="font-size: 0.75rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase;">Awaiting Your Review</div>
+            <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                @_submissions.Count(s => s.Status == VerificationStatus.Pending)
+            </div>
+        </div>
+
+        <div class="vg-card" style="padding: 16px 20px; border-left: 3px solid var(--accent-emerald);">
+            <div style="font-size: 0.75rem; color: var(--accent-emerald); font-weight: 700; text-transform: uppercase;">Verified by You</div>
+            <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                @_submissions.Count(s => s.Status == VerificationStatus.Approved)
+            </div>
+        </div>
+
+        <div class="vg-card" style="padding: 16px 20px; border-left: 3px solid var(--accent-rose);">
+            <div style="font-size: 0.75rem; color: var(--accent-rose); font-weight: 700; text-transform: uppercase;">Revisions Requested</div>
+            <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                @_submissions.Count(s => s.Status == VerificationStatus.NeedsRevision)
+            </div>
+        </div>
+
+        <div class="vg-card" style="padding: 16px 20px; border-left: 3px solid var(--accent);">
+            <div style="font-size: 0.75rem; color: var(--accent); font-weight: 700; text-transform: uppercase;">Supervised Students</div>
+            <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                @_submissions.Select(s => s.StudentId).Distinct().Count()
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs & Search -->
+    <div class="vg-card" style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            @foreach (var tab in _tabs)
+            {
+                var isSelected = _selectedTab == tab.Key;
+                <button type="button" 
+                        @onclick="() => _selectedTab = tab.Key"
+                        style="background: @(isSelected ? "var(--accent)" : "rgba(255,255,255,0.04)");
+                               color: @(isSelected ? "#ffffff" : "var(--text-secondary)");
+                               font-weight: @(isSelected ? "700" : "500");
+                               border: 1px solid @(isSelected ? "var(--accent)" : "var(--border-subtle)");
+                               padding: 6px 14px;
+                               border-radius: 8px;
+                               font-size: 0.82rem;
+                               cursor: pointer;
+                               transition: all 0.15s ease;">
+                    @tab.Label (@GetTabCount(tab.Key))
+                </button>
+            }
+        </div>
+
+        <div style="width: 260px;">
+            <MudTextField @bind-Value="_searchQuery"
+                          Placeholder="Filter by student or skill..."
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense"
+                          Immediate="true"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Style="background: rgba(255,255,255,0.03);" />
+        </div>
+    </div>
+
+    <!-- Submissions List -->
+    @if (FilteredSubmissions.Count == 0)
+    {
+        <div class="vg-placeholder" style="padding: 40px; text-align: center;">
+            <p style="color: var(--text-muted); margin: 0; font-size: 0.9rem;">
+                No submissions found matching the selected filter.
+            </p>
+        </div>
+    }
+    else
+    {
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            @foreach (var item in FilteredSubmissions)
+            {
+                <div class="vg-card" style="padding: 22px; border-radius: 12px; display: flex; flex-direction: column; gap: 16px;">
+                    
+                    <!-- Top Row: Student Profile & Status -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+                        
+                        <!-- Student Identity -->
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem;">
+                                @GetInitial(item.StudentName)
+                            </div>
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 1rem; font-weight: 800; color: #ffffff;">@item.StudentName</span>
+                                    <span style="font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); background: rgba(255,255,255,0.04); padding: 2px 6px; border-radius: 4px;">
+                                        ID: @item.StudentId
+                                    </span>
+                                </div>
+                                <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px;">
+                                    @item.Program — @item.Institution
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Status Badge -->
+                        <div>
+                            @GetStatusPill(item.Status)
+                        </div>
+
+                    </div>
+
+                    <!-- Middle: Project Details -->
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px;">
+                        <div style="font-size: 1.1rem; font-weight: 700; color: #ffffff; margin-bottom: 6px;">
+                            @item.Title
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; margin: 0 0 12px 0;">
+                            @item.Description
+                        </p>
+
+                        <!-- Tech Skills -->
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;">
+                            @foreach (var skill in item.Skills)
+                            {
+                                <span style="font-size: 0.72rem; background: rgba(99, 102, 241, 0.12); color: var(--accent); border: 1px solid rgba(99, 102, 241, 0.25); padding: 2px 8px; border-radius: 5px; font-weight: 600;">
+                                    @skill
+                                </span>
+                            }
+                        </div>
+
+                        <!-- Links -->
+                        <div style="display: flex; gap: 14px; font-size: 0.8rem; border-top: 1px solid var(--border-subtle); padding-top: 10px;">
+                            @if (!string.IsNullOrEmpty(item.RepoUrl))
+                            {
+                                <a href="@item.RepoUrl" target="_blank" style="color: #ffffff; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='#ffffff'">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                                    </svg>
+                                    GitHub Repo
+                                </a>
+                            }
+                            @if (!string.IsNullOrEmpty(item.LiveDemoUrl))
+                            {
+                                <a href="@item.LiveDemoUrl" target="_blank" style="color: var(--accent-cyan); text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                    </svg>
+                                    Live Demo
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Bottom Action / Feedback Row -->
+                    @if (item.Status == VerificationStatus.Approved)
+                    {
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 10px 14px;">
+                            <div style="display: flex; align-items: center; gap: 8px; color: var(--accent-emerald); font-size: 0.82rem; font-weight: 700;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Verified & Endorsed by Dr. Michael Soli on @item.VerifiedAt?.ToString("MMM dd, yyyy")
+                            </div>
+                            <span style="font-size: 0.75rem; color: var(--accent-emerald); font-weight: 600;">Credential Active</span>
+                        </div>
+                    }
+                    else if (item.Status == VerificationStatus.NeedsRevision)
+                    {
+                        <div style="background: rgba(244, 63, 94, 0.08); border: 1px solid rgba(244, 63, 94, 0.25); border-radius: 8px; padding: 10px 14px;">
+                            <div style="font-size: 0.78rem; font-weight: 700; color: var(--accent-rose); margin-bottom: 2px;">Your Revision Note to Student:</div>
+                            <div style="font-size: 0.82rem; color: #fca5a5; font-style: italic;">"@item.Feedback"</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Pending: Action Buttons -->
+                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                            <MudButton Variant="Variant.Outlined" 
+                                       Color="Color.Error" 
+                                       Size="Size.Small"
+                                       OnClick="() => RequestRevision(item)"
+                                       Style="text-transform: none; border-radius: 8px; font-weight: 600; font-size: 0.82rem;">
+                                Request Changes
+                            </MudButton>
+
+                            <MudButton Variant="Variant.Filled" 
+                                       Color="Color.Success" 
+                                       Size="Size.Small"
+                                       OnClick="() => EndorseProject(item)"
+                                       Style="background: var(--accent-emerald); color: #080c14; text-transform: none; border-radius: 8px; font-weight: 700; font-size: 0.82rem; padding: 6px 16px;">
+                                ✓ Endorse & Verify
+                            </MudButton>
+                        </div>
+                    }
+
+                </div>
+            }
+        </div>
+    }
+
 </div>
+
+@code {
+    private string _selectedTab = "All";
+    private string _searchQuery = string.Empty;
+
+    private record TabDef(string Key, string Label);
+
+    private readonly List<TabDef> _tabs = new()
+    {
+        new("All", "All Submissions"),
+        new("Pending", "Awaiting Review"),
+        new("Approved", "Verified by You"),
+        new("NeedsRevision", "Revisions Requested")
+    };
+
+    public class SubmissionItem
+    {
+        public int Id { get; set; }
+        public string StudentId { get; set; } = string.Empty;
+        public string StudentName { get; set; } = string.Empty;
+        public string Program { get; set; } = "BSc. Computer Science";
+        public string Institution { get; set; } = "University of Ghana";
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string? RepoUrl { get; set; }
+        public string? LiveDemoUrl { get; set; }
+        public List<string> Skills { get; set; } = new();
+        public VerificationStatus Status { get; set; }
+        public DateTime SubmittedAt { get; set; }
+        public DateTime? VerifiedAt { get; set; }
+        public string? Feedback { get; set; }
+    }
+
+    private List<SubmissionItem> _submissions = new()
+    {
+        new()
+        {
+            Id = 1,
+            StudentId = "22159683",
+            StudentName = "Kelvin Yeboah",
+            Title = "AgriScan GH: Deep Learning Crop Pathology Detector",
+            Description = "Convolutional neural network mobile-edge classifier trained on 12,000 cocoa leaf samples to identify black pod disease in offline farm environments.",
+            RepoUrl = "https://github.com/kelvinagyareyeboah/VerifyGH",
+            LiveDemoUrl = "https://agriscan.demo.gh",
+            Skills = new List<string> { "Python", "TensorFlow", "React Native", "FastAPI", "Docker" },
+            Status = VerificationStatus.Pending,
+            SubmittedAt = DateTime.UtcNow.AddDays(-2)
+        },
+        new()
+        {
+            Id = 2,
+            StudentId = "22040783",
+            StudentName = "Ama Serwaa Boateng",
+            Title = "MediSync: Cross-Facility Patient Record Protocol",
+            Description = "Zero-knowledge decentralized protocol allowing district hospitals in Greater Accra to exchange encrypted patient charts with patient-consented keys.",
+            RepoUrl = "https://github.com/student/medisync",
+            LiveDemoUrl = "https://medisync-demo.vercel.app",
+            Skills = new List<string> { "C#", "ASP.NET Core", "SQL Server", "Cryptography" },
+            Status = VerificationStatus.Pending,
+            SubmittedAt = DateTime.UtcNow.AddDays(-1)
+        },
+        new()
+        {
+            Id = 3,
+            StudentId = "22027295",
+            StudentName = "Frank Bless Kofi Tsetse",
+            Title = "TroTroPay: Micro-Fare Contactless Transit Ledger",
+            Description = "NFC card reader firmware and mobile money webhook engine handling low-latency offline tap-to-ride settlements for urban bus operators.",
+            RepoUrl = "https://github.com/student/trotropay",
+            Skills = new List<string> { "TypeScript", "Node.js", "Redis", "USSD API" },
+            Status = VerificationStatus.NeedsRevision,
+            SubmittedAt = DateTime.UtcNow.AddDays(-10),
+            Feedback = "Ensure idempotent handling on payment callback webhooks and provide stress test benchmarks."
+        },
+        new()
+        {
+            Id = 4,
+            StudentId = "22046873",
+            StudentName = "Kwesi Appiah",
+            Title = "EcoVolt: Solar Microgrid Load Balancer",
+            Description = "IoT telemetry system calculating distributed battery bank state-of-charge with automated shedding heuristics for rural clinic solar installations.",
+            RepoUrl = "https://github.com/student/ecovolt",
+            LiveDemoUrl = "https://ecovolt.azurewebsites.net",
+            Skills = new List<string> { "Go", "MQTT", "Time-Series DB", "Vue.js" },
+            Status = VerificationStatus.Approved,
+            SubmittedAt = DateTime.UtcNow.AddDays(-15),
+            VerifiedAt = DateTime.UtcNow.AddDays(-3)
+        },
+        new()
+        {
+            Id = 5,
+            StudentId = "22014087",
+            StudentName = "Abena Osei",
+            Title = "GhanaLaw Corpus NLP Query Engine",
+            Description = "Semantic vector search engine indexing Supreme Court judgments since 1992 for paralegals and law researchers in Accra.",
+            RepoUrl = "https://github.com/student/ghanalaw-nlp",
+            Skills = new List<string> { "Python", "BERT", "Qdrant", "FastAPI" },
+            Status = VerificationStatus.Approved,
+            SubmittedAt = DateTime.UtcNow.AddDays(-20),
+            VerifiedAt = DateTime.UtcNow.AddDays(-6)
+        },
+        new()
+        {
+            Id = 6,
+            StudentId = "22099559",
+            StudentName = "Osman Ilyas",
+            Title = "Fisheries Guard: AIS Vessel Tracking Anomaly Model",
+            Description = "Spatial-temporal trajectory analyzer flagging unlicensed trawler incursions in Ghana's Exclusive Economic Zone.",
+            RepoUrl = "https://github.com/student/vessel-tracker",
+            Skills = new List<string> { "Python", "GIS", "PostGIS", "Docker" },
+            Status = VerificationStatus.Approved,
+            SubmittedAt = DateTime.UtcNow.AddDays(-25),
+            VerifiedAt = DateTime.UtcNow.AddDays(-8)
+        }
+    };
+
+    private int GetTabCount(string key) => key switch
+    {
+        "Pending" => _submissions.Count(s => s.Status == VerificationStatus.Pending),
+        "Approved" => _submissions.Count(s => s.Status == VerificationStatus.Approved),
+        "NeedsRevision" => _submissions.Count(s => s.Status == VerificationStatus.NeedsRevision),
+        _ => _submissions.Count
+    };
+
+    private List<SubmissionItem> FilteredSubmissions
+    {
+        get
+        {
+            var query = _submissions.AsEnumerable();
+
+            if (_selectedTab == "Pending")
+                query = query.Where(s => s.Status == VerificationStatus.Pending);
+            else if (_selectedTab == "Approved")
+                query = query.Where(s => s.Status == VerificationStatus.Approved);
+            else if (_selectedTab == "NeedsRevision")
+                query = query.Where(s => s.Status == VerificationStatus.NeedsRevision);
+
+            if (!string.IsNullOrWhiteSpace(_searchQuery))
+            {
+                query = query.Where(s => 
+                    s.StudentName.Contains(_searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    s.Title.Contains(_searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    s.Skills.Any(sk => sk.Contains(_searchQuery, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            return query.OrderByDescending(s => s.SubmittedAt).ToList();
+        }
+    }
+
+    private void EndorseProject(SubmissionItem item)
+    {
+        item.Status = VerificationStatus.Approved;
+        item.VerifiedAt = DateTime.UtcNow;
+        Snackbar.Add($"Endorsed '{item.Title}' by {item.StudentName}! Verified credential issued.", Severity.Success);
+    }
+
+    private void RequestRevision(SubmissionItem item)
+    {
+        item.Status = VerificationStatus.NeedsRevision;
+        item.Feedback = "Please update repository README with setup steps and verify automated unit tests.";
+        Snackbar.Add($"Revision request sent to {item.StudentName}.", Severity.Warning);
+    }
+
+    private RenderFragment GetStatusPill(VerificationStatus status) => __builder =>
+    {
+        switch (status)
+        {
+            case VerificationStatus.Approved:
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--accent-emerald); background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); padding: 3px 9px; border-radius: 999px;">
+                    ✓ VERIFIED
+                </span>
+                break;
+            case VerificationStatus.NeedsRevision:
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--accent-rose); background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.25); padding: 3px 9px; border-radius: 999px;">
+                    REVISION REQUESTED
+                </span>
+                break;
+            default:
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--accent-gold); background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.25); padding: 3px 9px; border-radius: 999px;">
+                    PENDING REVIEW
+                </span>
+                break;
+        }
+    };
+
+    private string GetInitial(string name) => 
+        string.IsNullOrWhiteSpace(name) ? "S" : name[0].ToString().ToUpper();
+}

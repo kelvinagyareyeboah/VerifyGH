@@ -122,11 +122,11 @@
 **Role:** Frontend Developer (Lecturer Portal)  
 **Working Directory:** `src/VerifyGH.Client/Pages/`
 
-- [ ] Implement `Verification.razor`:
+- [x] Implement `Verification.razor`:
   - Tabbed or table view of submissions: "Pending Reviews", "Reviewed", "All"
   - Student profile and submission date columns
   - Action button to open "Review Modal"
-- [ ] Create Review Modal Dialog:
+- [x] Create Review Modal Dialog:
   - Display student's project code links and attached documents
   - Radio toggle: "Approve" or "Reject / Request Changes"
   - Multiline text field for lecturer comments

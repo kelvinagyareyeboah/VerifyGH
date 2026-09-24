@@ -1,98 +1,188 @@
 @page "/"
+@layout PublicLayout
+@inject NavigationManager Navigation
+@inject UserSessionService Session
 
-<PageTitle>Dashboard — VerifyGH</PageTitle>
+<PageTitle>VerifyGH — Verified Credential & Portfolio Platform</PageTitle>
 
-<div style="display: flex; flex-direction: column; gap: 32px;">
-    <!-- Hero Section -->
-    <div class="vg-card" style="position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(0, 230, 118, 0.08) 0%, rgba(0, 229, 255, 0.03) 100%); border-color: rgba(0, 230, 118, 0.2);">
-        <div style="max-width: 680px;">
-            <div class="vg-pill" style="margin-bottom: 16px;">
-                <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent);"></span>
-                DCIT 318 · Verified Credential Network
+<div style="max-width: 1140px; margin: 0 auto; padding: 20px 24px 80px 24px; background: #ffffff;">
+
+    <!-- HERO SECTION -->
+    <section style="padding: 80px 0 60px 0; text-align: left; max-width: 860px;">
+        
+        <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #92400e; background: #fef3c7; border: 1px solid #fde68a; padding: 6px 12px; border-radius: 6px; margin-bottom: 24px;">
+            <span>●</span>
+            University of Ghana · DCIT 318
+        </div>
+
+        <h1 style="font-size: 3.4rem; font-weight: 800; color: #09090b; letter-spacing: -0.04em; margin: 0 0 20px 0; line-height: 1.1;">
+            Verified proof of work for Ghanaian graduates.
+        </h1>
+
+        <p style="color: #52525b; font-size: 1.15rem; line-height: 1.6; margin: 0 0 36px 0; max-width: 720px;">
+            Over 300,000 students graduate annually in Ghana, but employers struggle to verify real skills. VerifyGH replaces unverified resumes with faculty-endorsed capstones, real code repositories, and verifiable credentials.
+        </p>
+
+        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+            <a href="login" 
+               style="background: #09090b; color: #ffffff; font-weight: 700; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 0.92rem; display: inline-flex; align-items: center; gap: 8px; transition: opacity 0.15s ease;"
+               onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                Open Portal / Sign In →
+            </a>
+            <a href="#portals" 
+               style="background: #ffffff; color: #09090b; border: 1px solid #e5e5e5; font-weight: 600; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 0.92rem; display: inline-flex; align-items: center; gap: 8px; transition: border-color 0.15s ease;"
+               onmouseover="this.style.borderColor='#09090b'" onmouseout="this.style.borderColor='#e5e5e5'">
+                Choose Your Role
+            </a>
+        </div>
+
+    </section>
+
+    <!-- METRICS STRIP -->
+    <section style="border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; padding: 36px 0; margin-bottom: 70px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px;">
+            <div>
+                <div style="font-size: 2.2rem; font-weight: 800; color: #09090b; letter-spacing: -0.03em;">~300,000</div>
+                <div style="color: #71717a; font-size: 0.85rem; font-weight: 600; margin-top: 4px;">Annual Tertiary Graduates</div>
             </div>
-            <h1 class="vg-gradient-text" style="font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 12px 0;">
-                Bridging the Trust Gap for <span class="vg-gradient-accent">Ghanaian Talent</span>
-            </h1>
-            <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.6; margin: 0 0 24px 0;">
-                Ghana produces ~300,000 graduates annually. VerifyGH provides cryptographically verifiable, lecturer-endorsed proof for academic work, capstone projects, and real-world skills.
-            </p>
-            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <a href="projects/upload" class="vg-pill" style="text-decoration: none; padding: 10px 18px; font-size: 0.85rem; font-weight: 700; background: var(--accent); color: #080c14;">
-                    + Submit Project for Review
-                </a>
-                <a href="search" class="vg-pill vg-pill-secondary" style="text-decoration: none; padding: 10px 18px; font-size: 0.85rem; font-weight: 600;">
-                    Browse Verified Talent →
-                </a>
+            <div>
+                <div style="font-size: 2.2rem; font-weight: 800; color: #92400e; letter-spacing: -0.03em;">100%</div>
+                <div style="color: #71717a; font-size: 0.85rem; font-weight: 600; margin-top: 4px;">Faculty Verified Code</div>
+            </div>
+            <div>
+                <div style="font-size: 2.2rem; font-weight: 800; color: #09090b; letter-spacing: -0.03em;">Zero</div>
+                <div style="color: #71717a; font-size: 0.85rem; font-weight: 600; margin-top: 4px;">Resume Exaggeration</div>
+            </div>
+            <div>
+                <div style="font-size: 2.2rem; font-weight: 800; color: #09090b; letter-spacing: -0.03em;">Real-Time</div>
+                <div style="color: #71717a; font-size: 0.85rem; font-weight: 600; margin-top: 4px;">SignalR Endorsement Alerts</div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Quick Stats -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-        <div class="vg-card">
-            <div style="color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Target Graduate Pool</div>
-            <div style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em;">300,000+</div>
-            <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px;">Annual tertiary output</div>
+    <!-- PORTALS SECTION (ROLE SELECTION) -->
+    <section id="portals" style="margin-bottom: 80px;">
+        <div style="margin-bottom: 32px;">
+            <div style="font-size: 0.76rem; font-weight: 700; text-transform: uppercase; color: #92400e; letter-spacing: 0.08em; margin-bottom: 6px;">
+                Platform Access
+            </div>
+            <h2 style="font-size: 1.8rem; font-weight: 800; color: #09090b; margin: 0; letter-spacing: -0.02em;">
+                Select your portal to enter
+            </h2>
         </div>
-        <div class="vg-card">
-            <div style="color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Verified Projects</div>
-            <div style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em; color: var(--accent);">1,420</div>
-            <div style="color: var(--accent); font-size: 0.8rem; margin-top: 4px;">100% lecturer-endorsed</div>
-        </div>
-        <div class="vg-card">
-            <div style="color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Accredited Supervisors</div>
-            <div style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em; color: var(--accent-cyan);">280+</div>
-            <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px;">Faculty reviewers</div>
-        </div>
-        <div class="vg-card">
-            <div style="color: var(--text-muted); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Employer Partners</div>
-            <div style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em;">85</div>
-            <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 4px;">Active hiring teams</div>
-        </div>
-    </div>
 
-    <!-- Portal Gateways -->
-    <div>
-        <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; color: var(--text-primary);">Role Portals</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
-            <div class="vg-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+            
+            <!-- Student Portal -->
+            <div class="vg-card" style="display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid #b45309; background: #ffffff;">
                 <div>
-                    <span class="vg-pill" style="margin-bottom: 12px;">Student Gateway</span>
-                    <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 8px 0;">Build Your Verified Portfolio</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.5; margin: 0 0 16px 0;">
-                        Upload capstones, repositories, and skill proofs. Get permanent endorsements from your department lecturers.
+                    <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #92400e; letter-spacing: 0.06em; margin-bottom: 8px;">
+                        Student Gateway
+                    </div>
+                    <h3 style="font-size: 1.3rem; font-weight: 700; color: #09090b; margin: 0 0 10px 0;">
+                        Student Portfolio
+                    </h3>
+                    <p style="color: #52525b; font-size: 0.9rem; line-height: 1.55; margin: 0 0 24px 0;">
+                        Upload capstone projects, attach GitHub links and documentation, request supervisor endorsement, and track verification status.
                     </p>
                 </div>
-                <a href="projects/my" style="color: var(--accent); text-decoration: none; font-size: 0.85rem; font-weight: 600;">
-                    View Student Portfolio →
-                </a>
+                <button type="button" 
+                        @onclick='() => SelectRole(UserRole.Student, "projects/my")'
+                        style="width: 100%; background: #09090b; color: #ffffff; font-weight: 700; padding: 10px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.88rem; transition: opacity 0.15s ease;"
+                        onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                    Enter as Student →
+                </button>
             </div>
 
-            <div class="vg-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <!-- Lecturer Portal -->
+            <div class="vg-card" style="display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid #78350f; background: #ffffff;">
                 <div>
-                    <span class="vg-pill" style="background: rgba(0, 229, 255, 0.12); color: var(--accent-cyan); border-color: rgba(0, 229, 255, 0.25); margin-bottom: 12px;">Lecturer Gateway</span>
-                    <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 8px 0;">Review & Validate Submissions</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.5; margin: 0 0 16px 0;">
-                        Inspect student code, verify authenticity, provide feedback, and issue verified accreditation badges.
+                    <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #92400e; letter-spacing: 0.06em; margin-bottom: 8px;">
+                        Faculty Gateway
+                    </div>
+                    <h3 style="font-size: 1.3rem; font-weight: 700; color: #09090b; margin: 0 0 10px 0;">
+                        Lecturer Review Queue
+                    </h3>
+                    <p style="color: #52525b; font-size: 0.9rem; line-height: 1.55; margin: 0 0 24px 0;">
+                        Access student deliverables from your department, examine code repositories, provide academic feedback, and certify credentials.
                     </p>
                 </div>
-                <a href="verification" style="color: var(--accent-cyan); text-decoration: none; font-size: 0.85rem; font-weight: 600;">
-                    Open Review Queue →
-                </a>
+                <button type="button" 
+                        @onclick='() => SelectRole(UserRole.Lecturer, "verification")'
+                        style="width: 100%; background: #fafaf9; color: #09090b; font-weight: 700; padding: 10px; border-radius: 6px; border: 1px solid #e5e5e5; cursor: pointer; font-size: 0.88rem; transition: all 0.15s ease;"
+                        onmouseover="this.style.borderColor='#09090b'" onmouseout="this.style.borderColor='#e5e5e5'">
+                    Enter Review Queue →
+                </button>
             </div>
 
-            <div class="vg-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <!-- Employer Portal -->
+            <div class="vg-card" style="display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid #a1a1aa; background: #ffffff;">
                 <div>
-                    <span class="vg-pill vg-pill-secondary" style="margin-bottom: 12px;">Employer Gateway</span>
-                    <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 8px 0;">Discover Verified Talent</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.5; margin: 0 0 16px 0;">
-                        Filter graduate profiles by verified skills, degree programs, and supervisor ratings. Zero resume fraud.
+                    <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #71717a; letter-spacing: 0.06em; margin-bottom: 8px;">
+                        Industry Gateway
+                    </div>
+                    <h3 style="font-size: 1.3rem; font-weight: 700; color: #09090b; margin: 0 0 10px 0;">
+                        Employer Search
+                    </h3>
+                    <p style="color: #52525b; font-size: 0.9rem; line-height: 1.55; margin: 0 0 24px 0;">
+                        Search vetted Ghanaian graduates by verified skills and degree programs. Review genuine code before scheduling interviews.
                     </p>
                 </div>
-                <a href="search" style="color: var(--text-primary); text-decoration: none; font-size: 0.85rem; font-weight: 600;">
-                    Search Verified Graduates →
-                </a>
+                <button type="button" 
+                        @onclick='() => SelectRole(UserRole.Employer, "search")'
+                        style="width: 100%; background: #fafaf9; color: #09090b; font-weight: 700; padding: 10px; border-radius: 6px; border: 1px solid #e5e5e5; cursor: pointer; font-size: 0.88rem; transition: all 0.15s ease;"
+                        onmouseover="this.style.borderColor='#09090b'" onmouseout="this.style.borderColor='#e5e5e5'">
+                    Browse Talent →
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS (SIMPLE 3 STEPS) -->
+    <section id="how-it-works" style="margin-bottom: 70px;">
+        <div style="margin-bottom: 32px;">
+            <div style="font-size: 0.76rem; font-weight: 700; text-transform: uppercase; color: #92400e; letter-spacing: 0.08em; margin-bottom: 6px;">
+                Architecture
+            </div>
+            <h2 style="font-size: 1.8rem; font-weight: 800; color: #09090b; margin: 0; letter-spacing: -0.02em;">
+                The 3-Step Verification Pipeline
+            </h2>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+            <div class="vg-card" style="padding: 24px; background: #ffffff;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #92400e; margin-bottom: 8px;">01</div>
+                <h4 style="font-size: 1.05rem; font-weight: 700; color: #09090b; margin: 0 0 6px 0;">Student Submits Work</h4>
+                <p style="color: #52525b; font-size: 0.85rem; line-height: 1.55; margin: 0;">
+                    Uploads project deliverables, GitHub repository link, and live demo. Selects supervising lecturer.
+                </p>
+            </div>
+
+            <div class="vg-card" style="padding: 24px; background: #ffffff;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #92400e; margin-bottom: 8px;">02</div>
+                <h4 style="font-size: 1.05rem; font-weight: 700; color: #09090b; margin: 0 0 6px 0;">Supervisor Endorses</h4>
+                <p style="color: #52525b; font-size: 0.85rem; line-height: 1.55; margin: 0;">
+                    Department lecturer inspects code quality, leaves academic feedback, and officially approves the credential.
+                </p>
+            </div>
+
+            <div class="vg-card" style="padding: 24px; background: #ffffff;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #92400e; margin-bottom: 8px;">03</div>
+                <h4 style="font-size: 1.05rem; font-weight: 700; color: #09090b; margin: 0 0 6px 0;">Employer Recruits</h4>
+                <p style="color: #52525b; font-size: 0.85rem; line-height: 1.55; margin: 0;">
+                    Companies search verified graduates with confirmed proof-of-work rather than unverified resumes.
+                </p>
             </div>
         </div>
-    </div>
+    </section>
+
 </div>
+
+@code {
+    private void SelectRole(UserRole role, string redirectUrl)
+    {
+        Session.SwitchRole(role);
+        Navigation.NavigateTo(redirectUrl);
+    }
+}
