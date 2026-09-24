@@ -206,22 +206,12 @@
                     }
                     else
                     {
-                        <!-- Pending: Action Buttons -->
-                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-                            <MudButton Variant="Variant.Outlined" 
-                                       Color="Color.Error" 
+                        <div style="display: flex; justify-content: flex-end;">
+                            <MudButton Variant="Variant.Filled"
                                        Size="Size.Small"
-                                       OnClick="() => RequestRevision(item)"
-                                       Style="text-transform: none; border-radius: 8px; font-weight: 600; font-size: 0.82rem;">
-                                Request Changes
-                            </MudButton>
-
-                            <MudButton Variant="Variant.Filled" 
-                                       Color="Color.Success" 
-                                       Size="Size.Small"
-                                       OnClick="() => EndorseProject(item)"
-                                       Style="background: var(--accent-emerald); color: #080c14; text-transform: none; border-radius: 8px; font-weight: 700; font-size: 0.82rem; padding: 6px 16px;">
-                                ✓ Endorse & Verify
+                                       OnClick="() => OpenReviewModal(item)"
+                                       Style="background: var(--accent); color: #ffffff; text-transform: none; border-radius: 8px; font-weight: 700; font-size: 0.82rem; padding: 6px 18px;">
+                                Review
                             </MudButton>
                         </div>
                     }
@@ -233,18 +223,123 @@
 
 </div>
 
+<!-- ── Review Modal ──────────────────────────────────────────────────────── -->
+@if (_modalOpen && _reviewing is not null)
+{
+    <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px;" @onclick="CloseModal">
+        <div class="vg-card" style="width: 100%; max-width: 560px; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 20px;" @onclick:stopPropagation="true">
+
+            <!-- Modal Header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <div style="font-size: 1.1rem; font-weight: 800; color: #ffffff;">Review Submission</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">@_reviewing.StudentName &mdash; @_reviewing.Title</div>
+                </div>
+                <button type="button" @onclick="CloseModal" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 0;">&times;</button>
+            </div>
+
+            <!-- Student Profile Row -->
+            <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 12px;">
+                <div style="width: 38px; height: 38px; border-radius: 8px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; flex-shrink: 0;">
+                    @GetInitial(_reviewing.StudentName)
+                </div>
+                <div>
+                    <div style="font-size: 0.88rem; font-weight: 700; color: #ffffff;">@_reviewing.StudentName</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">@_reviewing.Program &mdash; @_reviewing.Institution</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 1px;">Submitted @_reviewing.SubmittedAt.ToString("MMM dd, yyyy")</div>
+                </div>
+            </div>
+
+            <!-- Links & Documents -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em;">Project Links & Documents</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    @if (!string.IsNullOrEmpty(_reviewing.RepoUrl))
+                    {
+                        <a href="@_reviewing.RepoUrl" target="_blank"
+                           style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; color: #ffffff; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 7px; padding: 6px 12px; text-decoration: none;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                            </svg>
+                            GitHub Repo
+                        </a>
+                    }
+                    @if (!string.IsNullOrEmpty(_reviewing.LiveDemoUrl))
+                    {
+                        <a href="@_reviewing.LiveDemoUrl" target="_blank"
+                           style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; color: var(--accent-cyan); background: rgba(6,182,212,0.07); border: 1px solid rgba(6,182,212,0.25); border-radius: 7px; padding: 6px 12px; text-decoration: none;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                            Live Demo
+                        </a>
+                    }
+                    @if (!string.IsNullOrEmpty(_reviewing.DocumentUrl))
+                    {
+                        <a href="@_reviewing.DocumentUrl" target="_blank"
+                           style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; color: var(--accent-gold); background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.25); border-radius: 7px; padding: 6px 12px; text-decoration: none;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            Document
+                        </a>
+                    }
+                    @if (string.IsNullOrEmpty(_reviewing.RepoUrl) && string.IsNullOrEmpty(_reviewing.LiveDemoUrl) && string.IsNullOrEmpty(_reviewing.DocumentUrl))
+                    {
+                        <span style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">No links attached.</span>
+                    }
+                </div>
+            </div>
+
+            <!-- Radio Toggle: Approve / Reject -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em;">Decision</div>
+                <div style="display: flex; gap: 10px;">
+                    <label style="@_approveLabelStyle">
+                        <input type="radio" name="decision" checked="@_approveSelected" @onchange="() => _approveSelected = true" style="accent-color: var(--accent-emerald);" />
+                        <span style="@_approveTextStyle">Approve</span>
+                    </label>
+                    <label style="@_rejectLabelStyle">
+                        <input type="radio" name="decision" checked="@(!_approveSelected)" @onchange="() => _approveSelected = false" style="accent-color: var(--accent-rose);" />
+                        <span style="@_rejectTextStyle">Reject / Request Changes</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Lecturer Comments -->
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em;">Lecturer Comments</label>
+                <textarea @bind="_comment"
+                          rows="4"
+                          placeholder="@_commentPlaceholder"
+                          style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 8px; color: #ffffff; font-size: 0.85rem; padding: 10px 12px; resize: vertical; font-family: inherit; box-sizing: border-box; outline: none;"></textarea>
+            </div>
+
+            <!-- Submit -->
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <MudButton Variant="Variant.Text" OnClick="CloseModal"
+                           Style="text-transform: none; color: var(--text-secondary); font-size: 0.85rem;">Cancel</MudButton>
+                <MudButton Variant="Variant.Filled" OnClick="SubmitReview" Style="@_submitBtnStyle">
+                    @(_approveSelected ? "✓ Submit Endorsement" : "Submit Revision Request")
+                </MudButton>
+            </div>
+
+        </div>
+    </div>
+}
+
 @code {
-    private string _selectedTab = "All";
+    private string _selectedTab = "Pending";
     private string _searchQuery = string.Empty;
 
     private record TabDef(string Key, string Label);
 
     private readonly List<TabDef> _tabs = new()
     {
-        new("All", "All Submissions"),
-        new("Pending", "Awaiting Review"),
-        new("Approved", "Verified by You"),
-        new("NeedsRevision", "Revisions Requested")
+        new("Pending", "Pending Reviews"),
+        new("Reviewed", "Reviewed"),
+        new("All", "All")
     };
 
     public class SubmissionItem
@@ -258,6 +353,7 @@
         public string Description { get; set; } = string.Empty;
         public string? RepoUrl { get; set; }
         public string? LiveDemoUrl { get; set; }
+        public string? DocumentUrl { get; set; }
         public List<string> Skills { get; set; } = new();
         public VerificationStatus Status { get; set; }
         public DateTime SubmittedAt { get; set; }
@@ -350,10 +446,9 @@
 
     private int GetTabCount(string key) => key switch
     {
-        "Pending" => _submissions.Count(s => s.Status == VerificationStatus.Pending),
-        "Approved" => _submissions.Count(s => s.Status == VerificationStatus.Approved),
-        "NeedsRevision" => _submissions.Count(s => s.Status == VerificationStatus.NeedsRevision),
-        _ => _submissions.Count
+        "Pending"  => _submissions.Count(s => s.Status == VerificationStatus.Pending),
+        "Reviewed" => _submissions.Count(s => s.Status is VerificationStatus.Approved or VerificationStatus.NeedsRevision or VerificationStatus.Rejected),
+        _          => _submissions.Count
     };
 
     private List<SubmissionItem> FilteredSubmissions
@@ -364,10 +459,8 @@
 
             if (_selectedTab == "Pending")
                 query = query.Where(s => s.Status == VerificationStatus.Pending);
-            else if (_selectedTab == "Approved")
-                query = query.Where(s => s.Status == VerificationStatus.Approved);
-            else if (_selectedTab == "NeedsRevision")
-                query = query.Where(s => s.Status == VerificationStatus.NeedsRevision);
+            else if (_selectedTab == "Reviewed")
+                query = query.Where(s => s.Status is VerificationStatus.Approved or VerificationStatus.NeedsRevision or VerificationStatus.Rejected);
 
             if (!string.IsNullOrWhiteSpace(_searchQuery))
             {
@@ -381,18 +474,63 @@
         }
     }
 
-    private void EndorseProject(SubmissionItem item)
+    // ── Review Modal ─────────────────────────────────────────────────────────
+    private bool _modalOpen;
+    private SubmissionItem? _reviewing;
+    private bool _approveSelected = true;
+    private string _comment = string.Empty;
+
+    private void OpenReviewModal(SubmissionItem item)
     {
-        item.Status = VerificationStatus.Approved;
-        item.VerifiedAt = DateTime.UtcNow;
-        Snackbar.Add($"Endorsed '{item.Title}' by {item.StudentName}! Verified credential issued.", Severity.Success);
+        _reviewing = item;
+        _approveSelected = true;
+        _comment = string.Empty;
+        _modalOpen = true;
     }
 
-    private void RequestRevision(SubmissionItem item)
+    private void CloseModal() => _modalOpen = false;
+
+    private string _submitBtnStyle => _approveSelected
+        ? "background: var(--accent-emerald); color: #080c14; text-transform: none; border-radius: 8px; font-weight: 700; font-size: 0.85rem; padding: 7px 20px;"
+        : "background: var(--accent-rose); color: #ffffff; text-transform: none; border-radius: 8px; font-weight: 700; font-size: 0.85rem; padding: 7px 20px;";
+
+    private string _approveLabelStyle => _approveSelected
+        ? "flex: 1; display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.4); border-radius: 9px; padding: 10px 14px;"
+        : "flex: 1; display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 9px; padding: 10px 14px;";
+
+    private string _rejectLabelStyle => !_approveSelected
+        ? "flex: 1; display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(244,63,94,0.1); border: 1px solid rgba(244,63,94,0.4); border-radius: 9px; padding: 10px 14px;"
+        : "flex: 1; display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 9px; padding: 10px 14px;";
+
+    private string _approveTextStyle => _approveSelected
+        ? "font-size: 0.85rem; font-weight: 700; color: var(--accent-emerald)"
+        : "font-size: 0.85rem; font-weight: 700; color: var(--text-secondary)";
+
+    private string _rejectTextStyle => !_approveSelected
+        ? "font-size: 0.85rem; font-weight: 700; color: var(--accent-rose)"
+        : "font-size: 0.85rem; font-weight: 700; color: var(--text-secondary)";
+
+    private string _commentPlaceholder => _approveSelected ? "Optional endorsement note..." : "Describe what needs to be revised...";
+
+    private void SubmitReview()
     {
-        item.Status = VerificationStatus.NeedsRevision;
-        item.Feedback = "Please update repository README with setup steps and verify automated unit tests.";
-        Snackbar.Add($"Revision request sent to {item.StudentName}.", Severity.Warning);
+        if (_reviewing is null) return;
+
+        if (_approveSelected)
+        {
+            _reviewing.Status = VerificationStatus.Approved;
+            _reviewing.VerifiedAt = DateTime.UtcNow;
+            _reviewing.Feedback = _comment;
+            Snackbar.Add($"Endorsed '{_reviewing.Title}'! Credential issued.", Severity.Success);
+        }
+        else
+        {
+            _reviewing.Status = VerificationStatus.NeedsRevision;
+            _reviewing.Feedback = _comment;
+            Snackbar.Add($"Revision request sent to {_reviewing.StudentName}.", Severity.Warning);
+        }
+
+        _modalOpen = false;
     }
 
     private RenderFragment GetStatusPill(VerificationStatus status) => __builder =>
