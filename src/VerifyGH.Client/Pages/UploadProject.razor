@@ -1,27 +1,221 @@
 @page "/projects/upload"
+@inject NavigationManager Navigation
+@inject HttpClient Http
 
 <PageTitle>Upload Project — VerifyGH</PageTitle>
 
-<div style="display: flex; flex-direction: column; gap: 24px;">
+<div style="display:flex; flex-direction:column; gap:28px; max-width:720px;">
+
+    <!-- Header -->
     <div>
-        <div class="vg-pill vg-pill-secondary" style="margin-bottom: 12px;">Student Portal</div>
-        <h1 class="vg-gradient-text" style="font-size: 1.8rem; font-weight: 800; margin: 0 0 6px 0;">Upload Project / Credential</h1>
-        <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">Submit capstone projects, repositories, and skill proofs for lecturer endorsement.</p>
+        <span class="vg-pill vg-pill-secondary" style="margin-bottom:12px; display:inline-block;">Student Portal</span>
+        <h1 class="vg-title-bold" style="font-size:1.75rem; margin:0 0 6px;">Submit a Project</h1>
+        <p style="color:var(--text-secondary); margin:0; font-size:0.95rem;">
+            Upload your capstone work for lecturer endorsement and portfolio display.
+        </p>
     </div>
 
-    <!-- Linear-style Placeholder Box -->
-    <div class="vg-placeholder">
-        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0, 230, 118, 0.25); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="17 8 12 3 7 8"></polyline>
-                <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-        </div>
-        <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0 0 8px 0; color: #ffffff;">Project Submission Form</h3>
-        <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 20px auto; font-size: 0.88rem; line-height: 1.5;">
-            Input fields for project title, description, GitHub repository URL, live demo link, supervisor lecturer selector, and skill tags.
-        </p>
-        <span class="vg-pill">Assigned to: Frank Bless Kofi Tsetse (Frontend)</span>
+    <!-- Form Card -->
+    <div class="vg-card vg-animate-in">
+        <EditForm Model="@model" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <div style="display:flex; flex-direction:column; gap:20px;">
+
+                <!-- Title -->
+                <div>
+                    <label class="vg-label" style="display:block; margin-bottom:6px;">Project Title *</label>
+                    <InputText @bind-Value="model.Title"
+                               placeholder="e.g. Blockchain Transcript Verification System"
+                               style="width:100%; padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.9rem; font-family:inherit; outline:none; color:var(--text-primary); background:#fff; transition:border-color var(--transition-fast);"
+                               @onfocus="@(() => {})" />
+                    <ValidationMessage For="@(() => model.Title)" style="font-size:0.78rem; color:var(--accent-red); margin-top:4px;" />
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="vg-label" style="display:block; margin-bottom:6px;">Description *</label>
+                    <InputTextArea @bind-Value="model.Description"
+                                   placeholder="Briefly describe the project, technologies used, and what problem it solves..."
+                                   rows="4"
+                                   style="width:100%; padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.9rem; font-family:inherit; outline:none; resize:vertical; color:var(--text-primary); background:#fff;" />
+                    <ValidationMessage For="@(() => model.Description)" style="font-size:0.78rem; color:var(--accent-red); margin-top:4px;" />
+                </div>
+
+                <!-- URLs row -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div>
+                        <label class="vg-label" style="display:block; margin-bottom:6px;">GitHub Repository URL</label>
+                        <InputText @bind-Value="model.RepoUrl"
+                                   placeholder="https://github.com/..."
+                                   style="width:100%; padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.88rem; font-family:inherit; outline:none; color:var(--text-primary); background:#fff;" />
+                    </div>
+                    <div>
+                        <label class="vg-label" style="display:block; margin-bottom:6px;">Live Demo URL</label>
+                        <InputText @bind-Value="model.LiveDemoUrl"
+                                   placeholder="https://your-demo.vercel.app"
+                                   style="width:100%; padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.88rem; font-family:inherit; outline:none; color:var(--text-primary); background:#fff;" />
+                    </div>
+                </div>
+
+                <!-- Document URL -->
+                <div>
+                    <label class="vg-label" style="display:block; margin-bottom:6px;">Document / Report URL</label>
+                    <InputText @bind-Value="model.DocumentUrl"
+                               placeholder="https://drive.google.com/..."
+                               style="width:100%; padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.88rem; font-family:inherit; outline:none; color:var(--text-primary); background:#fff;" />
+                </div>
+
+                <!-- Supervisor Selector -->
+                <div>
+                    <label class="vg-label" style="display:block; margin-bottom:6px;">Supervising Lecturer *</label>
+                    <InputSelect @bind-Value="model.SupervisorName"
+                                 style="width:100%; padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.9rem; font-family:inherit; outline:none; color:var(--text-primary); background:#fff; cursor:pointer;">
+                        <option value="">— Select a Supervisor —</option>
+                        @foreach (var sv in Supervisors)
+                        {
+                            <option value="@sv">@sv</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => model.SupervisorName)" style="font-size:0.78rem; color:var(--accent-red); margin-top:4px;" />
+                </div>
+
+                <!-- Skill Tags -->
+                <div>
+                    <label class="vg-label" style="display:block; margin-bottom:8px;">Skill Tags</label>
+                    <div class="vg-skill-chips" style="margin-bottom:10px;">
+                        @foreach (var skill in AllSkills)
+                        {
+                            <button type="button"
+                                    class="vg-skill-chip @(SelectedSkills.Contains(skill) ? "active" : "")"
+                                    @onclick="@(() => ToggleSkill(skill))">
+                                @skill
+                            </button>
+                        }
+                    </div>
+                    @if (SelectedSkills.Count > 0)
+                    {
+                        <p style="font-size:0.78rem; color:var(--text-muted); margin:0;">
+                            Selected: @string.Join(", ", SelectedSkills)
+                        </p>
+                    }
+                </div>
+
+                <!-- Success / Error messages -->
+                @if (!string.IsNullOrEmpty(SuccessMessage))
+                {
+                    <div style="background:var(--ghana-green-bg); border:1px solid var(--ghana-green-border); border-radius:var(--radius-sm); padding:12px 16px; color:var(--ghana-green); font-size:0.88rem; font-weight:600;">
+                        ✓ @SuccessMessage
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(ErrorMessage))
+                {
+                    <div style="background:var(--accent-red-bg); border:1px solid var(--accent-red-border); border-radius:var(--radius-sm); padding:12px 16px; color:var(--accent-red); font-size:0.88rem; font-weight:600;">
+                        ✗ @ErrorMessage
+                    </div>
+                }
+
+                <!-- Submit -->
+                <div style="display:flex; align-items:center; justify-content:space-between; padding-top:4px; border-top:1px solid var(--border-subtle);">
+                    <span style="font-size:0.8rem; color:var(--text-muted);">* Required fields</span>
+                    <button type="submit"
+                            class="vg-btn-primary"
+                            disabled="@IsSubmitting"
+                            style="padding:10px 24px; border:none; border-radius:var(--radius-sm); cursor:pointer; font-size:0.9rem; font-family:inherit; display:inline-flex; align-items:center; gap:8px;">
+                        @if (IsSubmitting)
+                        {
+                            <span style="width:14px; height:14px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; display:inline-block;"></span>
+                            <span>Submitting...</span>
+                        }
+                        else
+                        {
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <span>Submit Project</span>
+                        }
+                    </button>
+                </div>
+
+            </div>
+        </EditForm>
     </div>
 </div>
+
+<style>
+    @@keyframes spin { to { transform: rotate(360deg); } }
+    input:focus, textarea:focus, select:focus {
+        border-color: var(--ghana-black) !important;
+        box-shadow: 0 0 0 3px rgba(9,9,11,0.06);
+    }
+</style>
+
+@code {
+    private UploadModel model = new();
+    private bool IsSubmitting = false;
+    private string SuccessMessage = "";
+    private string ErrorMessage  = "";
+
+    private HashSet<string> SelectedSkills = new();
+
+    private static readonly List<string> Supervisors = new()
+    {
+        "Dr. Michael Soli",
+        "Dr. Isaac Wiafe",
+        "Dr. Ebenezer Owusu",
+        "Dr. Jamal-Deen Abdulai",
+        "Dr. Amma Gyamfi",
+        "Prof. Kweku Ewusie"
+    };
+
+    private static readonly List<string> AllSkills = new()
+    {
+        "C#", "ASP.NET Core", "Blazor", "SQL", "Entity Framework",
+        "React", "TypeScript", "Python", "Machine Learning",
+        "Docker", "Azure", "SignalR", "REST API", "Git"
+    };
+
+    private void ToggleSkill(string skill)
+    {
+        if (!SelectedSkills.Remove(skill))
+            SelectedSkills.Add(skill);
+    }
+
+    private async Task HandleSubmit()
+    {
+        IsSubmitting   = true;
+        SuccessMessage = "";
+        ErrorMessage   = "";
+        StateHasChanged();
+
+        // Simulate API call — replace with: await Http.PostAsJsonAsync("api/projects", model)
+        await Task.Delay(1200);
+
+        IsSubmitting   = false;
+        SuccessMessage = $"'{model.Title}' submitted successfully! Awaiting lecturer review.";
+
+        // Reset form
+        model          = new();
+        SelectedSkills.Clear();
+
+        StateHasChanged();
+
+        // Redirect after short delay
+        await Task.Delay(2000);
+        Navigation.NavigateTo("projects/my");
+    }
+
+    private class UploadModel
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Project title is required.")]
+        [System.ComponentModel.DataAnnotations.MaxLength(200)]
+        public string Title { get; set; } = "";
+
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Description is required.")]
+        public string Description { get; set; } = "";
+
+        public string RepoUrl      { get; set; } = "";
+        public string LiveDemoUrl  { get; set; } = "";
+        public string DocumentUrl  { get; set; } = "";
+
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Please select a supervisor.")]
+        public string SupervisorName { get; set; } = "";
+    }
+}
