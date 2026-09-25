@@ -21,16 +21,12 @@
 
     <!-- Active User Mini-Profile Card -->
     <div class="nav-profile-card">
-        <div class="nav-profile-avatar" style="color: @GetPortalColor(); background: @GetPortalBg(); border-color: @GetPortalColor();">
+        <div class="nav-profile-avatar">
             @GetInitial(Session.CurrentSession.Name)
         </div>
         <div style="flex: 1; min-width: 0; line-height: 1.25;">
-            <div style="font-size: 0.86rem; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                @Session.CurrentSession.Name
-            </div>
-            <div style="font-size: 0.73rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                @Session.CurrentSession.Organization
-            </div>
+            <div class="nav-profile-name">@Session.CurrentSession.Name</div>
+            <div class="nav-profile-org">@Session.CurrentSession.Organization</div>
         </div>
     </div>
 
@@ -118,12 +114,12 @@
     </div>
 
     <!-- Sidebar Footer -->
-    <div style="padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+    <div class="nav-footer">
         <div style="display: flex; align-items: center; gap: 6px;">
-            <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent);"></span>
+            <span class="nav-status-dot"></span>
             <span>SignalR Active</span>
         </div>
-        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted);">v1.0</span>
+        <span class="vg-mono">v1.0</span>
     </div>
 
 </div>

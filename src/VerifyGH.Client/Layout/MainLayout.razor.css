@@ -104,13 +104,12 @@
 }
 
 @media (max-width: 768px) {
-    .sidebar-container {
-        display: none;
+    /* Content takes full width when sidebar slides off-screen */
+    .top-header {
+        padding: 0 16px;
+        gap: 10px;
     }
     .content-body {
         padding: 20px 16px;
-    }
-    .top-header {
-        padding: 0 16px;
     }
 }
