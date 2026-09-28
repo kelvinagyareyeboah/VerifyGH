@@ -20,6 +20,11 @@ builder.Services.AddAuthorizationCore();
 // In-Memory Role and Session State
 builder.Services.AddScoped<VerifyGH.Client.Services.UserSessionService>();
 
+// API Integration Services (Tenkorang Julius — 22017966)
+builder.Services.AddScoped<VerifyGH.Client.Services.AuthService>();
+builder.Services.AddScoped<VerifyGH.Client.Services.ProjectService>();
+builder.Services.AddScoped<VerifyGH.Client.Services.VerificationService>();
+
 // Configure HttpClient pointing to Backend Web API
 var backendApiUrl = builder.Configuration["BackendUrl"] ?? "https://localhost:7296/";
 builder.Services.AddScoped(sp => new HttpClient

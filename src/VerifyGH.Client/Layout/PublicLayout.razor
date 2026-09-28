@@ -7,92 +7,145 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<div class="public-shell" style="min-height: 100vh; display: flex; flex-direction: column; background-color: #ffffff; color: var(--text-primary);">
-    
-    <!-- Editorial Top Navigation -->
-    <header style="height: 68px; border-bottom: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 100;">
-        <div style="max-width: 1140px; height: 100%; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between;">
-            
+<div style="min-height:100vh; display:flex; flex-direction:column; background:#fff; color:#0a0a0a; font-family:'Plus Jakarta Sans',-apple-system,sans-serif;">
+
+    <!-- ── NAVBAR ── -->
+    <header style="position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.92); backdrop-filter:blur(14px); border-bottom:1px solid #f0f0f0;">
+        <div style="max-width:1200px; margin:0 auto; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between;">
+
             <!-- Brand -->
-            <a href="" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #09090b;">
-                <div style="width: 32px; height: 32px; border-radius: 6px; background: #09090b; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 900; font-size: 0.95rem;">
-                    V
+            <a href="" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
+                <div style="width:34px; height:34px; background:#0a0a0a; border-radius:8px; display:flex; align-items:center; justify-content:center;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </div>
-                <span style="font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em;">VerifyGH</span>
-                <span style="font-size: 0.7rem; color: #71717a; font-weight: 600; margin-left: 4px;">UG · DCIT 318</span>
+                <span style="font-size:1.1rem; font-weight:800; color:#0a0a0a; letter-spacing:-0.025em;">VerifyGH</span>
             </a>
 
-            <!-- Nav Links -->
-            <nav style="display: flex; align-items: center; gap: 28px;">
-                <a href="#portals" style="color: #52525b; text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: color 0.12s ease;" onmouseover="this.style.color='#09090b'" onmouseout="this.style.color='#52525b'">
-                    Portals
-                </a>
-                <a href="#how-it-works" style="color: #52525b; text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: color 0.12s ease;" onmouseover="this.style.color='#09090b'" onmouseout="this.style.color='#52525b'">
-                    Architecture
-                </a>
-                <a href="search" style="color: #52525b; text-decoration: none; font-size: 0.88rem; font-weight: 600; transition: color 0.12s ease;" onmouseover="this.style.color='#09090b'" onmouseout="this.style.color='#52525b'">
-                    Browse Talent
-                </a>
+            <!-- Links -->
+            <nav style="display:flex; align-items:center; gap:32px;">
+                <a href="#features"   class="lp-nav-link">Features</a>
+                <a href="#how"        class="lp-nav-link">How It Works</a>
+                <a href="#portals"    class="lp-nav-link">Portals</a>
+                <a href="#faq"        class="lp-nav-link">FAQ</a>
             </nav>
 
-            <!-- Actions -->
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <a href="login" 
-                   style="color: #09090b; text-decoration: none; font-size: 0.86rem; font-weight: 600; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--border-subtle); background: #ffffff; transition: all 0.12s ease;"
-                   onmouseover="this.style.borderColor='#a1a1aa'" onmouseout="this.style.borderColor='var(--border-subtle)'">
-                    Sign In
-                </a>
-                <a href="login" 
-                   style="background: #09090b; color: #ffffff; text-decoration: none; font-size: 0.86rem; font-weight: 700; padding: 7px 16px; border-radius: 6px; transition: opacity 0.12s ease;"
-                   onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-                    Enter Portal →
-                </a>
+            <!-- CTAs -->
+            <div style="display:flex; gap:10px; align-items:center;">
+                <a href="login"    class="lp-btn-ghost">Sign In</a>
+                <a href="register" class="lp-btn-solid">Get Started →</a>
             </div>
-
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main style="flex: 1; background: #ffffff;">
+    <!-- Page body -->
+    <main style="flex:1;">
         @Body
     </main>
 
-    <!-- Minimalist Editorial Footer -->
-    <footer style="border-top: 1px solid var(--border-subtle); background: #fafaf9; padding: 48px 24px 32px 24px;">
-        <div style="max-width: 1140px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px;">
-            
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 32px;">
-                <div style="max-width: 360px;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
-                        <span style="font-weight: 800; color: #09090b; font-size: 1.05rem;">VerifyGH</span>
-                        <span style="font-size: 0.72rem; color: #71717a;">University of Ghana</span>
+    <!-- ── FOOTER ── -->
+    <footer style="background:#0a0a0a; color:#fff; padding:64px 28px 36px;">
+        <div style="max-width:1200px; margin:0 auto;">
+            <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:48px; padding-bottom:48px; border-bottom:1px solid #1f1f1f;">
+
+                <!-- Brand blurb -->
+                <div>
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+                        <div style="width:30px; height:30px; background:#fff; border-radius:6px; display:flex; align-items:center; justify-content:center;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <span style="font-weight:800; font-size:1.05rem;">VerifyGH</span>
                     </div>
-                    <p style="color: #52525b; font-size: 0.84rem; line-height: 1.5; margin: 0;">
-                        Verified academic credential and capstone portfolio platform for tertiary graduates.
+                    <p style="color:#a1a1aa; font-size:0.88rem; line-height:1.65; max-width:280px; margin:0 0 20px;">
+                        Ghana's first faculty-endorsed capstone portfolio platform. Replacing unverified CVs with real, verified proof of work.
                     </p>
+                    <div style="display:flex; gap:10px;">
+                        <span style="font-size:0.75rem; color:#52525b; background:#18181b; border-radius:5px; padding:4px 10px;">ASP.NET Core</span>
+                        <span style="font-size:0.75rem; color:#52525b; background:#18181b; border-radius:5px; padding:4px 10px;">Blazor WASM</span>
+                        <span style="font-size:0.75rem; color:#52525b; background:#18181b; border-radius:5px; padding:4px 10px;">SignalR</span>
+                    </div>
                 </div>
 
-                <div style="display: flex; gap: 40px; font-size: 0.84rem;">
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <span style="font-weight: 700; color: #09090b; font-size: 0.75rem; text-transform: uppercase;">Workspace</span>
-                        <a href="projects/my" style="color: #52525b; text-decoration: none;">Student Portal</a>
-                        <a href="verification" style="color: #52525b; text-decoration: none;">Lecturer Queue</a>
-                        <a href="search" style="color: #52525b; text-decoration: none;">Talent Search</a>
+                <div>
+                    <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#52525b; margin-bottom:14px;">Platform</div>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <a href="projects/my"  class="lp-footer-link">Student Portal</a>
+                        <a href="verification" class="lp-footer-link">Lecturer Queue</a>
+                        <a href="search"       class="lp-footer-link">Employer Search</a>
+                        <a href="credentials"  class="lp-footer-link">Credentials</a>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 8px; color: #71717a;">
-                        <span style="font-weight: 700; color: #09090b; font-size: 0.75rem; text-transform: uppercase;">Academic</span>
-                        <span>DCIT 318 Semester Project</span>
+                </div>
+
+                <div>
+                    <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#52525b; margin-bottom:14px;">Account</div>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <a href="login"    class="lp-footer-link">Sign In</a>
+                        <a href="register" class="lp-footer-link">Register</a>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#52525b; margin-bottom:14px;">Academic</div>
+                    <div style="display:flex; flex-direction:column; gap:10px; color:#71717a; font-size:0.86rem;">
+                        <span>DCIT 318 — Semester Project</span>
                         <span>Dept. of Computer Science</span>
+                        <span>University of Ghana, Legon</span>
                     </div>
                 </div>
+
             </div>
 
-            <div style="border-top: 1px solid #e5e5e5; padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 0.78rem; color: #71717a;">
-                <span>© 2026 VerifyGH. University of Ghana.</span>
-                <span>ASP.NET Core Web API · Blazor WebAssembly · SQL Server</span>
+            <div style="padding-top:28px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; font-size:0.78rem; color:#52525b;">
+                <span>© 2026 VerifyGH — University of Ghana · DCIT 318</span>
+                <span>Built with ASP.NET Core 10 · Blazor WebAssembly · SQL Server · SignalR</span>
             </div>
-
         </div>
     </footer>
 
 </div>
+
+<style>
+    .lp-nav-link {
+        color: #52525b;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 600;
+        transition: color 0.12s;
+    }
+    .lp-nav-link:hover { color: #0a0a0a; }
+
+    .lp-btn-ghost {
+        color: #0a0a0a;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 600;
+        padding: 7px 16px;
+        border-radius: 7px;
+        border: 1px solid #e5e5e5;
+        transition: border-color 0.12s;
+    }
+    .lp-btn-ghost:hover { border-color: #a1a1aa; }
+
+    .lp-btn-solid {
+        background: #0284c7;
+        color: #fff;
+        text-decoration: none;
+        font-size: 0.875rem;
+        font-weight: 700;
+        padding: 8px 18px;
+        border-radius: 7px;
+        transition: opacity 0.12s;
+    }
+    .lp-btn-solid:hover { opacity: 0.82; }
+
+    .lp-footer-link {
+        color: #a1a1aa;
+        text-decoration: none;
+        font-size: 0.86rem;
+        transition: color 0.12s;
+    }
+    .lp-footer-link:hover { color: #fff; }
+
+    @@media (max-width: 768px) {
+        nav { display: none !important; }
+    }
+</style>

@@ -3,181 +3,341 @@
 @inject NavigationManager Navigation
 @inject UserSessionService Session
 
-<PageTitle>VerifyGH — Verified Credential & Portfolio Platform</PageTitle>
+<PageTitle>VerifyGH — Verified Proof of Work for Ghanaian Graduates</PageTitle>
 
-<div style="max-width: 1140px; margin: 0 auto; padding: 20px 24px 80px 24px; background: #ffffff;">
+<div style="overflow-x:hidden; font-family:'Plus Jakarta Sans',-apple-system,sans-serif;">
 
-    <!-- HERO SECTION -->
-    <section style="padding: 80px 0 60px 0; text-align: left; max-width: 860px;">
-        
-        <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #92400e; background: #fef3c7; border: 1px solid #fde68a; padding: 6px 12px; border-radius: 6px; margin-bottom: 24px;">
-            <span>●</span>
-            University of Ghana · DCIT 318
+    <!-- ════════════════════════════════════════════════════════════
+         HERO  — full-viewport, two-column
+    ════════════════════════════════════════════════════════════ -->
+    <section style="max-width:1200px; margin:0 auto; padding:72px 28px 64px; display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; min-height:calc(100vh - 64px); box-sizing:border-box;">
+
+        <!-- Left: Copy -->
+        <div>
+            <div style="display:inline-flex; align-items:center; gap:7px; background:#f0f9ff; border:1px solid #bae6fd; border-radius:999px; padding:5px 14px 5px 8px; font-size:0.78rem; font-weight:700; color:#0369a1; margin-bottom:28px;">
+                <span style="background:#0284c7; width:7px; height:7px; border-radius:50%; display:inline-block; flex-shrink:0;"></span>
+                University of Ghana · DCIT 318 Semester Project
+            </div>
+
+            <h1 style="font-size:3.2rem; font-weight:900; color:#0a0a0a; letter-spacing:-0.04em; line-height:1.1; margin:0 0 22px;">
+                Verified proof of work<br/>
+                <span style="color:#0284c7;">for every graduate.</span>
+            </h1>
+
+            <p style="font-size:1.05rem; color:#52525b; line-height:1.7; margin:0 0 36px; max-width:480px;">
+                Ghana produces over 300,000 graduates a year. VerifyGH lets students prove their skills with faculty-endorsed projects — and lets employers hire with confidence.
+            </p>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                <a href="login" style="background:#0284c7; color:#fff; text-decoration:none; font-weight:700; font-size:0.93rem; padding:12px 24px; border-radius:9px; transition:opacity 0.14s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                    Enter Portal →
+                </a>
+                <a href="#how" style="color:#0a0a0a; text-decoration:none; font-weight:600; font-size:0.93rem; padding:12px 22px; border-radius:9px; border:1px solid #e5e5e5; transition:border-color 0.14s;" onmouseover="this.style.borderColor='#94a3b8'" onmouseout="this.style.borderColor='#e5e5e5'">
+                    How It Works
+                </a>
+            </div>
+
+            <!-- Social proof -->
+            <div style="display:flex; align-items:center; gap:12px; margin-top:36px;">
+                <div style="display:flex;">
+                    @foreach (var (letter, bg) in new[]{ ("K","#0284c7"), ("A","#0ea5e9"), ("E","#38bdf8"), ("F","#7dd3fc") })
+                    {
+                        <div style="width:28px; height:28px; border-radius:50%; background:@bg; border:2px solid #fff; margin-left:-7px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:800; color:#fff; flex-shrink:0;">
+                            @letter
+                        </div>
+                    }
+                </div>
+                <span style="font-size:0.82rem; color:#71717a; font-weight:500;">
+                    Trusted by <strong style="color:#0a0a0a;">11 developers</strong> this semester
+                </span>
+            </div>
         </div>
 
-        <h1 style="font-size: 3.4rem; font-weight: 800; color: #09090b; letter-spacing: -0.04em; margin: 0 0 20px 0; line-height: 1.1;">
-            Verified proof of work for Ghanaian graduates.
-        </h1>
+        <!-- Right: Dashboard preview -->
+        <div style="position:relative;">
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:16px; padding:24px; box-shadow:0 16px 48px rgba(2,132,199,0.09);">
 
-        <p style="color: #52525b; font-size: 1.15rem; line-height: 1.6; margin: 0 0 36px 0; max-width: 720px;">
-            Over 300,000 students graduate annually in Ghana, but employers struggle to verify real skills. VerifyGH replaces unverified resumes with faculty-endorsed capstones, real code repositories, and verifiable credentials.
-        </p>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid #f1f5f9;">
+                    <span style="font-size:0.82rem; font-weight:700; color:#0a0a0a;">Recent Submissions</span>
+                    <span style="font-size:0.72rem; color:#0284c7; font-weight:700; background:#e0f2fe; padding:3px 10px; border-radius:999px;">● Live</span>
+                </div>
 
-        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
-            <a href="login" 
-               style="background: #09090b; color: #ffffff; font-weight: 700; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 0.92rem; display: inline-flex; align-items: center; gap: 8px; transition: opacity 0.15s ease;"
-               onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-                Open Portal / Sign In →
-            </a>
-            <a href="#portals" 
-               style="background: #ffffff; color: #09090b; border: 1px solid #e5e5e5; font-weight: 600; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 0.92rem; display: inline-flex; align-items: center; gap: 8px; transition: border-color 0.15s ease;"
-               onmouseover="this.style.borderColor='#09090b'" onmouseout="this.style.borderColor='#e5e5e5'">
-                Choose Your Role
-            </a>
+                @foreach (var (title, author, status, bg, color) in new[]{
+                    ("Blockchain Transcript System", "Kelvin Yeboah",  "Approved",  "#ecfdf5", "#059669"),
+                    ("AI Lecture Scheduler",         "Abena Mensah",   "Pending",   "#fef9f0", "#b45309"),
+                    ("Campus Bus Tracker",           "Kofi Asante",    "Reviewing", "#f0f9ff", "#0284c7"),
+                })
+                {
+                    <div style="display:flex; align-items:center; justify-content:space-between; padding:11px 13px; background:#fff; border-radius:9px; border:1px solid #f1f5f9; margin-bottom:8px;">
+                        <div>
+                            <div style="font-size:0.83rem; font-weight:700; color:#0a0a0a;">@title</div>
+                            <div style="font-size:0.74rem; color:#94a3b8; margin-top:1px;">@author</div>
+                        </div>
+                        <span style="font-size:0.71rem; font-weight:700; padding:3px 10px; border-radius:999px; background:@bg; color:@color; white-space:nowrap;">@status</span>
+                    </div>
+                }
+
+                <div style="margin-top:14px; background:#0a0a0a; border-radius:8px; padding:10px 14px; display:flex; align-items:center; gap:9px;">
+                    <span style="width:7px; height:7px; background:#0ea5e9; border-radius:50%; display:inline-block; flex-shrink:0;"></span>
+                    <span style="font-size:0.77rem; color:#94a3b8;">SignalR: Project #12 approved by Dr. Soli</span>
+                </div>
+            </div>
+
+            <!-- Floating badge -->
+            <div style="position:absolute; top:-14px; right:-14px; background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:9px 13px; box-shadow:0 6px 20px rgba(0,0,0,0.07); display:flex; align-items:center; gap:7px; z-index:1;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span style="font-size:0.76rem; font-weight:700; color:#0a0a0a;">Faculty Endorsed</span>
+            </div>
         </div>
-
     </section>
 
-    <!-- METRICS STRIP -->
-    <section style="border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; padding: 36px 0; margin-bottom: 70px;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px;">
-            <div>
-                <div style="font-size: 2.2rem; font-weight: 800; color: #09090b; letter-spacing: -0.03em;">~300,000</div>
-                <div style="color: #71717a; font-size: 0.85rem; font-weight: 600; margin-top: 4px;">Annual Tertiary Graduates</div>
+    <!-- ════════════════════════════════════════════════════════════
+         STATS BAND
+    ════════════════════════════════════════════════════════════ -->
+    <section style="border-top:1px solid #f0f0f0; border-bottom:1px solid #f0f0f0; background:#faf9f7; padding:40px 28px;">
+        <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr); gap:24px; text-align:center;">
+            @foreach (var (stat, label) in new[]{
+                ("300,000+", "Ghanaian graduates per year"),
+                ("100%",     "Faculty-verified projects"),
+                ("0",        "Resume exaggerations"),
+                ("Real-Time","SignalR endorsement alerts"),
+            })
+            {
+                <div>
+                    <div style="font-size:1.9rem; font-weight:900; color:#0a0a0a; letter-spacing:-0.04em;">@stat</div>
+                    <div style="font-size:0.8rem; color:#94a3b8; font-weight:500; margin-top:4px;">@label</div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════
+         THE PROBLEM
+    ════════════════════════════════════════════════════════════ -->
+    <section style="max-width:1200px; margin:0 auto; padding:88px 28px 72px;">
+        <div style="max-width:580px; margin-bottom:48px;">
+            <div class="lp-label">The Problem</div>
+            <h2 style="font-size:2.2rem; font-weight:900; color:#0a0a0a; letter-spacing:-0.035em; margin:14px 0 14px; line-height:1.15;">
+                Employers can't trust what they can't verify.
+            </h2>
+            <p style="font-size:0.95rem; color:#52525b; line-height:1.7; margin:0;">
+                A CV lists skills — but nothing confirms they are real. VerifyGH anchors credentials to actual code reviewed by accredited faculty.
+            </p>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:18px;">
+            @foreach (var (icon, heading, body) in new[]{
+                ("🎓", "Unverified Resumes",       "Graduates self-report skills with no third-party confirmation, making screening expensive and unreliable."),
+                ("🔍", "Manual Background Checks",  "Employers spend hours verifying degrees with no standardised, digital process."),
+                ("🚫", "Lost Talent",               "Skilled graduates without polished portfolios get overlooked while weaker candidates advance."),
+            })
+            {
+                <div style="background:#faf9f7; border:1px solid #eeece8; border-radius:12px; padding:26px;">
+                    <div style="font-size:1.7rem; margin-bottom:12px;">@icon</div>
+                    <h3 style="font-size:0.97rem; font-weight:700; color:#0a0a0a; margin:0 0 7px;">@heading</h3>
+                    <p style="font-size:0.85rem; color:#71717a; line-height:1.6; margin:0;">@body</p>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════
+         FEATURES
+    ════════════════════════════════════════════════════════════ -->
+    <section id="features" style="background:#faf9f7; border-top:1px solid #eeece8; border-bottom:1px solid #eeece8; padding:88px 28px;">
+        <div style="max-width:1200px; margin:0 auto;">
+            <div style="text-align:center; max-width:520px; margin:0 auto 48px;">
+                <div class="lp-label">Features</div>
+                <h2 style="font-size:2.2rem; font-weight:900; color:#0a0a0a; letter-spacing:-0.035em; margin:14px 0 14px; line-height:1.15;">
+                    Everything you need. Nothing you don't.
+                </h2>
+                <p style="color:#71717a; font-size:0.93rem; line-height:1.65; margin:0;">
+                    Built to be practical, fast, and genuinely verifiable.
+                </p>
             </div>
-            <div>
-                <div style="font-size: 2.2rem; font-weight: 800; color: #92400e; letter-spacing: -0.03em;">100%</div>
-                <div style="color: #71717a; font-size: 0.85rem; font-weight: 600; margin-top: 4px;">Faculty Verified Code</div>
-            </div>
-            <div>
-                <div style="font-size: 2.2rem; font-weight: 800; color: #09090b; letter-spacing: -0.03em;">Zero</div>
-                <div style="color: #71717a; font-size: 0.85rem; font-weight: 600; margin-top: 4px;">Resume Exaggeration</div>
-            </div>
-            <div>
-                <div style="font-size: 2.2rem; font-weight: 800; color: #09090b; letter-spacing: -0.03em;">Real-Time</div>
-                <div style="color: #71717a; font-size: 0.85rem; font-weight: 600; margin-top: 4px;">SignalR Endorsement Alerts</div>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:18px;">
+                @foreach (var (iconPath, title, desc) in new[]{
+                    ("<path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/>", "Faculty Endorsement", "Accredited lecturers approve, reject, or request revisions — all tracked in a permanent audit trail."),
+                    ("<rect x='3' y='3' width='18' height='18' rx='2'/><path d='M3 9h18M9 21V9'/>", "Real Code Review", "Submissions link to GitHub repositories and live demos — no more PDF portfolios."),
+                    ("<path d='M22 12h-4l-3 9L9 3l-3 9H2'/>", "Real-Time Alerts", "SignalR pushes instant notifications when a project status changes."),
+                    ("<circle cx='11' cy='11' r='8'/><line x1='21' y1='21' x2='16.65' y2='16.65'/>", "Employer Search", "Filter verified graduates by skill, university, or degree before the interview."),
+                    ("<circle cx='12' cy='8' r='7'/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88'/>", "Digital Badges", "Shareable credential cards with unique IDs and QR codes — publicly verifiable."),
+                    ("<path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M23 21v-2a4 4 0 0 0-3-3.87'/>", "Three-Role System", "Dedicated portals for Students, Lecturers, and Employers with precisely the access they need."),
+                })
+                {
+                    <div style="background:#fff; border:1px solid #e8e5e0; border-radius:12px; padding:26px; transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(2,132,199,0.07)'" onmouseout="this.style.boxShadow='none'">
+                        <div style="width:38px; height:38px; background:#e0f2fe; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">@((MarkupString)iconPath)</svg>
+                        </div>
+                        <h3 style="font-size:0.95rem; font-weight:700; color:#0a0a0a; margin:0 0 7px;">@title</h3>
+                        <p style="font-size:0.84rem; color:#71717a; line-height:1.6; margin:0;">@desc</p>
+                    </div>
+                }
             </div>
         </div>
     </section>
 
-    <!-- PORTALS SECTION (ROLE SELECTION) -->
-    <section id="portals" style="margin-bottom: 80px;">
-        <div style="margin-bottom: 32px;">
-            <div style="font-size: 0.76rem; font-weight: 700; text-transform: uppercase; color: #92400e; letter-spacing: 0.08em; margin-bottom: 6px;">
-                Platform Access
-            </div>
-            <h2 style="font-size: 1.8rem; font-weight: 800; color: #09090b; margin: 0; letter-spacing: -0.02em;">
-                Select your portal to enter
+    <!-- ════════════════════════════════════════════════════════════
+         HOW IT WORKS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="how" style="max-width:1200px; margin:0 auto; padding:88px 28px;">
+        <div style="text-align:center; max-width:500px; margin:0 auto 56px;">
+            <div class="lp-label">Process</div>
+            <h2 style="font-size:2.2rem; font-weight:900; color:#0a0a0a; letter-spacing:-0.035em; margin:14px 0 0; line-height:1.15;">
+                From submission to hire in 3 steps.
             </h2>
         </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
-            
-            <!-- Student Portal -->
-            <div class="vg-card" style="display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid #b45309; background: #ffffff;">
-                <div>
-                    <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #92400e; letter-spacing: 0.06em; margin-bottom: 8px;">
-                        Student Gateway
+        <div style="position:relative;">
+            <div style="position:absolute; top:28px; left:calc(16.66% + 28px); right:calc(16.66% + 28px); height:1px; background:#e2e8f0; z-index:0;"></div>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:32px; position:relative; z-index:1;">
+                @foreach (var (num, title, desc) in new[]{
+                    ("01", "Student Submits",  "Upload your capstone: title, description, GitHub link, live demo, skill tags and supervising lecturer."),
+                    ("02", "Lecturer Endorses","Your supervisor reviews the actual code, leaves feedback and officially signs off the credential."),
+                    ("03", "Employer Recruits","Search verified graduates by confirmed skills. Read real project repos before booking a single interview."),
+                })
+                {
+                    <div style="text-align:center;">
+                        <div style="width:52px; height:52px; background:#0284c7; color:#fff; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.82rem; margin:0 auto 22px; letter-spacing:0.02em;">@num</div>
+                        <h3 style="font-size:1.05rem; font-weight:700; color:#0a0a0a; margin:0 0 9px;">@title</h3>
+                        <p style="font-size:0.86rem; color:#71717a; line-height:1.65; margin:0 auto; max-width:250px;">@desc</p>
                     </div>
-                    <h3 style="font-size: 1.3rem; font-weight: 700; color: #09090b; margin: 0 0 10px 0;">
-                        Student Portfolio
-                    </h3>
-                    <p style="color: #52525b; font-size: 0.9rem; line-height: 1.55; margin: 0 0 24px 0;">
-                        Upload capstone projects, attach GitHub links and documentation, request supervisor endorsement, and track verification status.
-                    </p>
-                </div>
-                <button type="button" 
-                        @onclick='() => SelectRole(UserRole.Student, "projects/my")'
-                        style="width: 100%; background: #09090b; color: #ffffff; font-weight: 700; padding: 10px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.88rem; transition: opacity 0.15s ease;"
-                        onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-                    Enter as Student →
-                </button>
+                }
             </div>
-
-            <!-- Lecturer Portal -->
-            <div class="vg-card" style="display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid #78350f; background: #ffffff;">
-                <div>
-                    <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #92400e; letter-spacing: 0.06em; margin-bottom: 8px;">
-                        Faculty Gateway
-                    </div>
-                    <h3 style="font-size: 1.3rem; font-weight: 700; color: #09090b; margin: 0 0 10px 0;">
-                        Lecturer Review Queue
-                    </h3>
-                    <p style="color: #52525b; font-size: 0.9rem; line-height: 1.55; margin: 0 0 24px 0;">
-                        Access student deliverables from your department, examine code repositories, provide academic feedback, and certify credentials.
-                    </p>
-                </div>
-                <button type="button" 
-                        @onclick='() => SelectRole(UserRole.Lecturer, "verification")'
-                        style="width: 100%; background: #fafaf9; color: #09090b; font-weight: 700; padding: 10px; border-radius: 6px; border: 1px solid #e5e5e5; cursor: pointer; font-size: 0.88rem; transition: all 0.15s ease;"
-                        onmouseover="this.style.borderColor='#09090b'" onmouseout="this.style.borderColor='#e5e5e5'">
-                    Enter Review Queue →
-                </button>
-            </div>
-
-            <!-- Employer Portal -->
-            <div class="vg-card" style="display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid #a1a1aa; background: #ffffff;">
-                <div>
-                    <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #71717a; letter-spacing: 0.06em; margin-bottom: 8px;">
-                        Industry Gateway
-                    </div>
-                    <h3 style="font-size: 1.3rem; font-weight: 700; color: #09090b; margin: 0 0 10px 0;">
-                        Employer Search
-                    </h3>
-                    <p style="color: #52525b; font-size: 0.9rem; line-height: 1.55; margin: 0 0 24px 0;">
-                        Search vetted Ghanaian graduates by verified skills and degree programs. Review genuine code before scheduling interviews.
-                    </p>
-                </div>
-                <button type="button" 
-                        @onclick='() => SelectRole(UserRole.Employer, "search")'
-                        style="width: 100%; background: #fafaf9; color: #09090b; font-weight: 700; padding: 10px; border-radius: 6px; border: 1px solid #e5e5e5; cursor: pointer; font-size: 0.88rem; transition: all 0.15s ease;"
-                        onmouseover="this.style.borderColor='#09090b'" onmouseout="this.style.borderColor='#e5e5e5'">
-                    Browse Talent →
-                </button>
-            </div>
-
         </div>
     </section>
 
-    <!-- HOW IT WORKS (SIMPLE 3 STEPS) -->
-    <section id="how-it-works" style="margin-bottom: 70px;">
-        <div style="margin-bottom: 32px;">
-            <div style="font-size: 0.76rem; font-weight: 700; text-transform: uppercase; color: #92400e; letter-spacing: 0.08em; margin-bottom: 6px;">
-                Architecture
+    <!-- ════════════════════════════════════════════════════════════
+         PORTALS
+    ════════════════════════════════════════════════════════════ -->
+    <section id="portals" style="background:#0a0a0a; padding:88px 28px;">
+        <div style="max-width:1200px; margin:0 auto;">
+            <div style="text-align:center; max-width:480px; margin:0 auto 52px;">
+                <div style="display:inline-block; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#52525b; background:#18181b; border:1px solid #27272a; border-radius:999px; padding:4px 12px; margin-bottom:14px;">Access</div>
+                <h2 style="font-size:2.2rem; font-weight:900; color:#fff; letter-spacing:-0.035em; margin:0 0 14px; line-height:1.15;">Choose your portal.</h2>
+                <p style="color:#71717a; font-size:0.92rem; line-height:1.65; margin:0;">Each role has a workspace built for exactly what they need to do.</p>
             </div>
-            <h2 style="font-size: 1.8rem; font-weight: 800; color: #09090b; margin: 0; letter-spacing: -0.02em;">
-                The 3-Step Verification Pipeline
-            </h2>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:18px;">
+
+                <!-- Student -->
+                <div style="background:#111; border:1px solid #1f1f1f; border-radius:14px; padding:30px; display:flex; flex-direction:column; justify-content:space-between; min-height:280px;" onmouseover="this.style.borderColor='#3f3f46'" onmouseout="this.style.borderColor='#1f1f1f'">
+                    <div>
+                        <div style="width:40px; height:40px; background:#fdf8f0; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:18px;">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                        </div>
+                        <div style="font-size:0.71rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#b45309; margin-bottom:7px;">Student Gateway</div>
+                        <h3 style="font-size:1.1rem; font-weight:800; color:#fff; margin:0 0 10px; letter-spacing:-0.02em;">Student Portfolio</h3>
+                        <p style="color:#71717a; font-size:0.85rem; line-height:1.6; margin:0 0 24px;">Upload projects, attach repos, select your supervisor, and track verification status in real time.</p>
+                    </div>
+                    <button type="button" @onclick='() => SelectRole(UserRole.Student, "projects/my")'
+                            style="width:100%; background:#fff; color:#0a0a0a; font-weight:700; font-size:0.87rem; padding:11px; border-radius:8px; border:none; cursor:pointer; transition:opacity 0.14s; font-family:inherit;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+                        Enter as Student →
+                    </button>
+                </div>
+
+                <!-- Lecturer — highlighted -->
+                <div style="background:#0284c7; border:1px solid #0369a1; border-radius:14px; padding:30px; display:flex; flex-direction:column; justify-content:space-between; min-height:280px; position:relative; overflow:hidden;">
+                    <div style="position:absolute; top:-24px; right:-24px; width:96px; height:96px; background:rgba(255,255,255,0.07); border-radius:50%;"></div>
+                    <div>
+                        <div style="width:40px; height:40px; background:rgba(255,255,255,0.15); border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:18px;">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </div>
+                        <div style="font-size:0.71rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:rgba(255,255,255,0.6); margin-bottom:7px;">Faculty Gateway</div>
+                        <h3 style="font-size:1.1rem; font-weight:800; color:#fff; margin:0 0 10px; letter-spacing:-0.02em;">Lecturer Review Queue</h3>
+                        <p style="color:rgba(255,255,255,0.72); font-size:0.85rem; line-height:1.6; margin:0 0 24px;">Review student submissions, inspect code repositories, provide academic feedback and endorse credentials.</p>
+                    </div>
+                    <button type="button" @onclick='() => SelectRole(UserRole.Lecturer, "verification")'
+                            style="width:100%; background:#fff; color:#0284c7; font-weight:700; font-size:0.87rem; padding:11px; border-radius:8px; border:none; cursor:pointer; transition:opacity 0.14s; font-family:inherit;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                        Enter Review Queue →
+                    </button>
+                </div>
+
+                <!-- Employer -->
+                <div style="background:#111; border:1px solid #1f1f1f; border-radius:14px; padding:30px; display:flex; flex-direction:column; justify-content:space-between; min-height:280px;" onmouseover="this.style.borderColor='#3f3f46'" onmouseout="this.style.borderColor='#1f1f1f'">
+                    <div>
+                        <div style="width:40px; height:40px; background:#f0f9ff; border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:18px;">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </div>
+                        <div style="font-size:0.71rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#38bdf8; margin-bottom:7px;">Industry Gateway</div>
+                        <h3 style="font-size:1.1rem; font-weight:800; color:#fff; margin:0 0 10px; letter-spacing:-0.02em;">Employer Search</h3>
+                        <p style="color:#71717a; font-size:0.85rem; line-height:1.6; margin:0 0 24px;">Filter verified graduates by skill set, institution and degree. Review real code before a single interview.</p>
+                    </div>
+                    <button type="button" @onclick='() => SelectRole(UserRole.Employer, "search")'
+                            style="width:100%; background:#fff; color:#0a0a0a; font-weight:700; font-size:0.87rem; padding:11px; border-radius:8px; border:none; cursor:pointer; transition:opacity 0.14s; font-family:inherit;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+                        Browse Talent →
+                    </button>
+                </div>
+
+            </div>
         </div>
+    </section>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
-            <div class="vg-card" style="padding: 24px; background: #ffffff;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: #92400e; margin-bottom: 8px;">01</div>
-                <h4 style="font-size: 1.05rem; font-weight: 700; color: #09090b; margin: 0 0 6px 0;">Student Submits Work</h4>
-                <p style="color: #52525b; font-size: 0.85rem; line-height: 1.55; margin: 0;">
-                    Uploads project deliverables, GitHub repository link, and live demo. Selects supervising lecturer.
-                </p>
+    <!-- ════════════════════════════════════════════════════════════
+         FAQ
+    ════════════════════════════════════════════════════════════ -->
+    <section id="faq" style="max-width:720px; margin:0 auto; padding:88px 28px;">
+        <div style="text-align:center; margin-bottom:52px;">
+            <div class="lp-label">FAQ</div>
+            <h2 style="font-size:2.2rem; font-weight:900; color:#0a0a0a; letter-spacing:-0.035em; margin:14px 0 0; line-height:1.15;">Common questions.</h2>
+        </div>
+        <div>
+            @foreach (var (q, a) in Faqs)
+            {
+                <details style="border-top:1px solid #f0f0f0; padding:18px 0; cursor:pointer;">
+                    <summary style="font-size:0.95rem; font-weight:700; color:#0a0a0a; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:16px; cursor:pointer; user-select:none;">
+                        @q
+                        <svg style="flex-shrink:0; transition:transform 0.2s;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </summary>
+                    <p style="font-size:0.875rem; color:#71717a; line-height:1.7; margin:12px 0 0; max-width:620px;">@a</p>
+                </details>
+            }
+            <div style="border-top:1px solid #f0f0f0;"></div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════
+         CTA
+    ════════════════════════════════════════════════════════════ -->
+    <section style="max-width:1200px; margin:0 auto 88px; padding:0 28px;">
+        <div style="background:#0a0a0a; border-radius:18px; padding:60px 52px; display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap;">
+            <div>
+                <h2 style="font-size:1.9rem; font-weight:900; color:#fff; letter-spacing:-0.035em; margin:0 0 9px; line-height:1.2;">Ready to get verified?</h2>
+                <p style="color:#71717a; font-size:0.92rem; margin:0;">Build your faculty-endorsed portfolio and stand out in Ghana's job market.</p>
             </div>
-
-            <div class="vg-card" style="padding: 24px; background: #ffffff;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: #92400e; margin-bottom: 8px;">02</div>
-                <h4 style="font-size: 1.05rem; font-weight: 700; color: #09090b; margin: 0 0 6px 0;">Supervisor Endorses</h4>
-                <p style="color: #52525b; font-size: 0.85rem; line-height: 1.55; margin: 0;">
-                    Department lecturer inspects code quality, leaves academic feedback, and officially approves the credential.
-                </p>
-            </div>
-
-            <div class="vg-card" style="padding: 24px; background: #ffffff;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: #92400e; margin-bottom: 8px;">03</div>
-                <h4 style="font-size: 1.05rem; font-weight: 700; color: #09090b; margin: 0 0 6px 0;">Employer Recruits</h4>
-                <p style="color: #52525b; font-size: 0.85rem; line-height: 1.55; margin: 0;">
-                    Companies search verified graduates with confirmed proof-of-work rather than unverified resumes.
-                </p>
+            <div style="display:flex; gap:10px; flex-shrink:0; flex-wrap:wrap;">
+                <a href="register" style="background:#0284c7; color:#fff; text-decoration:none; font-weight:700; font-size:0.9rem; padding:12px 24px; border-radius:9px; transition:opacity 0.14s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                    Create Account →
+                </a>
+                <a href="login" style="background:#1a1a1a; color:#a1a1aa; text-decoration:none; font-weight:600; font-size:0.9rem; padding:12px 22px; border-radius:9px; border:1px solid #2a2a2a; transition:border-color 0.14s;" onmouseover="this.style.borderColor='#3f3f46'" onmouseout="this.style.borderColor='#2a2a2a'">
+                    Sign In
+                </a>
             </div>
         </div>
     </section>
 
 </div>
+
+<style>
+    .lp-label {
+        display: inline-block;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #52525b;
+        background: #faf9f7;
+        border: 1px solid #e8e5e0;
+        border-radius: 999px;
+        padding: 4px 12px;
+    }
+
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary svg { transform: rotate(180deg); }
+
+    @@media (max-width: 900px) {
+        section[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
+        section[style*="repeat(3,1fr)"] { grid-template-columns: 1fr !important; }
+        section[style*="repeat(4,1fr)"] { grid-template-columns: repeat(2,1fr) !important; }
+    }
+</style>
 
 @code {
     private void SelectRole(UserRole role, string redirectUrl)
@@ -185,4 +345,18 @@
         Session.SwitchRole(role);
         Navigation.NavigateTo(redirectUrl);
     }
+
+    private static readonly (string q, string a)[] Faqs =
+    {
+        ("Who can use VerifyGH?",
+         "Any student enrolled at a Ghanaian tertiary institution can create an account and submit projects. Lecturers register with their faculty email and are assigned as supervisors. Employers can search verified profiles without needing an account."),
+        ("How does faculty endorsement work?",
+         "After a student submits a project, they select their supervising lecturer. The lecturer receives a notification, reviews the code and attached documents, then marks the submission Approved, Needs Revision, or Rejected — with written feedback."),
+        ("Is the credential verifiable by third parties?",
+         "Yes. Every approved credential has a unique ID and a shareable public URL. Employers can scan the QR code or visit the link to confirm authenticity without logging in."),
+        ("What happens if a submission needs revision?",
+         "The student receives a real-time SignalR notification with the lecturer's feedback. They can update their submission and resubmit for re-review."),
+        ("Is this a production system?",
+         "VerifyGH is a DCIT 318 semester project built with production-grade technology: ASP.NET Core Web API, Blazor WebAssembly, EF Core, SQL Server and SignalR. It demonstrates a fully functional three-role credential verification system."),
+    };
 }
