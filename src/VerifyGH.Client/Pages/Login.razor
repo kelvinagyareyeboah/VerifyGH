@@ -3,218 +3,196 @@
 @inject NavigationManager Navigation
 @inject UserSessionService Session
 @inject ISnackbar Snackbar
+@inject AuthService Auth
 
 <PageTitle>Sign In — VerifyGH</PageTitle>
 
-<div style="max-width: 480px; margin: 30px auto; padding: 0 16px;">
-    
-    <div class="vg-card" style="padding: 32px; border-radius: 14px;">
-        <!-- Header -->
-        <div style="text-align: center; margin-bottom: 24px;">
-            <div style="width: 44px; height: 44px; border-radius: 12px; background: #f4f4f5; display: inline-flex; align-items: center; justify-content: center; color: #09090b; margin-bottom: 12px;">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                    <polyline points="10 17 15 12 10 7"></polyline>
-                    <line x1="15" y1="12" x2="3" y2="12"></line>
-                </svg>
-            </div>
-            <h2 style="font-size: 1.4rem; font-weight: 800; color: #09090b; margin: 0 0 6px 0;">Sign In</h2>
-            <p style="color: #52525b; font-size: 0.88rem; margin: 0;">Access your VerifyGH workspace</p>
+<div style="min-height:calc(100vh - 64px); display:flex; align-items:center; justify-content:center; padding:40px 20px; background:#f8fafc;">
+    <div style="width:100%; max-width:420px;">
+
+        <!-- Logo mark -->
+        <div style="text-align:center; margin-bottom:32px;">
+            <a href="" style="display:inline-flex; align-items:center; gap:9px; text-decoration:none; margin-bottom:24px;">
+                <div style="width:36px; height:36px; background:#0a0a0a; border-radius:8px; display:flex; align-items:center; justify-content:center;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <span style="font-size:1.1rem; font-weight:800; color:#0a0a0a; letter-spacing:-0.025em;">VerifyGH</span>
+            </a>
+            <h1 style="font-size:1.5rem; font-weight:800; color:#0a0a0a; margin:0 0 6px; letter-spacing:-0.025em;">Welcome back</h1>
+            <p style="font-size:0.875rem; color:#71717a; margin:0;">Sign in to your account to continue</p>
         </div>
 
-        <!-- Role Selector Tabs -->
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">
-                Select Role:
-            </label>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: #f4f4f5; padding: 4px; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                <button type="button" 
-                        @onclick="() => SetRole(UserRole.Student)"
-                        class="@(_selectedRole == UserRole.Student ? "vg-tab-active" : "vg-tab-inactive")"
-                        style="border: none; border-radius: 6px; padding: 9px 4px; font-size: 0.84rem; cursor: pointer; transition: all 0.15s ease;">
-                    Student
-                </button>
-                <button type="button" 
-                        @onclick="() => SetRole(UserRole.Lecturer)"
-                        class="@(_selectedRole == UserRole.Lecturer ? "vg-tab-active" : "vg-tab-inactive")"
-                        style="border: none; border-radius: 6px; padding: 9px 4px; font-size: 0.84rem; cursor: pointer; transition: all 0.15s ease;">
-                    Lecturer
-                </button>
-                <button type="button" 
-                        @onclick="() => SetRole(UserRole.Employer)"
-                        class="@(_selectedRole == UserRole.Employer ? "vg-tab-active" : "vg-tab-inactive")"
-                        style="border: none; border-radius: 6px; padding: 9px 4px; font-size: 0.84rem; cursor: pointer; transition: all 0.15s ease;">
-                    Employer
-                </button>
-            </div>
-        </div>
+        <!-- Card -->
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:32px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
 
-        <!-- Login Form -->
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-            <div>
-                <label style="display: block; font-size: 0.84rem; font-weight: 600; color: #09090b; margin-bottom: 6px;">
-                    Email Address
-                </label>
-                <MudTextField @bind-Value="_email"
-                              Placeholder="@_emailPlaceholder"
-                              Variant="Variant.Outlined"
-                              Margin="Margin.Dense"
-                              Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Email"
-                              Style="background: #ffffff; color: #09090b;" />
+            <!-- Role selector -->
+            <div style="margin-bottom:24px;">
+                <label style="display:block; font-size:0.78rem; font-weight:600; color:#374151; margin-bottom:8px; letter-spacing:0.01em;">Sign in as</label>
+                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; background:#f9fafb; padding:4px; border-radius:9px; border:1px solid #e5e7eb;">
+                    @foreach (var (role, label, icon) in Roles)
+                    {
+                        var active = _role == role;
+                        <button type="button" @onclick="() => SelectRole(role)"
+                                style="border:none; border-radius:6px; padding:9px 6px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.15s; background:@(active ? "#fff" : "transparent"); color:@(active ? "#0a0a0a" : "#9ca3af"); box-shadow:@(active ? "0 1px 4px rgba(0,0,0,0.08)" : "none");">
+                            @label
+                        </button>
+                    }
+                </div>
             </div>
 
-            <div>
-                <label style="display: block; font-size: 0.84rem; font-weight: 600; color: #09090b; margin-bottom: 6px;">
-                    Password
-                </label>
-                <MudTextField @bind-Value="_password"
-                              InputType="InputType.Password"
-                              Placeholder="••••••••"
-                              Variant="Variant.Outlined"
-                              Margin="Margin.Dense"
-                              Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Lock"
-                              Style="background: #ffffff; color: #09090b;" />
-            </div>
+            <!-- Fields -->
+            <div style="display:flex; flex-direction:column; gap:18px;">
+                <div>
+                    <label class="auth-label">Email address</label>
+                    <input type="email"
+                           @bind="_email" @bind:event="oninput"
+                           placeholder="@_placeholder"
+                           class="auth-input"
+                           @onkeydown="OnKeyDown" />
+                </div>
 
-            <button type="button" 
-                    @onclick="HandleLogin"
-                    disabled="@_isLoading"
-                    class="vg-btn-primary"
-                    style="width: 100%; padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.92rem; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px; transition: opacity 0.15s ease;"
-                    onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-                @if (_isLoading)
+                <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <label class="auth-label" style="margin-bottom:0;">Password</label>
+                    </div>
+                    <input type="password"
+                           @bind="_password" @bind:event="oninput"
+                           placeholder="••••••••"
+                           class="auth-input"
+                           @onkeydown="OnKeyDown" />
+                </div>
+
+                @if (!string.IsNullOrEmpty(_error))
                 {
-                    <span style="display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #ffffff; border-radius: 50%; animation: spin 0.8s linear infinite;"></span>
-                    <span style="color: #ffffff !important;">Signing In...</span>
+                    <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:7px; padding:10px 13px; font-size:0.83rem; color:#dc2626;">
+                        @_error
+                    </div>
                 }
-                else
-                {
-                    <span style="color: #ffffff !important;">Sign In to @GetRoleLabel(_selectedRole) →</span>
-                }
-            </button>
-        </div>
 
-        <div style="height: 1px; background: var(--border-subtle); margin: 24px 0 18px 0;"></div>
-
-        <!-- Quick 1-Click Demo Profiles -->
-        <div>
-            <div style="font-size: 0.76rem; color: #71717a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; text-align: center;">
-                Quick Demo Logins (1-Click)
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button type="button" 
-                        @onclick='() => QuickLogin(UserRole.Student, "kelvin@st.ug.edu.gh", "Kelvin Yeboah", "University of Ghana")'
-                        style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 8px; color: #09090b; font-size: 0.84rem; cursor: pointer; text-align: left; transition: all 0.15s ease;"
-                        onmouseover="this.style.borderColor='#a1a1aa'" onmouseout="this.style.borderColor='var(--border-subtle)'">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #09090b;"></span>
-                        <span style="color: #09090b;"><strong>Student:</strong> Kelvin Yeboah (Legon)</span>
-                    </div>
-                    <span style="color: #09090b; font-size: 0.78rem; font-weight: 700;">Login →</span>
-                </button>
-
-                <button type="button" 
-                        @onclick='() => QuickLogin(UserRole.Lecturer, "msoli@ug.edu.gh", "Dr. Michael Soli", "Dept. of Computer Science, UG")'
-                        style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 8px; color: #09090b; font-size: 0.84rem; cursor: pointer; text-align: left; transition: all 0.15s ease;"
-                        onmouseover="this.style.borderColor='#a1a1aa'" onmouseout="this.style.borderColor='var(--border-subtle)'">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #92400e;"></span>
-                        <span style="color: #09090b;"><strong>Lecturer:</strong> Dr. Michael Soli (UG)</span>
-                    </div>
-                    <span style="color: #92400e; font-size: 0.78rem; font-weight: 700;">Login →</span>
-                </button>
-
-                <button type="button" 
-                        @onclick='() => QuickLogin(UserRole.Employer, "talent@hubtel.com", "Kwadwo Mensah", "Hubtel Ghana")'
-                        style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 8px; color: #09090b; font-size: 0.84rem; cursor: pointer; text-align: left; transition: all 0.15s ease;"
-                        onmouseover="this.style.borderColor='#a1a1aa'" onmouseout="this.style.borderColor='var(--border-subtle)'">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #71717a;"></span>
-                        <span style="color: #09090b;"><strong>Employer:</strong> Hubtel Recruiter</span>
-                    </div>
-                    <span style="color: #71717a; font-size: 0.78rem; font-weight: 700;">Login →</span>
+                <button type="button" @onclick="HandleLogin" disabled="@_loading"
+                        style="width:100%; background:#0284c7; color:#fff; font-weight:700; font-size:0.9rem; padding:11px; border-radius:8px; border:none; cursor:@(_loading ? "not-allowed" : "pointer"); font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px; transition:opacity 0.14s; opacity:@(_loading ? "0.7" : "1");"
+                        onmouseover="if(!this.disabled) this.style.opacity='0.88'" onmouseout="this.style.opacity=this.disabled?'0.7':'1'">
+                    @if (_loading)
+                    {
+                        <span style="width:14px; height:14px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; display:inline-block;"></span>
+                        <span>Signing in...</span>
+                    }
+                    else
+                    {
+                        <span>Sign In</span>
+                    }
                 </button>
             </div>
         </div>
 
-        <div style="text-align: center; font-size: 0.84rem; color: #52525b; margin-top: 20px;">
-            Don't have an account? <a href="register" style="color: #92400e; text-decoration: underline; font-weight: 700;">Register here</a>
-        </div>
+        <!-- Footer link -->
+        <p style="text-align:center; font-size:0.85rem; color:#71717a; margin-top:20px;">
+            Don't have an account?
+            <a href="register" style="color:#0284c7; font-weight:600; text-decoration:none; margin-left:3px;">Create one →</a>
+        </p>
+
     </div>
-
 </div>
 
-@code {
-    private UserRole _selectedRole = UserRole.Student;
-    private string _email = "kelvin@st.ug.edu.gh";
-    private string _password = "Password@123";
-    private string _emailPlaceholder = "student@st.ug.edu.gh";
-    private bool _isLoading = false;
+<style>
+    .auth-label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 6px;
+    }
+    .auth-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-family: inherit;
+        color: #0a0a0a;
+        background: #fff;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.14s, box-shadow 0.14s;
+    }
+    .auth-input:focus {
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2,132,199,0.1);
+    }
+    .auth-input::placeholder { color: #9ca3af; }
+    @@keyframes spin { to { transform: rotate(360deg); } }
+</style>
 
-    private void SetRole(UserRole role)
+@code {
+    private UserRole _role        = UserRole.Student;
+    private string   _email       = "";
+    private string   _password    = "";
+    private string   _placeholder = "student@university.edu.gh";
+    private bool     _loading     = false;
+    private string   _error       = "";
+
+    private static readonly (UserRole role, string label, string icon)[] Roles =
     {
-        _selectedRole = role;
-        _email = role switch
+        (UserRole.Student,  "Student",  ""),
+        (UserRole.Lecturer, "Lecturer", ""),
+        (UserRole.Employer, "Employer", ""),
+    };
+
+    private void SelectRole(UserRole role)
+    {
+        _role  = role;
+        _email = "";
+        _error = "";
+        _placeholder = role switch
         {
-            UserRole.Student => "kelvin@st.ug.edu.gh",
-            UserRole.Lecturer => "msoli@ug.edu.gh",
-            UserRole.Employer => "talent@hubtel.com",
-            _ => "user@example.com"
-        };
-        _emailPlaceholder = role switch
-        {
-            UserRole.Student => "student@st.ug.edu.gh",
-            UserRole.Lecturer => "lecturer@ug.edu.gh",
+            UserRole.Student  => "student@university.edu.gh",
+            UserRole.Lecturer => "lecturer@university.edu.gh",
             UserRole.Employer => "recruiter@company.com",
-            _ => "email@example.com"
+            _                 => "you@example.com"
         };
     }
 
-    private string GetRoleLabel(UserRole role) => role switch
+    private async Task OnKeyDown(KeyboardEventArgs e)
     {
-        UserRole.Student => "Student Portal",
-        UserRole.Lecturer => "Lecturer Portal",
-        UserRole.Employer => "Employer Portal",
-        _ => "Account"
-    };
+        if (e.Key == "Enter") await HandleLogin();
+    }
 
     private async Task HandleLogin()
     {
-        _isLoading = true;
-        await Task.Delay(300); // Smooth UX transition
+        _error = "";
 
-        Session.Login(_email, _selectedRole);
-        Snackbar.Add($"Signed in successfully as {GetRoleLabel(_selectedRole)}", Severity.Success);
+        if (string.IsNullOrWhiteSpace(_email))   { _error = "Please enter your email address."; return; }
+        if (string.IsNullOrWhiteSpace(_password)) { _error = "Please enter your password.";       return; }
 
-        NavigateToPortal(_selectedRole);
-        _isLoading = false;
-    }
+        _loading = true;
+        StateHasChanged();
 
-    private void QuickLogin(UserRole role, string email, string name, string organization)
-    {
-        Session.Login(email, role, name, organization);
-        Snackbar.Add($"Logged in as {name} ({role})", Severity.Success);
-        NavigateToPortal(role);
-    }
-
-    private void NavigateToPortal(UserRole role)
-    {
-        switch (role)
+        var (ok, err) = await Auth.LoginAsync(new LoginRequestDto
         {
-            case UserRole.Student:
-                Navigation.NavigateTo("projects/my");
-                break;
-            case UserRole.Lecturer:
-                Navigation.NavigateTo("verification");
-                break;
-            case UserRole.Employer:
-                Navigation.NavigateTo("search");
-                break;
-            default:
-                Navigation.NavigateTo("");
-                break;
+            Email    = _email.Trim(),
+            Password = _password
+        });
+
+        _loading = false;
+
+        if (ok)
+        {
+            Snackbar.Add("Signed in successfully.", Severity.Success);
+            Navigation.NavigateTo(Session.CurrentRole switch
+            {
+                UserRole.Student  => "projects/my",
+                UserRole.Lecturer => "verification",
+                UserRole.Employer => "search",
+                UserRole.Admin    => "projects/my",
+                _                 => ""
+            });
+        }
+        else
+        {
+            _error = err ?? "Incorrect email or password.";
+            StateHasChanged();
         }
     }
 }

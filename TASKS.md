@@ -117,7 +117,7 @@
 
 ---
 
-### 7. Tieku Justice (22105235)
+### 7. Tieku Justice (22105235) TAsk has been done
 
 **Role:** Frontend Developer (Lecturer Portal)  
 **Working Directory:** `src/VerifyGH.Client/Pages/`
@@ -134,7 +134,7 @@
 
 ---
 
-### 8. Opuni Frimpong Asante (22039152)
+### 8. Opuni Frimpong Asante (22039152) task has been done
 
 **Role:** Frontend Developer (Employer Portal & Badges)  
 **Working Directory:** `src/VerifyGH.Client/Pages/`

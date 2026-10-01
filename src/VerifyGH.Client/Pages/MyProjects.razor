@@ -1,25 +1,177 @@
 @page "/projects/my"
+@inject HttpClient Http
 
-<PageTitle>My Portfolio — VerifyGH</PageTitle>
+<PageTitle>My Projects — VerifyGH</PageTitle>
 
-<div style="display: flex; flex-direction: column; gap: 24px;">
-    <div>
-        <div class="vg-pill vg-pill-secondary" style="margin-bottom: 12px;">Student Portfolio</div>
-        <h1 class="vg-gradient-text" style="font-size: 1.8rem; font-weight: 800; margin: 0 0 6px 0;">My Submissions & Portfolio</h1>
-        <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">Track real-time review status, lecturer feedback, and public shareable portfolio.</p>
-    </div>
+<div style="display:flex; flex-direction:column; gap:28px;" class="vg-animate-in">
 
-    <!-- Linear-style Placeholder Box -->
-    <div class="vg-placeholder">
-        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0, 230, 118, 0.25); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-            </svg>
+    <!-- Header -->
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+        <div>
+            <span class="vg-pill vg-pill-secondary" style="margin-bottom:10px; display:inline-block;">Student Portfolio</span>
+            <h1 class="vg-title-bold" style="font-size:1.75rem; margin:0 0 6px;">My Submissions</h1>
+            <p style="color:var(--text-secondary); margin:0; font-size:0.93rem;">
+                Track review status, read lecturer feedback, and share your verified portfolio.
+            </p>
         </div>
-        <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0 0 8px 0; color: #ffffff;">Student Projects Feed</h3>
-        <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 20px auto; font-size: 0.88rem; line-height: 1.5;">
-            Responsive grid of project cards with status badges (Pending, Approved, Needs Revision) and live SignalR status listeners.
-        </p>
-        <span class="vg-pill">Assigned to: Frank Bless Kofi Tsetse (Frontend)</span>
+        <a href="projects/upload" class="vg-action-link primary-action" style="margin-top:4px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Submission
+        </a>
     </div>
+
+    <!-- Stats Bar -->
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px;">
+        @{
+            var total    = Projects.Count;
+            var approved = Projects.Count(p => p.Status == "Approved");
+            var pending  = Projects.Count(p => p.Status == "Pending");
+            var revision = Projects.Count(p => p.Status == "NeedsRevision");
+        }
+        <div class="vg-card" style="padding:16px 18px; text-align:center;">
+            <div style="font-size:1.6rem; font-weight:800; color:var(--text-primary); letter-spacing:-0.04em;">@total</div>
+            <div class="vg-label" style="margin-top:2px;">Total</div>
+        </div>
+        <div class="vg-card" style="padding:16px 18px; text-align:center;">
+            <div style="font-size:1.6rem; font-weight:800; color:var(--ghana-green); letter-spacing:-0.04em;">@approved</div>
+            <div class="vg-label" style="margin-top:2px;">Approved</div>
+        </div>
+        <div class="vg-card" style="padding:16px 18px; text-align:center;">
+            <div style="font-size:1.6rem; font-weight:800; color:var(--ghana-gold); letter-spacing:-0.04em;">@pending</div>
+            <div class="vg-label" style="margin-top:2px;">Pending</div>
+        </div>
+        <div class="vg-card" style="padding:16px 18px; text-align:center;">
+            <div style="font-size:1.6rem; font-weight:800; color:var(--accent-red); letter-spacing:-0.04em;">@revision</div>
+            <div class="vg-label" style="margin-top:2px;">Needs Revision</div>
+        </div>
+    </div>
+
+    <!-- Filter Chips -->
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        @foreach (var f in new[]{ "All", "Approved", "Pending", "Under Review", "NeedsRevision" })
+        {
+            <button type="button"
+                    class="vg-skill-chip @(ActiveFilter == f ? "active" : "")"
+                    @onclick="@(() => ActiveFilter = f)">
+                @(f == "NeedsRevision" ? "Needs Revision" : f)
+            </button>
+        }
+        <input type="text" placeholder="Search by title or skill..."
+               @bind="SearchQuery" @bind:event="oninput"
+               style="margin-left:auto; padding:6px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.85rem; font-family:inherit; color:var(--text-primary); background:#fff; outline:none; min-width:200px;" />
+    </div>
+
+    <!-- Project Cards -->
+    @{
+        var filtered = Projects
+            .Where(p => ActiveFilter == "All" || p.Status == ActiveFilter)
+            .Where(p => string.IsNullOrWhiteSpace(SearchQuery)
+                        || p.Title.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)
+                        || p.Skills.Any(s => s.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+    }
+
+    @if (filtered.Count == 0)
+    {
+        <div class="vg-placeholder">
+            <p style="margin:0; font-size:0.9rem;">No projects match your filter.</p>
+        </div>
+    }
+    else
+    {
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:16px;" class="vg-stagger">
+            @foreach (var p in filtered)
+            {
+                <div class="vg-project-card">
+                    <!-- Card Header -->
+                    <div class="vg-project-card-header">
+                        <div class="vg-author-avatar">@p.Title[0].ToString().ToUpper()</div>
+                        <div style="flex:1; min-width:0;">
+                            <div class="vg-project-card-title">@p.Title</div>
+                            <div class="vg-project-card-date">Submitted @p.Date</div>
+                        </div>
+                        <span class="vg-badge @GetBadgeClass(p.Status)">@GetStatusLabel(p.Status)</span>
+                    </div>
+
+                    <!-- Supervisor -->
+                    <div class="vg-project-card-supervisor">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        @p.Supervisor
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="vg-skill-chips">
+                        @foreach (var sk in p.Skills)
+                        {
+                            <span class="vg-skill-chip">@sk</span>
+                        }
+                    </div>
+
+                    <!-- Feedback (if revision) -->
+                    @if ((p.Status == "NeedsRevision" || p.Status == "Rejected") && !string.IsNullOrEmpty(p.Feedback))
+                    {
+                        <div style="background:var(--accent-red-bg); border:1px solid var(--accent-red-border); border-radius:var(--radius-sm); padding:10px 12px; font-size:0.82rem; color:var(--accent-red);">
+                            <strong>Lecturer Feedback:</strong> @p.Feedback
+                        </div>
+                    }
+
+                    <!-- Action Links -->
+                    <div class="vg-project-card-actions">
+                        @if (!string.IsNullOrEmpty(p.RepoUrl))
+                        {
+                            <a href="@p.RepoUrl" target="_blank" class="vg-action-link">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                                Code
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(p.LiveDemoUrl))
+                        {
+                            <a href="@p.LiveDemoUrl" target="_blank" class="vg-action-link">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                Demo
+                            </a>
+                        }
+                        <a href="credentials" class="vg-action-link" style="margin-left:auto;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                            View Badge
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
+
+@code {
+    private string ActiveFilter = "All";
+    private string SearchQuery  = "";
+
+    private List<ProjectItem> Projects = new()
+    {
+        new("Blockchain Transcript Verification", "Dr. Michael Soli",  "Approved",      "Sept 10, 2025", "https://github.com/", "https://demo.app", new[]{"C#","Blazor","SQL"}),
+        new("AI Lecture Scheduler",               "Dr. Isaac Wiafe",   "Pending",        "Sept 18, 2025", "https://github.com/", "",                 new[]{"Python","ML","REST API"}),
+        new("Campus Bus Tracker",                  "Dr. Ebenezer Owusu","Under Review",  "Aug 28, 2025",  "https://github.com/", "https://demo.app", new[]{"React","TypeScript","SignalR"}),
+        new("E-Hostel Booking System",             "Dr. Jamal-Deen Abdulai","NeedsRevision","Aug 15,2025","https://github.com/","",new[]{"ASP.NET Core","SQL","Docker"},
+            "Please add proper error handling to the payment module and expand the API documentation."),
+    };
+
+    private static string GetBadgeClass(string status) => status switch
+    {
+        "Approved"     => "vg-badge-approved",
+        "Pending"      => "vg-badge-pending",
+        "Under Review" => "vg-badge-review",
+        "NeedsRevision"=> "vg-badge-revision",
+        "Rejected"     => "vg-badge-revision",
+        _              => "vg-badge-pending"
+    };
+
+    private static string GetStatusLabel(string status) => status switch
+    {
+        "NeedsRevision" => "Needs Revision",
+        _ => status
+    };
+
+    private record ProjectItem(
+        string Title, string Supervisor, string Status, string Date,
+        string RepoUrl, string LiveDemoUrl, string[] Skills, string Feedback = "");
+}

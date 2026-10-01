@@ -1,26 +1,194 @@
 @page "/search"
+@inject HttpClient Http
 
-<PageTitle>Search Talent — VerifyGH</PageTitle>
+<PageTitle>Search Verified Talent — VerifyGH</PageTitle>
 
-<div style="display: flex; flex-direction: column; gap: 24px;">
+<div style="display:flex; flex-direction:column; gap:28px;" class="vg-animate-in">
+
+    <!-- Header -->
     <div>
-        <div class="vg-pill vg-pill-secondary" style="margin-bottom: 12px;">Employer Portal</div>
-        <h1 class="vg-gradient-text" style="font-size: 1.8rem; font-weight: 800; margin: 0 0 6px 0;">Search Verified Talent</h1>
-        <p style="color: var(--text-secondary); margin: 0; font-size: 0.95rem;">Filter and discover graduates by accredited skills, degree, and institution.</p>
+        <span class="vg-pill vg-pill-secondary" style="margin-bottom:10px; display:inline-block;">Employer Portal</span>
+        <h1 class="vg-title-bold" style="font-size:1.75rem; margin:0 0 6px;">Search Verified Talent</h1>
+        <p style="color:var(--text-secondary); margin:0; font-size:0.93rem;">
+            Discover graduates with faculty-endorsed capstone projects and verified skill sets.
+        </p>
     </div>
 
-    <!-- Linear-style Placeholder Box -->
-    <div class="vg-placeholder">
-        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0, 230, 118, 0.25); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
+    <!-- Search Bar -->
+    <div style="display:flex; gap:10px; align-items:center;">
+        <div style="flex:1; position:relative;">
+            <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+            <input type="text"
+                   placeholder="Search by name, project title, or skill..."
+                   @bind="SearchQuery" @bind:event="oninput"
+                   style="width:100%; padding:10px 12px 10px 36px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.9rem; font-family:inherit; color:var(--text-primary); background:#fff; outline:none;" />
         </div>
-        <h3 style="font-size: 1.15rem; font-weight: 700; margin: 0 0 8px 0; color: #ffffff;">Talent Search & Filtering Interface</h3>
-        <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 20px auto; font-size: 0.88rem; line-height: 1.5;">
-            Dynamic search input, skill filter chips (C#, React, SQL), institution selector, and verified graduate profile cards.
-        </p>
-        <span class="vg-pill">Assigned to: Opuni Frimpong Asante (Frontend)</span>
+        <select @bind="InstitutionFilter"
+                style="padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.88rem; font-family:inherit; color:var(--text-primary); background:#fff; cursor:pointer; outline:none;">
+            <option value="">All Institutions</option>
+            <option>University of Ghana</option>
+            <option>KNUST</option>
+            <option>UCC</option>
+            <option>GIMPA</option>
+            <option>UDS</option>
+        </select>
     </div>
+
+    <!-- Skill Filters -->
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span class="vg-label" style="margin-right:4px;">Filter by Skill:</span>
+        @foreach (var sk in SkillFilters)
+        {
+            <button type="button"
+                    class="vg-skill-chip @(ActiveSkills.Contains(sk) ? "active" : "")"
+                    @onclick="@(() => ToggleSkill(sk))">
+                @sk
+            </button>
+        }
+        @if (ActiveSkills.Count > 0)
+        {
+            <button type="button"
+                    @onclick="@(() => ActiveSkills.Clear())"
+                    style="font-size:0.75rem; color:var(--text-muted); background:none; border:none; cursor:pointer; padding:4px 6px; text-decoration:underline;">
+                Clear
+            </button>
+        }
+    </div>
+
+    <!-- Results count -->
+    @{
+        var results = FilteredCandidates();
+    }
+    <div style="font-size:0.82rem; color:var(--text-muted);">
+        Showing <strong style="color:var(--text-primary);">@results.Count</strong> verified graduate@(results.Count == 1 ? "" : "s")
+    </div>
+
+    <!-- Candidate Cards -->
+    @if (results.Count == 0)
+    {
+        <div class="vg-placeholder">
+            <p style="margin:0; font-size:0.9rem;">No graduates match your search criteria.</p>
+        </div>
+    }
+    else
+    {
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:16px;" class="vg-stagger">
+            @foreach (var c in results)
+            {
+                <div class="vg-project-card">
+                    <!-- Candidate Header -->
+                    <div class="vg-project-card-header">
+                        <div class="vg-author-avatar @c.AvatarColor" style="width:42px; height:42px; font-size:1rem;">
+                            @c.Name[0].ToString().ToUpper()
+                        </div>
+                        <div style="flex:1; min-width:0;">
+                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                <span class="vg-project-card-title">@c.Name</span>
+                                @if (c.Verified)
+                                {
+                                    <span class="vg-badge vg-badge-verified">✓ Verified</span>
+                                }
+                            </div>
+                            <div class="vg-project-card-supervisor">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                                @c.Institution · @c.Program
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Featured Project -->
+                    <div style="background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); padding:10px 12px;">
+                        <div class="vg-label" style="margin-bottom:4px;">Featured Project</div>
+                        <div style="font-size:0.88rem; font-weight:600; color:var(--text-primary);">@c.FeaturedProject</div>
+                        <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Endorsed by @c.Supervisor</div>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="vg-skill-chips">
+                        @foreach (var sk in c.Skills)
+                        {
+                            <span class="vg-skill-chip @(ActiveSkills.Contains(sk) ? "active" : "")">@sk</span>
+                        }
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="vg-project-card-actions">
+                        @if (!string.IsNullOrEmpty(c.RepoUrl))
+                        {
+                            <a href="@c.RepoUrl" target="_blank" class="vg-action-link">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                                Portfolio
+                            </a>
+                        }
+                        <a href="credentials" class="vg-action-link" style="margin-left:auto;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                            View Credentials
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
+
+<style>
+    input:focus, select:focus { border-color: var(--ghana-black) !important; box-shadow: 0 0 0 3px rgba(9,9,11,0.06); }
+</style>
+
+@code {
+    private string SearchQuery      = "";
+    private string InstitutionFilter = "";
+    private HashSet<string> ActiveSkills = new();
+
+    private static readonly List<string> SkillFilters = new()
+    {
+        "C#", "React", "Python", "SQL", "Machine Learning", "TypeScript", "Blazor", "Docker"
+    };
+
+    private List<Candidate> Candidates = new()
+    {
+        new("Kelvin Yeboah",    "University of Ghana","BSc Computer Science","Dr. Michael Soli",
+            "Blockchain Transcript System","https://github.com/",  new[]{"C#","Blazor","SQL"},       true,  "green"),
+        new("Abena Mensah",     "KNUST",              "BSc Software Engineering","Dr. Amma Gyamfi",
+            "AI-Based Crop Disease Detection","https://github.com/",new[]{"Python","ML","React"},     true,  "blue"),
+        new("Kofi Asante",      "UCC",                "BSc IT","Dr. Isaac Wiafe",
+            "Smart Campus IoT Dashboard","https://github.com/",    new[]{"TypeScript","Docker","SQL"},true,  ""),
+        new("Ama Darkoa",       "University of Ghana","BSc MIS","Dr. Ebenezer Owusu",
+            "E-Procurement Platform","https://github.com/",        new[]{"React","SQL","REST API"},   false, "green"),
+        new("Kwabena Boateng",  "GIMPA",              "BSc IT Management","Dr. Jamal-Deen Abdulai",
+            "Hospital Queue Management System","https://github.com/",new[]{"C#","ASP.NET Core","SQL"},true, "blue"),
+        new("Efua Antwi",       "UDS",                "BSc Computer Science","Prof. Kweku Ewusie",
+            "Sign Language Recognition App","https://github.com/", new[]{"Python","ML","Docker"},    true,  ""),
+    };
+
+    private List<Candidate> FilteredCandidates()
+    {
+        return Candidates.Where(c =>
+        {
+            var matchesSearch = string.IsNullOrWhiteSpace(SearchQuery)
+                || c.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)
+                || c.FeaturedProject.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)
+                || c.Skills.Any(s => s.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase));
+
+            var matchesInstitution = string.IsNullOrEmpty(InstitutionFilter)
+                || c.Institution == InstitutionFilter;
+
+            var matchesSkills = ActiveSkills.Count == 0
+                || ActiveSkills.All(s => c.Skills.Contains(s));
+
+            return matchesSearch && matchesInstitution && matchesSkills;
+        }).ToList();
+    }
+
+    private void ToggleSkill(string sk)
+    {
+        if (!ActiveSkills.Remove(sk)) ActiveSkills.Add(sk);
+    }
+
+    private record Candidate(
+        string Name, string Institution, string Program, string Supervisor,
+        string FeaturedProject, string RepoUrl, string[] Skills,
+        bool Verified, string AvatarColor);
+}

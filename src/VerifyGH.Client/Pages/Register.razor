@@ -1,33 +1,307 @@
 @page "/register"
 @layout PublicLayout
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+@inject AuthService Auth
 
-<PageTitle>Register — VerifyGH</PageTitle>
+<PageTitle>Create Account — VerifyGH</PageTitle>
 
-<div style="max-width: 480px; margin: 40px auto 0 auto;">
-    <div class="vg-card" style="padding: 32px; background: #ffffff;">
-        <div style="text-align: center; margin-bottom: 24px;">
-            <div style="width: 44px; height: 44px; border-radius: 12px; background: #f4f4f5; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; color: #09090b;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="8.5" cy="7" r="4"></circle>
-                    <line x1="20" y1="8" x2="20" y2="14"></line>
-                    <line x1="23" y1="11" x2="17" y2="11"></line>
-                </svg>
+<div style="min-height:calc(100vh - 64px); display:flex; align-items:center; justify-content:center; padding:40px 20px; background:#f8fafc;">
+    <div style="width:100%; max-width:440px;">
+
+        <!-- Logo mark -->
+        <div style="text-align:center; margin-bottom:32px;">
+            <a href="" style="display:inline-flex; align-items:center; gap:9px; text-decoration:none; margin-bottom:24px;">
+                <div style="width:36px; height:36px; background:#0a0a0a; border-radius:8px; display:flex; align-items:center; justify-content:center;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <span style="font-size:1.1rem; font-weight:800; color:#0a0a0a; letter-spacing:-0.025em;">VerifyGH</span>
+            </a>
+            <h1 style="font-size:1.5rem; font-weight:800; color:#0a0a0a; margin:0 0 6px; letter-spacing:-0.025em;">Create your account</h1>
+            <p style="font-size:0.875rem; color:#71717a; margin:0;">Join as a student, lecturer, or employer</p>
+        </div>
+
+        <!-- Card -->
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:32px; box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+
+            <!-- Step indicator -->
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:24px;">
+                <div style="flex:1; height:2px; border-radius:2px; background:@(_step >= 1 ? "#0284c7" : "#e5e7eb"); transition:background 0.3s;"></div>
+                <div style="flex:1; height:2px; border-radius:2px; background:@(_step >= 2 ? "#0284c7" : "#e5e7eb"); transition:background 0.3s;"></div>
+                <span style="font-size:0.75rem; color:#9ca3af; white-space:nowrap;">Step @_step of 2</span>
             </div>
-            <h2 style="font-size: 1.35rem; font-weight: 800; margin: 0 0 6px 0; color: #09090b;">Create an Account</h2>
-            <p style="color: #52525b; font-size: 0.88rem; margin: 0;">Join as a Student, Lecturer, or Employer</p>
+
+            <!-- ── STEP 1: Choose Role ── -->
+            @if (_step == 1)
+            {
+                <div>
+                    <p style="font-size:0.9rem; font-weight:600; color:#0a0a0a; margin:0 0 16px;">I am joining as a…</p>
+
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        @foreach (var (role, title, desc, icon) in RoleOptions)
+                        {
+                            var selected = _role == role;
+                            <button type="button" @onclick="() => _role = role"
+                                    style="display:flex; align-items:center; gap:14px; padding:14px 16px; border-radius:10px; border:@(selected ? "2px solid #0284c7" : "1px solid #e5e7eb"); background:@(selected ? "#f0f9ff" : "#fff"); cursor:pointer; text-align:left; width:100%; font-family:inherit; transition:all 0.15s;">
+                                <div style="width:38px; height:38px; border-radius:8px; background:@(selected ? "#0284c7" : "#f4f4f5"); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background 0.15s;">
+                                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="@(selected ? "#fff" : "#6b7280")" stroke-width="2" stroke-linecap="round">@((MarkupString)icon)</svg>
+                                </div>
+                                <div>
+                                    <div style="font-size:0.9rem; font-weight:700; color:#0a0a0a; margin-bottom:2px;">@title</div>
+                                    <div style="font-size:0.78rem; color:#71717a; line-height:1.4;">@desc</div>
+                                </div>
+                                @if (selected)
+                                {
+                                    <div style="margin-left:auto; width:18px; height:18px; border-radius:50%; background:#0284c7; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                    </div>
+                                }
+                            </button>
+                        }
+                    </div>
+
+                    <button type="button" @onclick="() => _step = 2"
+                            style="width:100%; margin-top:20px; background:#0284c7; color:#fff; font-weight:700; font-size:0.9rem; padding:11px; border-radius:8px; border:none; cursor:pointer; font-family:inherit; transition:opacity 0.14s;"
+                            onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
+                        Continue →
+                    </button>
+                </div>
+            }
+
+            <!-- ── STEP 2: Account Details ── -->
+            @if (_step == 2)
+            {
+                <EditForm Model="@_model" OnValidSubmit="HandleRegister">
+                    <DataAnnotationsValidator />
+                    <div style="display:flex; flex-direction:column; gap:16px;">
+
+                        <!-- Role badge -->
+                        <div style="display:flex; align-items:center; justify-content:space-between; padding:9px 13px; background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px;">
+                            <span style="font-size:0.82rem; font-weight:600; color:#0369a1;">Registering as: @_role</span>
+                            <button type="button" @onclick="() => _step = 1"
+                                    style="font-size:0.78rem; color:#0284c7; background:none; border:none; cursor:pointer; font-weight:600; padding:0; font-family:inherit;">
+                                Change
+                            </button>
+                        </div>
+
+                        <!-- Full Name -->
+                        <div>
+                            <label class="auth-label">Full Name *</label>
+                            <InputText @bind-Value="_model.FullName" placeholder="Your full legal name" class="auth-input" />
+                            <ValidationMessage For="@(() => _model.FullName)" class="auth-error" />
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label class="auth-label">Email Address *</label>
+                            <InputText @bind-Value="_model.Email" placeholder="@GetEmailPlaceholder()" type="email" class="auth-input" />
+                            <ValidationMessage For="@(() => _model.Email)" class="auth-error" />
+                        </div>
+
+                        <!-- Password -->
+                        <div>
+                            <label class="auth-label">Password *</label>
+                            <InputText @bind-Value="_model.Password" placeholder="Min. 6 chars with uppercase &amp; number" type="password" class="auth-input" />
+                            <ValidationMessage For="@(() => _model.Password)" class="auth-error" />
+                        </div>
+
+                        <!-- Institution -->
+                        <div>
+                            <label class="auth-label">Institution *</label>
+                            <InputSelect @bind-Value="_model.Institution" class="auth-input">
+                                <option value="">— Select your institution —</option>
+                                <option>University of Ghana</option>
+                                <option>KNUST</option>
+                                <option>University of Cape Coast</option>
+                                <option>GIMPA</option>
+                                <option>University for Development Studies</option>
+                                <option>Ashesi University</option>
+                                <option>Other</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => _model.Institution)" class="auth-error" />
+                        </div>
+
+                        <!-- Programme / Department -->
+                        <div>
+                            <label class="auth-label">@(_role == UserRole.Employer ? "Company / Organisation" : "Programme / Department")</label>
+                            <InputText @bind-Value="_model.Department"
+                                       placeholder="@(_role == UserRole.Employer ? "e.g. Hubtel Ghana" : "e.g. BSc Computer Science")"
+                                       class="auth-input" />
+                        </div>
+
+                        <!-- Student ID — students only -->
+                        @if (_role == UserRole.Student)
+                        {
+                            <div>
+                                <label class="auth-label">Student ID</label>
+                                <InputText @bind-Value="_model.StudentId" placeholder="e.g. 22159683" class="auth-input" />
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(_error))
+                        {
+                            <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:7px; padding:10px 13px; font-size:0.83rem; color:#dc2626;">
+                                @_error
+                            </div>
+                        }
+
+                        <button type="submit" disabled="@_loading"
+                                style="width:100%; background:#0284c7; color:#fff; font-weight:700; font-size:0.9rem; padding:11px; border-radius:8px; border:none; cursor:@(_loading ? "not-allowed" : "pointer"); font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px; transition:opacity 0.14s; opacity:@(_loading ? "0.7" : "1");"
+                                onmouseover="if(!this.disabled) this.style.opacity='0.88'" onmouseout="this.style.opacity=this.disabled?'0.7':'1'">
+                            @if (_loading)
+                            {
+                                <span style="width:14px; height:14px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; display:inline-block;"></span>
+                                <span>Creating account...</span>
+                            }
+                            else
+                            {
+                                <span>Create Account</span>
+                            }
+                        </button>
+
+                    </div>
+                </EditForm>
+            }
+
         </div>
 
-        <!-- Linear-style Placeholder Box -->
-        <div class="vg-placeholder" style="padding: 28px 16px; margin-bottom: 20px; background: #fafaf9;">
-            <p style="color: #52525b; margin: 0 0 12px 0; font-size: 0.85rem;">
-                Registration form: Full Name, Email, Password, Role selector, and Student/Lecturer ID.
-            </p>
-            <span class="vg-pill" style="font-size: 0.7rem;">Assigned to: Anthony Gudu & Frontend</span>
-        </div>
-
-        <div style="text-align: center; font-size: 0.85rem; color: #52525b;">
-            Already have an account? <a href="login" style="color: #92400e; text-decoration: underline; font-weight: 700;">Sign in here</a>
-        </div>
+        <!-- Footer link -->
+        <p style="text-align:center; font-size:0.85rem; color:#71717a; margin-top:20px;">
+            Already have an account?
+            <a href="login" style="color:#0284c7; font-weight:600; text-decoration:none; margin-left:3px;">Sign in →</a>
+        </p>
     </div>
 </div>
+
+<style>
+    .auth-label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 6px;
+    }
+    .auth-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-family: inherit;
+        color: #0a0a0a;
+        background: #fff;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.14s, box-shadow 0.14s;
+    }
+    .auth-input:focus {
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2,132,199,0.1);
+    }
+    .auth-input::placeholder { color: #9ca3af; }
+    .auth-error {
+        display: block;
+        font-size: 0.78rem;
+        color: #dc2626;
+        margin-top: 4px;
+    }
+    @@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+@code {
+    private int      _step    = 1;
+    private UserRole _role    = UserRole.Student;
+    private bool     _loading = false;
+    private string   _error   = "";
+
+    private RegisterModel _model = new();
+
+    private static readonly (UserRole role, string title, string desc, string icon)[] RoleOptions =
+    {
+        (UserRole.Student,  "Student",
+         "Upload capstone projects and get faculty endorsements.",
+         "<path d='M22 10v6M2 10l10-5 10 5-10 5z'/><path d='M6 12v5c3 3 9 3 12 0v-5'/>"),
+
+        (UserRole.Lecturer, "Lecturer / Academic",
+         "Review student submissions and issue verified credentials.",
+         "<path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/>"),
+
+        (UserRole.Employer, "Employer / Recruiter",
+         "Search and verify graduates before scheduling interviews.",
+         "<rect x='2' y='7' width='20' height='14' rx='2'/><path d='M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16'/>"),
+    };
+
+    private string GetEmailPlaceholder() => _role switch
+    {
+        UserRole.Student  => "student@university.edu.gh",
+        UserRole.Lecturer => "lecturer@university.edu.gh",
+        UserRole.Employer => "you@company.com",
+        _                 => "you@example.com"
+    };
+
+    private async Task HandleRegister()
+    {
+        _loading = true;
+        _error   = "";
+        StateHasChanged();
+
+        var (ok, err) = await Auth.RegisterAsync(new RegisterRequestDto
+        {
+            FullName    = _model.FullName,
+            Email       = _model.Email.Trim(),
+            Password    = _model.Password,
+            Institution = _model.Institution,
+            Department  = _model.Department,
+            StudentId   = _model.StudentId,
+            Role        = _role
+        });
+
+        _loading = false;
+
+        if (ok)
+        {
+            // Auto-login
+            await Auth.LoginAsync(new LoginRequestDto
+            {
+                Email    = _model.Email.Trim(),
+                Password = _model.Password
+            });
+
+            Snackbar.Add($"Welcome to VerifyGH, {_model.FullName.Split(' ')[0]}!", Severity.Success);
+            Navigation.NavigateTo(_role switch
+            {
+                UserRole.Student  => "projects/my",
+                UserRole.Lecturer => "verification",
+                UserRole.Employer => "search",
+                _                 => ""
+            });
+        }
+        else
+        {
+            _error = err ?? "Registration failed. Please try again.";
+            StateHasChanged();
+        }
+    }
+
+    private class RegisterModel
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Full name is required.")]
+        public string FullName { get; set; } = "";
+
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Email is required.")]
+        [System.ComponentModel.DataAnnotations.EmailAddress(ErrorMessage = "Enter a valid email.")]
+        public string Email { get; set; } = "";
+
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Password is required.")]
+        [System.ComponentModel.DataAnnotations.MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
+        public string Password { get; set; } = "";
+
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Please select your institution.")]
+        public string Institution { get; set; } = "";
+
+        public string Department { get; set; } = "";
+        public string StudentId  { get; set; } = "";
+    }
+}

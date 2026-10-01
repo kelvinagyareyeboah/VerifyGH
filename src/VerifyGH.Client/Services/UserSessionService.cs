@@ -80,6 +80,9 @@ public class UserSessionService
     public void Logout()
     {
         _currentSession.IsAuthenticated = false;
+        _currentSession.Name = "Guest";
+        _currentSession.Email = "";
+        _currentSession.Organization = "";
         NotifyStateChanged();
     }
 

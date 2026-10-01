@@ -34,6 +34,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 // 3. Application Services
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 
 // 4. JWT Authentication & Token Validation
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -83,7 +84,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("VerifyGHClientPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5079", "https://localhost:7270")
+        policy.SetIsOriginAllowed(_ => true)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -116,7 +117,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// Only redirect to HTTPS in production; keep HTTP in dev for WASM compatibility
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("VerifyGHClientPolicy");
 
