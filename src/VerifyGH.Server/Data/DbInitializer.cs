@@ -16,7 +16,14 @@ public static class DbInitializer
         var logger      = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DbInitializer");
 
         // ── 1. Ensure database is up to date ──────────────────────────────────
-        await context.Database.MigrateAsync();
+        if (context.Database.IsSqlite())
+        {
+            await context.Database.EnsureCreatedAsync();
+        }
+        else
+        {
+            await context.Database.MigrateAsync();
+        }
 
         // ── 2. Seed Roles ─────────────────────────────────────────────────────
         foreach (var role in Enum.GetNames<UserRole>())
@@ -57,8 +64,8 @@ public static class DbInitializer
 
         // ── 5. Seed Sample Students ───────────────────────────────────────────
         var student1 = await EnsureUser(userManager, logger,
-            email: "kelvin@st.ug.edu.gh",
-            fullName: "Kelvin Yeboah",
+            email: "onlykelvin06@gmail.com",
+            fullName: "Kelvin Agyare Yeboah",
             institution: "University of Ghana",
             department: "BSc Computer Science",
             role: UserRole.Student,

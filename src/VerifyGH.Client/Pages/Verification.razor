@@ -1,106 +1,98 @@
 @page "/verification"
 @inject ISnackbar Snackbar
 @inject UserSessionService Session
+@inject VerificationService VerifySvc
 
 <PageTitle>Supervisor Review Queue — VerifyGH</PageTitle>
 
-<div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
+<div style="display: flex; flex-direction: column; gap: 24px;">
     
-    <!-- Header -->
+    <!-- Page Header -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
         <div>
-            <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--accent); background: rgba(99, 102, 241, 0.12); padding: 4px 10px; border-radius: 6px; margin-bottom: 8px;">
-                Faculty Portal
-            </div>
-            <h1 style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin: 0 0 4px 0; letter-spacing: -0.02em;">
+            <h1 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0 0 4px 0; letter-spacing: -0.02em;">
                 Supervisor Review Queue
             </h1>
-            <p style="color: var(--text-secondary); margin: 0; font-size: 0.9rem;">
+            <p style="color: #64748b; margin: 0; font-size: 0.9rem;">
                 Review student capstone deliverables, inspect code repositories, and certify authentic Ghanaian talent.
             </p>
         </div>
 
-        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 8px 14px; border-radius: 10px; display: flex; align-items: center; gap: 10px;">
-            <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(99, 102, 241, 0.2); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;">
-                MS
-            </div>
+        <div class="supervisor-pill">
+            <div class="supervisor-avatar">MS</div>
             <div style="line-height: 1.25;">
-                <div style="font-size: 0.82rem; font-weight: 700; color: #ffffff;">Dr. Michael Soli</div>
-                <div style="font-size: 0.72rem; color: var(--text-muted);">Dept. of Computer Science, UG</div>
+                <div style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">Dr. Michael Soli</div>
+                <div style="font-size: 0.72rem; color: #64748b;">Dept. of Computer Science, UG</div>
             </div>
         </div>
     </div>
 
     <!-- Quick Stats Metric Cards -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
-        <div class="vg-card" style="padding: 16px 20px; border-left: 3px solid var(--accent-gold);">
-            <div style="font-size: 0.75rem; color: var(--accent-gold); font-weight: 700; text-transform: uppercase;">Awaiting Your Review</div>
-            <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+        <div class="stat-card">
+            <span class="stat-label" style="color: #d97706;">Awaiting Review</span>
+            <span class="stat-value" style="color: #d97706;">
                 @_submissions.Count(s => s.Status == VerificationStatus.Pending)
-            </div>
+            </span>
         </div>
 
-        <div class="vg-card" style="padding: 16px 20px; border-left: 3px solid var(--accent-emerald);">
-            <div style="font-size: 0.75rem; color: var(--accent-emerald); font-weight: 700; text-transform: uppercase;">Verified by You</div>
-            <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+        <div class="stat-card">
+            <span class="stat-label" style="color: #059669;">Verified by You</span>
+            <span class="stat-value" style="color: #059669;">
                 @_submissions.Count(s => s.Status == VerificationStatus.Approved)
-            </div>
+            </span>
         </div>
 
-        <div class="vg-card" style="padding: 16px 20px; border-left: 3px solid var(--accent-rose);">
-            <div style="font-size: 0.75rem; color: var(--accent-rose); font-weight: 700; text-transform: uppercase;">Revisions Requested</div>
-            <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+        <div class="stat-card">
+            <span class="stat-label" style="color: #dc2626;">Revisions Requested</span>
+            <span class="stat-value" style="color: #dc2626;">
                 @_submissions.Count(s => s.Status == VerificationStatus.NeedsRevision)
-            </div>
+            </span>
         </div>
 
-        <div class="vg-card" style="padding: 16px 20px; border-left: 3px solid var(--accent);">
-            <div style="font-size: 0.75rem; color: var(--accent); font-weight: 700; text-transform: uppercase;">Supervised Students</div>
-            <div style="font-size: 1.8rem; font-weight: 800; color: #ffffff; margin-top: 2px;">
+        <div class="stat-card">
+            <span class="stat-label">Total Students</span>
+            <span class="stat-value">
                 @_submissions.Select(s => s.StudentId).Distinct().Count()
-            </div>
+            </span>
         </div>
     </div>
 
-    <!-- Filter Tabs & Search -->
-    <div class="vg-card" style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <!-- Toolbar: Tabs & Search -->
+    <div class="toolbar">
+        <div class="filter-tabs">
             @foreach (var tab in _tabs)
             {
                 var isSelected = _selectedTab == tab.Key;
                 <button type="button" 
-                        @onclick="() => _selectedTab = tab.Key"
-                        style="background: @(isSelected ? "var(--accent)" : "rgba(255,255,255,0.04)");
-                               color: @(isSelected ? "#ffffff" : "var(--text-secondary)");
-                               font-weight: @(isSelected ? "700" : "500");
-                               border: 1px solid @(isSelected ? "var(--accent)" : "var(--border-subtle)");
-                               padding: 6px 14px;
-                               border-radius: 8px;
-                               font-size: 0.82rem;
-                               cursor: pointer;
-                               transition: all 0.15s ease;">
+                        class="filter-tab @(isSelected ? "active" : "")"
+                        @onclick="() => _selectedTab = tab.Key">
                     @tab.Label (@GetTabCount(tab.Key))
                 </button>
             }
         </div>
 
-        <div style="width: 260px;">
-            <MudTextField @bind-Value="_searchQuery"
-                          Placeholder="Filter by student or skill..."
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense"
-                          Immediate="true"
-                          Adornment="Adornment.Start"
-                          AdornmentIcon="@Icons.Material.Filled.Search"
-                          Style="background: rgba(255,255,255,0.03);" />
+        <div class="search-input-wrapper">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" placeholder="Filter by student or skill..."
+                   @bind="_searchQuery" @bind:event="oninput"
+                   class="search-input" />
         </div>
     </div>
 
     <!-- Submissions List -->
     @if (FilteredSubmissions.Count == 0)
     {
-        <div class="vg-placeholder" style="padding: 40px; text-align: center;">
-            <p style="color: var(--text-muted); margin: 0; font-size: 0.9rem;">
+        <div class="empty-state">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <p style="margin: 8px 0 0; font-size: 0.92rem; color: #64748b; font-weight: 500;">
                 No submissions found matching the selected filter.
             </p>
         </div>
@@ -110,24 +102,21 @@
         <div style="display: flex; flex-direction: column; gap: 16px;">
             @foreach (var item in FilteredSubmissions)
             {
-                <div class="vg-card" style="padding: 22px; border-radius: 12px; display: flex; flex-direction: column; gap: 16px;">
-                    
+                <div class="submission-card">
                     <!-- Top Row: Student Profile & Status -->
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
                         
                         <!-- Student Identity -->
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem;">
+                            <div class="student-avatar">
                                 @GetInitial(item.StudentName)
                             </div>
                             <div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    <span style="font-size: 1rem; font-weight: 800; color: #ffffff;">@item.StudentName</span>
-                                    <span style="font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); background: rgba(255,255,255,0.04); padding: 2px 6px; border-radius: 4px;">
-                                        ID: @item.StudentId
-                                    </span>
+                                    <span style="font-size: 0.98rem; font-weight: 700; color: #0f172a;">@item.StudentName</span>
+                                    <span class="student-id-tag">ID: @item.StudentId</span>
                                 </div>
-                                <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px;">
+                                <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">
                                     @item.Program — @item.Institution
                                 </div>
                             </div>
@@ -137,48 +126,41 @@
                         <div>
                             @GetStatusPill(item.Status)
                         </div>
-
                     </div>
 
-                    <!-- Middle: Project Details -->
-                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px;">
-                        <div style="font-size: 1.1rem; font-weight: 700; color: #ffffff; margin-bottom: 6px;">
-                            @item.Title
-                        </div>
-                        <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; margin: 0 0 12px 0;">
-                            @item.Description
-                        </p>
+                    <!-- Project Details -->
+                    <div class="project-details-box">
+                        <h3 class="project-headline">@item.Title</h3>
+                        <p class="project-desc">@item.Description</p>
 
                         <!-- Tech Skills -->
                         <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;">
                             @foreach (var skill in item.Skills)
                             {
-                                <span style="font-size: 0.72rem; background: rgba(99, 102, 241, 0.12); color: var(--accent); border: 1px solid rgba(99, 102, 241, 0.25); padding: 2px 8px; border-radius: 5px; font-weight: 600;">
-                                    @skill
-                                </span>
+                                <span class="skill-pill">@skill</span>
                             }
                         </div>
 
                         <!-- Links -->
-                        <div style="display: flex; gap: 14px; font-size: 0.8rem; border-top: 1px solid var(--border-subtle); padding-top: 10px;">
+                        <div class="deliverables-row">
                             @if (!string.IsNullOrEmpty(item.RepoUrl))
                             {
-                                <a href="@item.RepoUrl" target="_blank" style="color: #ffffff; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='#ffffff'">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                                <a href="@item.RepoUrl" target="_blank" class="deliverable-link">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
                                     </svg>
-                                    GitHub Repo
+                                    <span>GitHub Repository</span>
                                 </a>
                             }
                             @if (!string.IsNullOrEmpty(item.LiveDemoUrl))
                             {
-                                <a href="@item.LiveDemoUrl" target="_blank" style="color: var(--accent-cyan); text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                <a href="@item.LiveDemoUrl" target="_blank" class="deliverable-link" style="color: #0284c7;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="2" y1="12" x2="22" y2="12"/>
+                                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
                                     </svg>
-                                    Live Demo
+                                    <span>Live Demonstration</span>
                                 </a>
                             }
                         </div>
@@ -187,42 +169,32 @@
                     <!-- Bottom Action / Feedback Row -->
                     @if (item.Status == VerificationStatus.Approved)
                     {
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 10px 14px;">
-                            <div style="display: flex; align-items: center; gap: 8px; color: var(--accent-emerald); font-size: 0.82rem; font-weight: 700;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
+                        <div class="status-approved-box">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"/>
                                 </svg>
-                                Verified & Endorsed by Dr. Michael Soli on @item.VerifiedAt?.ToString("MMM dd, yyyy")
+                                <span>Verified &amp; Endorsed by Dr. Michael Soli on @item.VerifiedAt?.ToString("MMM dd, yyyy")</span>
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--accent-emerald); font-weight: 600;">Credential Active</span>
+                            <span style="font-size: 0.75rem; font-weight: 700;">Credential Active</span>
                         </div>
                     }
                     else if (item.Status == VerificationStatus.NeedsRevision)
                     {
-                        <div style="background: rgba(244, 63, 94, 0.08); border: 1px solid rgba(244, 63, 94, 0.25); border-radius: 8px; padding: 10px 14px;">
-                            <div style="font-size: 0.78rem; font-weight: 700; color: var(--accent-rose); margin-bottom: 2px;">Your Revision Note to Student:</div>
-                            <div style="font-size: 0.82rem; color: #fca5a5; font-style: italic;">"@item.Feedback"</div>
+                        <div class="revision-note-box">
+                            <div style="font-size: 0.78rem; font-weight: 700; color: #dc2626; margin-bottom: 2px;">Your Revision Note to Student:</div>
+                            <div style="font-size: 0.84rem; color: #7f1d1d; font-style: italic;">"@item.Feedback"</div>
                         </div>
                     }
                     else
                     {
-                        <!-- Pending: Action Buttons -->
                         <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-                            <MudButton Variant="Variant.Outlined" 
-                                       Color="Color.Error" 
-                                       Size="Size.Small"
-                                       OnClick="() => RequestRevision(item)"
-                                       Style="text-transform: none; border-radius: 8px; font-weight: 600; font-size: 0.82rem;">
+                            <button type="button" class="btn-secondary" @onclick="() => RequestRevisionAsync(item)">
                                 Request Changes
-                            </MudButton>
-
-                            <MudButton Variant="Variant.Filled" 
-                                       Color="Color.Success" 
-                                       Size="Size.Small"
-                                       OnClick="() => EndorseProject(item)"
-                                       Style="background: var(--accent-emerald); color: #080c14; text-transform: none; border-radius: 8px; font-weight: 700; font-size: 0.82rem; padding: 6px 16px;">
-                                ✓ Endorse & Verify
-                            </MudButton>
+                            </button>
+                            <button type="button" class="btn-primary-green" @onclick="() => EndorseProjectAsync(item)">
+                                ✓ Endorse &amp; Certify
+                            </button>
                         </div>
                     }
 
@@ -233,9 +205,249 @@
 
 </div>
 
+<style>
+    .supervisor-pill {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 6px 14px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .supervisor-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #e0f2fe;
+        color: #0369a1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.84rem;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .stat-label {
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .stat-value {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+    }
+
+    .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .filter-tabs {
+        display: inline-flex;
+        background: #f1f5f9;
+        padding: 3px;
+        border-radius: 8px;
+        gap: 2px;
+    }
+    .filter-tab {
+        border: none;
+        background: transparent;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.12s ease;
+    }
+    .filter-tab.active {
+        background: #ffffff;
+        color: #0f172a;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .search-input-wrapper svg {
+        position: absolute;
+        left: 10px;
+        color: #94a3b8;
+    }
+    .search-input {
+        padding: 7px 12px 7px 32px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: #ffffff;
+        font-size: 0.84rem;
+        color: #0f172a;
+        outline: none;
+        width: 240px;
+    }
+    .search-input:focus { border-color: #0284c7; }
+
+    .submission-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .student-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #0f172a;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .student-id-tag {
+        font-size: 0.72rem;
+        font-family: 'JetBrains Mono', monospace;
+        color: #64748b;
+        background: #f1f5f9;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+
+    .project-details-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 16px;
+    }
+
+    .project-headline {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0 0 6px 0;
+    }
+
+    .project-desc {
+        color: #475569;
+        font-size: 0.88rem;
+        line-height: 1.5;
+        margin: 0 0 12px 0;
+    }
+
+    .skill-pill {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #334155;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 3px 8px;
+        border-radius: 5px;
+    }
+
+    .deliverables-row {
+        display: flex;
+        gap: 16px;
+        font-size: 0.82rem;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 12px;
+    }
+
+    .deliverable-link {
+        color: #0f172a;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+    }
+    .deliverable-link:hover { text-decoration: underline; }
+
+    .status-approved-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #dcfce7;
+        border: 1px solid #bbf7d0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        color: #15803d;
+        font-size: 0.84rem;
+        font-weight: 600;
+    }
+
+    .revision-note-box {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        padding: 10px 14px;
+    }
+
+    .btn-secondary {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        color: #dc2626;
+        padding: 7px 14px;
+        border-radius: 6px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.12s ease;
+    }
+    .btn-secondary:hover { background: #fef2f2; }
+
+    .btn-primary-green {
+        background: #059669;
+        border: none;
+        color: #ffffff;
+        padding: 7px 16px;
+        border-radius: 6px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity 0.12s ease;
+    }
+    .btn-primary-green:hover { opacity: 0.9; }
+
+    .empty-state {
+        background: #ffffff;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 48px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
+
 @code {
     private string _selectedTab = "All";
     private string _searchQuery = string.Empty;
+    private bool   _loading     = true;
 
     private record TabDef(string Key, string Label);
 
@@ -246,6 +458,59 @@
         new("Approved", "Verified by You"),
         new("NeedsRevision", "Revisions Requested")
     };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await VerifySvc.StartSignalRAsync();
+        var apiProjects = await VerifySvc.GetPendingSubmissionsAsync();
+        if (apiProjects.Count > 0)
+        {
+            _submissions = apiProjects.Select(p => new SubmissionItem
+            {
+                Id          = p.Id,
+                StudentId   = p.StudentId,
+                StudentName = p.StudentName ?? "Unknown",
+                Title       = p.Title,
+                Description = p.Description,
+                RepoUrl     = p.RepositoryUrl,
+                LiveDemoUrl = p.LiveDemoUrl,
+                Skills      = p.Skills,
+                Status      = p.Status,
+                SubmittedAt = p.CreatedAt,
+                VerifiedAt  = p.VerifiedAt,
+                Feedback    = p.LecturerFeedback
+            }).ToList();
+        }
+        // else keep the hardcoded mock list below as fallback
+        _loading = false;
+    }
+
+    private async Task EndorseProjectAsync(SubmissionItem item)
+    {
+        var dto = new VerifyGH.Shared.DTOs.VerifyProjectDto
+        {
+            ProjectId = item.Id,
+            Status    = VerifyGH.Shared.Enums.VerificationStatus.Approved
+        };
+        var (result, error) = await VerifySvc.SubmitReviewAsync(dto);
+        item.Status    = VerifyGH.Shared.Enums.VerificationStatus.Approved;
+        item.VerifiedAt = DateTime.UtcNow;
+        Snackbar.Add(error ?? $"Endorsed '{item.Title}'! Digital credential issued.", error is null ? Severity.Success : Severity.Error);
+    }
+
+    private async Task RequestRevisionAsync(SubmissionItem item)
+    {
+        var dto = new VerifyGH.Shared.DTOs.VerifyProjectDto
+        {
+            ProjectId = item.Id,
+            Status    = VerifyGH.Shared.Enums.VerificationStatus.NeedsRevision,
+            Feedback  = "Please update repository README with setup steps and verify automated unit tests."
+        };
+        var (result, error) = await VerifySvc.SubmitReviewAsync(dto);
+        item.Status   = VerifyGH.Shared.Enums.VerificationStatus.NeedsRevision;
+        item.Feedback = dto.Feedback;
+        Snackbar.Add(error ?? $"Revision request sent to {item.StudentName}.", error is null ? Severity.Warning : Severity.Error);
+    }
 
     public class SubmissionItem
     {
@@ -400,17 +665,17 @@
         switch (status)
         {
             case VerificationStatus.Approved:
-                <span style="font-size: 0.72rem; font-weight: 700; color: var(--accent-emerald); background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); padding: 3px 9px; border-radius: 999px;">
+                <span style="font-size: 0.72rem; font-weight: 700; color: #15803d; background: #dcfce7; padding: 3px 9px; border-radius: 999px;">
                     ✓ VERIFIED
                 </span>
                 break;
             case VerificationStatus.NeedsRevision:
-                <span style="font-size: 0.72rem; font-weight: 700; color: var(--accent-rose); background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.25); padding: 3px 9px; border-radius: 999px;">
+                <span style="font-size: 0.72rem; font-weight: 700; color: #b91c1c; background: #fee2e2; padding: 3px 9px; border-radius: 999px;">
                     REVISION REQUESTED
                 </span>
                 break;
             default:
-                <span style="font-size: 0.72rem; font-weight: 700; color: var(--accent-gold); background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.25); padding: 3px 9px; border-radius: 999px;">
+                <span style="font-size: 0.72rem; font-weight: 700; color: #b45309; background: #fef3c7; padding: 3px 9px; border-radius: 999px;">
                     PENDING REVIEW
                 </span>
                 break;

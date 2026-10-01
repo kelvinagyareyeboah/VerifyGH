@@ -1,70 +1,140 @@
 @page "/projects/my"
-@inject HttpClient Http
+@inject ProjectService ProjectSvc
+@inject UserSessionService Session
+@inject NavigationManager Navigation
 
 <PageTitle>My Projects — VerifyGH</PageTitle>
 
-<div style="display:flex; flex-direction:column; gap:28px;" class="vg-animate-in">
+<div class="projects-container">
 
-    <!-- Header -->
-    <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-        <div>
-            <span class="vg-pill vg-pill-secondary" style="margin-bottom:10px; display:inline-block;">Student Portfolio</span>
-            <h1 class="vg-title-bold" style="font-size:1.75rem; margin:0 0 6px;">My Submissions</h1>
-            <p style="color:var(--text-secondary); margin:0; font-size:0.93rem;">
-                Track review status, read lecturer feedback, and share your verified portfolio.
+    <!-- Hero / Page Header -->
+    <div class="portal-hero">
+        <div class="hero-left">
+            <div class="hero-tag">
+                <span class="pulse-dot"></span>
+                <span>University of Ghana • Student Workspace</span>
+            </div>
+            <h1 class="hero-title">Capstone Submissions &amp; Verification</h1>
+            <p class="hero-desc">
+                Track formal faculty review milestones, review academic feedback, and showcase cryptographically verified digital credentials.
             </p>
         </div>
-        <a href="projects/upload" class="vg-action-link primary-action" style="margin-top:4px;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            New Submission
-        </a>
-    </div>
-
-    <!-- Stats Bar -->
-    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px;">
-        @{
-            var total    = Projects.Count;
-            var approved = Projects.Count(p => p.Status == "Approved");
-            var pending  = Projects.Count(p => p.Status == "Pending");
-            var revision = Projects.Count(p => p.Status == "NeedsRevision");
-        }
-        <div class="vg-card" style="padding:16px 18px; text-align:center;">
-            <div style="font-size:1.6rem; font-weight:800; color:var(--text-primary); letter-spacing:-0.04em;">@total</div>
-            <div class="vg-label" style="margin-top:2px;">Total</div>
-        </div>
-        <div class="vg-card" style="padding:16px 18px; text-align:center;">
-            <div style="font-size:1.6rem; font-weight:800; color:var(--ghana-green); letter-spacing:-0.04em;">@approved</div>
-            <div class="vg-label" style="margin-top:2px;">Approved</div>
-        </div>
-        <div class="vg-card" style="padding:16px 18px; text-align:center;">
-            <div style="font-size:1.6rem; font-weight:800; color:var(--ghana-gold); letter-spacing:-0.04em;">@pending</div>
-            <div class="vg-label" style="margin-top:2px;">Pending</div>
-        </div>
-        <div class="vg-card" style="padding:16px 18px; text-align:center;">
-            <div style="font-size:1.6rem; font-weight:800; color:var(--accent-red); letter-spacing:-0.04em;">@revision</div>
-            <div class="vg-label" style="margin-top:2px;">Needs Revision</div>
+        <div class="hero-actions">
+            <a href="projects/upload" class="hero-cta-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Submit New Capstone</span>
+            </a>
         </div>
     </div>
 
-    <!-- Filter Chips -->
-    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-        @foreach (var f in new[]{ "All", "Approved", "Pending", "Under Review", "NeedsRevision" })
-        {
-            <button type="button"
-                    class="vg-skill-chip @(ActiveFilter == f ? "active" : "")"
-                    @onclick="@(() => ActiveFilter = f)">
-                @(f == "NeedsRevision" ? "Needs Revision" : f)
+    <!-- Metric Stat Cards -->
+    @{
+        var total    = Projects.Count;
+        var approved = Projects.Count(p => p.Status == "Approved");
+        var pending  = Projects.Count(p => p.Status == "Pending" || p.Status == "Under Review");
+        var revision = Projects.Count(p => p.Status == "NeedsRevision" || p.Status == "Rejected");
+    }
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon-wrap neutral">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Total Submissions</span>
+                <span class="stat-value">@total</span>
+                <span class="stat-sub">Across all semesters</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon-wrap success">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <polyline points="9 12 11 14 15 10"/>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Approved &amp; Certified</span>
+                <span class="stat-value highlight-green">@approved</span>
+                <span class="stat-sub">Ready for talent search</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon-wrap warning">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Awaiting Review</span>
+                <span class="stat-value highlight-amber">@pending</span>
+                <span class="stat-sub">In faculty evaluation queue</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon-wrap danger">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Needs Revision</span>
+                <span class="stat-value highlight-red">@revision</span>
+                <span class="stat-sub">Action required by student</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters & Search Toolbar -->
+    <div class="toolbar-card">
+        <div class="filter-tabs">
+            <button type="button" class="filter-tab @(ActiveFilter == "All" ? "active" : "")" @onclick='() => ActiveFilter = "All"'>
+                <span>All Projects</span>
+                <span class="tab-pill">@total</span>
             </button>
-        }
-        <input type="text" placeholder="Search by title or skill..."
-               @bind="SearchQuery" @bind:event="oninput"
-               style="margin-left:auto; padding:6px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.85rem; font-family:inherit; color:var(--text-primary); background:#fff; outline:none; min-width:200px;" />
+            <button type="button" class="filter-tab @(ActiveFilter == "Approved" ? "active" : "")" @onclick='() => ActiveFilter = "Approved"'>
+                <span>Approved</span>
+                <span class="tab-pill green">@approved</span>
+            </button>
+            <button type="button" class="filter-tab @(ActiveFilter == "Pending" ? "active" : "")" @onclick='() => ActiveFilter = "Pending"'>
+                <span>Pending</span>
+                <span class="tab-pill amber">@pending</span>
+            </button>
+            <button type="button" class="filter-tab @(ActiveFilter == "NeedsRevision" ? "active" : "")" @onclick='() => ActiveFilter = "NeedsRevision"'>
+                <span>Revision</span>
+                <span class="tab-pill red">@revision</span>
+            </button>
+        </div>
+
+        <div class="search-input-wrapper">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" placeholder="Filter by title or technology stack..."
+                   @bind="SearchQuery" @bind:event="oninput"
+                   class="search-input" />
+            @if (!string.IsNullOrEmpty(SearchQuery))
+            {
+                <button type="button" class="search-clear-btn" @onclick='() => SearchQuery = ""'>✕</button>
+            }
+        </div>
     </div>
 
-    <!-- Project Cards -->
+    <!-- Project List Cards -->
     @{
         var filtered = Projects
-            .Where(p => ActiveFilter == "All" || p.Status == ActiveFilter)
+            .Where(p => ActiveFilter == "All" || p.Status == ActiveFilter || (ActiveFilter == "Pending" && p.Status == "Under Review"))
             .Where(p => string.IsNullOrWhiteSpace(SearchQuery)
                         || p.Title.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)
                         || p.Skills.Any(s => s.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)))
@@ -73,67 +143,118 @@
 
     @if (filtered.Count == 0)
     {
-        <div class="vg-placeholder">
-            <p style="margin:0; font-size:0.9rem;">No projects match your filter.</p>
+        <div class="empty-state">
+            <div class="empty-icon-wrap">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+            </div>
+            <h3 class="empty-title">No submissions found</h3>
+            <p class="empty-desc">No project submissions match your selected filter or search keyword.</p>
+            <button type="button" class="empty-action-btn" @onclick='() => { ActiveFilter = "All"; SearchQuery = ""; }'>
+                Reset Search Filters
+            </button>
         </div>
     }
     else
     {
-        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:16px;" class="vg-stagger">
+        <div class="projects-grid">
             @foreach (var p in filtered)
             {
-                <div class="vg-project-card">
-                    <!-- Card Header -->
-                    <div class="vg-project-card-header">
-                        <div class="vg-author-avatar">@p.Title[0].ToString().ToUpper()</div>
-                        <div style="flex:1; min-width:0;">
-                            <div class="vg-project-card-title">@p.Title</div>
-                            <div class="vg-project-card-date">Submitted @p.Date</div>
+                <div class="project-card">
+                    <!-- Top Category & Status Header -->
+                    <div class="card-header-row">
+                        <div class="dept-badge">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                            <span>Dept. of Computer Science</span>
                         </div>
-                        <span class="vg-badge @GetBadgeClass(p.Status)">@GetStatusLabel(p.Status)</span>
+                        <span class="status-badge @GetBadgeClass(p.Status)">
+                            <span class="status-dot"></span>
+                            <span>@GetStatusLabel(p.Status)</span>
+                        </span>
                     </div>
 
-                    <!-- Supervisor -->
-                    <div class="vg-project-card-supervisor">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        @p.Supervisor
+                    <!-- Main Title & Date -->
+                    <div class="card-main-info">
+                        <h3 class="project-title">@p.Title</h3>
+                        <div class="project-meta-row">
+                            <span class="project-date">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                                <span>Submitted @p.Date</span>
+                            </span>
+                        </div>
                     </div>
 
-                    <!-- Skills -->
-                    <div class="vg-skill-chips">
+                    <!-- Supervisor Info -->
+                    <div class="supervisor-chip">
+                        <div class="supervisor-avatar">
+                            @GetInitials(p.Supervisor)
+                        </div>
+                        <div class="supervisor-text">
+                            <span class="supervisor-role">Faculty Endorser</span>
+                            <span class="supervisor-name">@p.Supervisor</span>
+                        </div>
+                    </div>
+
+                    <!-- Applied Tech / Skills -->
+                    <div class="skills-wrap">
                         @foreach (var sk in p.Skills)
                         {
-                            <span class="vg-skill-chip">@sk</span>
+                            <span class="skill-tag">@sk</span>
                         }
                     </div>
 
-                    <!-- Feedback (if revision) -->
+                    <!-- Lecturer Feedback Callout -->
                     @if ((p.Status == "NeedsRevision" || p.Status == "Rejected") && !string.IsNullOrEmpty(p.Feedback))
                     {
-                        <div style="background:var(--accent-red-bg); border:1px solid var(--accent-red-border); border-radius:var(--radius-sm); padding:10px 12px; font-size:0.82rem; color:var(--accent-red);">
-                            <strong>Lecturer Feedback:</strong> @p.Feedback
+                        <div class="feedback-alert">
+                            <div class="feedback-header">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                                <span>Supervisor Feedback:</span>
+                            </div>
+                            <div class="feedback-body">@p.Feedback</div>
                         </div>
                     }
 
-                    <!-- Action Links -->
-                    <div class="vg-project-card-actions">
+                    <!-- Actions Toolbar -->
+                    <div class="card-actions">
                         @if (!string.IsNullOrEmpty(p.RepoUrl))
                         {
-                            <a href="@p.RepoUrl" target="_blank" class="vg-action-link">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-                                Code
+                            <a href="@p.RepoUrl" target="_blank" class="action-btn-secondary" title="View Source Code on GitHub">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                                </svg>
+                                <span>Code</span>
                             </a>
                         }
                         @if (!string.IsNullOrEmpty(p.LiveDemoUrl))
                         {
-                            <a href="@p.LiveDemoUrl" target="_blank" class="vg-action-link">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                                Demo
+                            <a href="@p.LiveDemoUrl" target="_blank" class="action-btn-secondary" title="Open Live Production Demonstration">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                    <polyline points="15 3 21 3 21 9"/>
+                                    <line x1="10" y1="14" x2="21" y2="3"/>
+                                </svg>
+                                <span>Live Demo</span>
                             </a>
                         }
-                        <a href="credentials" class="vg-action-link" style="margin-left:auto;">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-                            View Badge
+
+                        <a href="credentials" class="badge-cta-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="8" r="7"/>
+                                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                            </svg>
+                            <span>View Digital Badge</span>
                         </a>
                     </div>
                 </div>
@@ -142,27 +263,569 @@
     }
 </div>
 
+<style>
+    .projects-container {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+    /* Hero / Banner */
+    .portal-hero {
+        background: linear-gradient(135deg, #09090b 0%, #1e293b 100%);
+        border-radius: 14px;
+        padding: 24px 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 18px;
+        color: #ffffff;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .hero-left {
+        max-width: 720px;
+    }
+
+    .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #38bdf8;
+        background: rgba(56, 189, 248, 0.12);
+        padding: 3px 9px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+    }
+
+    .pulse-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #38bdf8;
+        box-shadow: 0 0 6px #38bdf8;
+    }
+
+    .hero-title {
+        font-size: 1.55rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin: 0 0 6px 0;
+        color: #ffffff;
+    }
+
+    .hero-desc {
+        color: #94a3b8;
+        margin: 0;
+        font-size: 0.88rem;
+        line-height: 1.45;
+    }
+
+    .hero-cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #ffffff;
+        color: #09090b;
+        padding: 10px 18px;
+        border-radius: 9px;
+        font-size: 0.86rem;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .hero-cta-btn:hover {
+        background: #f8fafc;
+        transform: translateY(-1px);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+        border-color: #cbd5e1;
+    }
+
+    .stat-icon-wrap {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .stat-icon-wrap.neutral { background: #f1f5f9; color: #475569; }
+    .stat-icon-wrap.success { background: #dcfce7; color: #15803d; }
+    .stat-icon-wrap.warning { background: #fef3c7; color: #d97706; }
+    .stat-icon-wrap.danger  { background: #fee2e2; color: #dc2626; }
+
+    .stat-content {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.25;
+    }
+
+    .stat-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+        font-size: 1.55rem;
+        font-weight: 800;
+        color: #09090b;
+        letter-spacing: -0.02em;
+        margin: 2px 0;
+    }
+
+    .stat-sub {
+        font-size: 0.7rem;
+        color: #94a3b8;
+    }
+
+    .highlight-green { color: #059669; }
+    .highlight-amber { color: #d97706; }
+    .highlight-red   { color: #dc2626; }
+
+    /* Toolbar */
+    .toolbar-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .filter-tabs {
+        display: inline-flex;
+        background: #f1f5f9;
+        padding: 4px;
+        border-radius: 9px;
+        gap: 3px;
+    }
+
+    .filter-tab {
+        border: none;
+        background: transparent;
+        padding: 6px 12px;
+        border-radius: 7px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #64748b;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.12s ease;
+    }
+
+    .filter-tab:hover {
+        color: #09090b;
+    }
+
+    .filter-tab.active {
+        background: #ffffff;
+        color: #09090b;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .tab-pill {
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 999px;
+        background: #e2e8f0;
+        color: #475569;
+    }
+
+    .tab-pill.green { background: #dcfce7; color: #15803d; }
+    .tab-pill.amber { background: #fef3c7; color: #b45309; }
+    .tab-pill.red   { background: #fee2e2; color: #b91c1c; }
+
+    .search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-input-wrapper svg {
+        position: absolute;
+        left: 11px;
+        color: #94a3b8;
+    }
+
+    .search-input {
+        padding: 8px 30px 8px 34px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #f8fafc;
+        font-size: 0.84rem;
+        color: #09090b;
+        outline: none;
+        width: 270px;
+        transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .search-input:focus {
+        border-color: #0284c7;
+        background: #ffffff;
+    }
+
+    .search-clear-btn {
+        position: absolute;
+        right: 8px;
+        background: none;
+        border: none;
+        font-size: 0.72rem;
+        color: #94a3b8;
+        cursor: pointer;
+        padding: 3px 6px;
+    }
+
+    /* Projects Grid */
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 18px;
+    }
+
+    .project-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        transition: all 0.18s ease;
+        position: relative;
+    }
+
+    .project-card:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        transform: translateY(-2px);
+    }
+
+    .card-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .dept-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #64748b;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 3px 8px;
+        border-radius: 6px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 999px;
+        white-space: nowrap;
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+    }
+
+    .badge-approved { background: #dcfce7; color: #15803d; }
+    .badge-approved .status-dot { background: #16a34a; }
+
+    .badge-pending { background: #fef3c7; color: #b45309; }
+    .badge-pending .status-dot { background: #f59e0b; }
+
+    .badge-review { background: #e0f2fe; color: #0369a1; }
+    .badge-review .status-dot { background: #0284c7; }
+
+    .badge-revision { background: #fee2e2; color: #b91c1c; }
+    .badge-revision .status-dot { background: #dc2626; }
+
+    .project-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #09090b;
+        margin: 0 0 4px 0;
+        line-height: 1.35;
+    }
+
+    .project-meta-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.74rem;
+        color: #94a3b8;
+    }
+
+    .project-date {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    /* Supervisor Chip */
+    .supervisor-chip {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 8px 10px;
+        background: #f8fafc;
+        border: 1px solid #f1f5f9;
+        border-radius: 8px;
+    }
+
+    .supervisor-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        background: #0f172a;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    .supervisor-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+    }
+
+    .supervisor-role {
+        font-size: 0.65rem;
+        color: #94a3b8;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .supervisor-name {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #334155;
+    }
+
+    /* Skills */
+    .skills-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .skill-tag {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #334155;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        padding: 3px 8px;
+        border-radius: 6px;
+    }
+
+    /* Feedback Alert */
+    .feedback-alert {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .feedback-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        color: #dc2626;
+    }
+
+    .feedback-body {
+        font-size: 0.8rem;
+        color: #991b1b;
+        line-height: 1.35;
+    }
+
+    /* Actions */
+    .card-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-top: 12px;
+        border-top: 1px solid #f1f5f9;
+        margin-top: auto;
+    }
+
+    .action-btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #475569;
+        text-decoration: none;
+        padding: 6px 10px;
+        border-radius: 6px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        transition: all 0.12s ease;
+    }
+
+    .action-btn-secondary:hover {
+        background: #ffffff;
+        color: #09090b;
+        border-color: #cbd5e1;
+    }
+
+    .badge-cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #0284c7;
+        background: #e0f2fe;
+        text-decoration: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        margin-left: auto;
+        transition: all 0.12s ease;
+    }
+
+    .badge-cta-btn:hover {
+        background: #0284c7;
+        color: #ffffff;
+    }
+
+    /* Empty State */
+    .empty-state {
+        background: #ffffff;
+        border: 2px dashed #cbd5e1;
+        border-radius: 14px;
+        padding: 56px 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .empty-icon-wrap {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 4px;
+    }
+
+    .empty-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #09090b;
+        margin: 0;
+    }
+
+    .empty-desc {
+        font-size: 0.86rem;
+        color: #64748b;
+        margin: 0 0 12px 0;
+        max-width: 380px;
+    }
+
+    .empty-action-btn {
+        background: #09090b;
+        color: #ffffff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 7px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+</style>
+
 @code {
     private string ActiveFilter = "All";
     private string SearchQuery  = "";
 
+    // Student: Kelvin Agyare Yeboah — onlykelvin06@gmail.com
     private List<ProjectItem> Projects = new()
     {
-        new("Blockchain Transcript Verification", "Dr. Michael Soli",  "Approved",      "Sept 10, 2025", "https://github.com/", "https://demo.app", new[]{"C#","Blazor","SQL"}),
-        new("AI Lecture Scheduler",               "Dr. Isaac Wiafe",   "Pending",        "Sept 18, 2025", "https://github.com/", "",                 new[]{"Python","ML","REST API"}),
-        new("Campus Bus Tracker",                  "Dr. Ebenezer Owusu","Under Review",  "Aug 28, 2025",  "https://github.com/", "https://demo.app", new[]{"React","TypeScript","SignalR"}),
-        new("E-Hostel Booking System",             "Dr. Jamal-Deen Abdulai","NeedsRevision","Aug 15,2025","https://github.com/","",new[]{"ASP.NET Core","SQL","Docker"},
-            "Please add proper error handling to the payment module and expand the API documentation."),
+        new("Blockchain Transcript Verification", "Dr. Michael Soli",   "Approved",      "Sept 10, 2025", "https://github.com/kelvinagyareyeboah/VerifyGH", "https://verifygh.vercel.app", new[]{"C#","Blazor","SQL Server"}),
+        new("AI Lecture Scheduler",               "Dr. Michael Soli",   "Pending",       "Sept 18, 2025", "https://github.com/kelvinagyareyeboah/ai-scheduler", "",             new[]{"Python","ML","REST API"}),
+        new("Campus Bus Tracker",                 "Dr. Michael Soli",   "Under Review",  "Aug 28, 2025",  "https://github.com/kelvinagyareyeboah/bus-tracker",  "https://demo.app",           new[]{"React","TypeScript","SignalR"}),
+        new("E-Hostel Booking System",            "Dr. Michael Soli",   "NeedsRevision", "Aug 15, 2025",  "https://github.com/kelvinagyareyeboah/hostel-booking", "",            new[]{"ASP.NET Core","SQL","Docker"},
+            "Please add proper error handling to the payment module and expand the API documentation before resubmission."),
     };
 
     private static string GetBadgeClass(string status) => status switch
     {
-        "Approved"     => "vg-badge-approved",
-        "Pending"      => "vg-badge-pending",
-        "Under Review" => "vg-badge-review",
-        "NeedsRevision"=> "vg-badge-revision",
-        "Rejected"     => "vg-badge-revision",
-        _              => "vg-badge-pending"
+        "Approved"      => "badge-approved",
+        "Pending"       => "badge-pending",
+        "Under Review"  => "badge-review",
+        "NeedsRevision" => "badge-revision",
+        "Rejected"      => "badge-revision",
+        _               => "badge-pending"
     };
 
     private static string GetStatusLabel(string status) => status switch
@@ -170,6 +833,14 @@
         "NeedsRevision" => "Needs Revision",
         _ => status
     };
+
+    private static string GetInitials(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "DR";
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 1) return parts[0][0].ToString().ToUpper();
+        return $"{parts[0][0]}{parts[^1][0]}".ToUpper();
+    }
 
     private record ProjectItem(
         string Title, string Supervisor, string Status, string Date,

@@ -1,221 +1,850 @@
 @page "/projects/upload"
+@inject ProjectService ProjectSvc
 @inject NavigationManager Navigation
-@inject HttpClient Http
+@inject ISnackbar Snackbar
 
-<PageTitle>Upload Project — VerifyGH</PageTitle>
+<PageTitle>Submit Capstone Project — VerifyGH</PageTitle>
 
-<div style="display:flex; flex-direction:column; gap:28px; max-width:720px;">
+<div class="upload-container">
 
-    <!-- Header -->
-    <div>
-        <span class="vg-pill vg-pill-secondary" style="margin-bottom:12px; display:inline-block;">Student Portal</span>
-        <h1 class="vg-title-bold" style="font-size:1.75rem; margin:0 0 6px;">Submit a Project</h1>
-        <p style="color:var(--text-secondary); margin:0; font-size:0.95rem;">
-            Upload your capstone work for lecturer endorsement and portfolio display.
+    <!-- Page Header -->
+    <div class="upload-header">
+        <div class="header-breadcrumbs">
+            <a href="projects/my" class="back-link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                <span>Back to My Projects</span>
+            </a>
+            <span class="sep">/</span>
+            <span class="current">Submission Studio</span>
+        </div>
+        <h1 class="header-title">Submit Capstone Deliverables</h1>
+        <p class="header-subtitle">
+            Upload your project deliverables for official University of Ghana faculty review and digital credential issuance.
         </p>
     </div>
 
-    <!-- Form Card -->
-    <div class="vg-card vg-animate-in">
-        <EditForm Model="@model" OnValidSubmit="HandleSubmit">
-            <DataAnnotationsValidator />
-            <div style="display:flex; flex-direction:column; gap:20px;">
+    <!-- Layout Grid: Form (Left) & Guidance Sidebar (Right) -->
+    <div class="studio-layout">
 
-                <!-- Title -->
-                <div>
-                    <label class="vg-label" style="display:block; margin-bottom:6px;">Project Title *</label>
-                    <InputText @bind-Value="model.Title"
-                               placeholder="e.g. Blockchain Transcript Verification System"
-                               style="width:100%; padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.9rem; font-family:inherit; outline:none; color:var(--text-primary); background:#fff; transition:border-color var(--transition-fast);"
-                               @onfocus="@(() => {})" />
-                    <ValidationMessage For="@(() => model.Title)" style="font-size:0.78rem; color:var(--accent-red); margin-top:4px;" />
-                </div>
+        <!-- Form Column -->
+        <div class="form-column">
+            <div class="form-card">
+                <EditForm Model="@model" OnValidSubmit="HandleSubmit">
+                    <DataAnnotationsValidator />
 
-                <!-- Description -->
-                <div>
-                    <label class="vg-label" style="display:block; margin-bottom:6px;">Description *</label>
-                    <InputTextArea @bind-Value="model.Description"
-                                   placeholder="Briefly describe the project, technologies used, and what problem it solves..."
-                                   rows="4"
-                                   style="width:100%; padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.9rem; font-family:inherit; outline:none; resize:vertical; color:var(--text-primary); background:#fff;" />
-                    <ValidationMessage For="@(() => model.Description)" style="font-size:0.78rem; color:var(--accent-red); margin-top:4px;" />
-                </div>
+                    <!-- Section 1: Project Overview -->
+                    <div class="form-section">
+                        <div class="section-title-row">
+                            <span class="step-num">1</span>
+                            <div>
+                                <h3 class="section-heading">Project Overview</h3>
+                                <p class="section-sub">Describe the scope, problem statement, and solution architecture.</p>
+                            </div>
+                        </div>
 
-                <!-- URLs row -->
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-                    <div>
-                        <label class="vg-label" style="display:block; margin-bottom:6px;">GitHub Repository URL</label>
-                        <InputText @bind-Value="model.RepoUrl"
-                                   placeholder="https://github.com/..."
-                                   style="width:100%; padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.88rem; font-family:inherit; outline:none; color:var(--text-primary); background:#fff;" />
+                        <!-- Title -->
+                        <div class="input-group">
+                            <label class="form-label">Project Title <span class="required">*</span></label>
+                            <InputText @bind-Value="model.Title"
+                                       placeholder="e.g. Blockchain Transcript Verification System"
+                                       class="form-input" />
+                            <ValidationMessage For="@(() => model.Title)" class="form-error" />
+                        </div>
+
+                        <!-- Abstract -->
+                        <div class="input-group">
+                            <label class="form-label">Project Abstract &amp; Solution Overview <span class="required">*</span></label>
+                            <InputTextArea @bind-Value="model.Description"
+                                           placeholder="Provide a comprehensive summary of the problem, technologies used, system architecture, and your findings..."
+                                           rows="4"
+                                           class="form-input" />
+                            <div class="input-helper">Minimum 20 characters. Highlight key technical accomplishments.</div>
+                            <ValidationMessage For="@(() => model.Description)" class="form-error" />
+                        </div>
                     </div>
-                    <div>
-                        <label class="vg-label" style="display:block; margin-bottom:6px;">Live Demo URL</label>
-                        <InputText @bind-Value="model.LiveDemoUrl"
-                                   placeholder="https://your-demo.vercel.app"
-                                   style="width:100%; padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.88rem; font-family:inherit; outline:none; color:var(--text-primary); background:#fff;" />
+
+                    <!-- Section 2: Deliverables & Links -->
+                    <div class="form-section">
+                        <div class="section-title-row">
+                            <span class="step-num">2</span>
+                            <div>
+                                <h3 class="section-heading">Code &amp; Live Deliverables</h3>
+                                <p class="section-sub">Provide proof of work for faculty inspection and verification.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid-two-col">
+                            <div class="input-group">
+                                <label class="form-label">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                                    </svg>
+                                    <span>GitHub Repository URL</span>
+                                </label>
+                                <InputText @bind-Value="model.RepoUrl"
+                                           placeholder="https://github.com/username/project"
+                                           class="form-input" />
+                            </div>
+
+                            <div class="input-group">
+                                <label class="form-label">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="2" y1="12" x2="22" y2="12"/>
+                                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                    </svg>
+                                    <span>Live Demonstration URL</span>
+                                </label>
+                                <InputText @bind-Value="model.LiveDemoUrl"
+                                           placeholder="https://my-app.vercel.app"
+                                           class="form-input" />
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="form-label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                </svg>
+                                <span>Capstone Report / PDF Link</span>
+                            </label>
+                            <InputText @bind-Value="model.DocumentUrl"
+                                       placeholder="https://drive.google.com/file/d/... or OneDrive link"
+                                       class="form-input" />
+                        </div>
                     </div>
-                </div>
 
-                <!-- Document URL -->
-                <div>
-                    <label class="vg-label" style="display:block; margin-bottom:6px;">Document / Report URL</label>
-                    <InputText @bind-Value="model.DocumentUrl"
-                               placeholder="https://drive.google.com/..."
-                               style="width:100%; padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.88rem; font-family:inherit; outline:none; color:var(--text-primary); background:#fff;" />
-                </div>
+                    <!-- Section 3: Faculty Supervision -->
+                    <div class="form-section">
+                        <div class="section-title-row">
+                            <span class="step-num">3</span>
+                            <div>
+                                <h3 class="section-heading">Faculty Endorsement &amp; Skills</h3>
+                                <p class="section-sub">Select your assigned supervisor and highlight competencies demonstrated.</p>
+                            </div>
+                        </div>
 
-                <!-- Supervisor Selector -->
-                <div>
-                    <label class="vg-label" style="display:block; margin-bottom:6px;">Supervising Lecturer *</label>
-                    <InputSelect @bind-Value="model.SupervisorName"
-                                 style="width:100%; padding:10px 12px; border:1px solid var(--border-medium); border-radius:var(--radius-sm); font-size:0.9rem; font-family:inherit; outline:none; color:var(--text-primary); background:#fff; cursor:pointer;">
-                        <option value="">— Select a Supervisor —</option>
-                        @foreach (var sv in Supervisors)
-                        {
-                            <option value="@sv">@sv</option>
-                        }
-                    </InputSelect>
-                    <ValidationMessage For="@(() => model.SupervisorName)" style="font-size:0.78rem; color:var(--accent-red); margin-top:4px;" />
-                </div>
+                        <!-- Supervisor -->
+                        <div class="input-group">
+                            <label class="form-label">Supervising Lecturer <span class="required">*</span></label>
+                            <InputSelect @bind-Value="model.SupervisorName" class="form-input select-input">
+                                <option value="">— Select assigned lecturer —</option>
+                                @foreach (var sv in Supervisors)
+                                {
+                                    <option value="@sv">@sv (Dept. of Computer Science, UG)</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => model.SupervisorName)" class="form-error" />
+                        </div>
 
-                <!-- Skill Tags -->
-                <div>
-                    <label class="vg-label" style="display:block; margin-bottom:8px;">Skill Tags</label>
-                    <div class="vg-skill-chips" style="margin-bottom:10px;">
-                        @foreach (var skill in AllSkills)
-                        {
-                            <button type="button"
-                                    class="vg-skill-chip @(SelectedSkills.Contains(skill) ? "active" : "")"
-                                    @onclick="@(() => ToggleSkill(skill))">
-                                @skill
-                            </button>
-                        }
+                        <!-- Applied Skills -->
+                        <div class="input-group">
+                            <label class="form-label">Demonstrated Skills &amp; Stack</label>
+                            <p class="input-helper" style="margin-top: 0;">Click to select technologies applied in this project:</p>
+                            <div class="skill-cloud">
+                                @foreach (var skill in AllSkills)
+                                {
+                                    var active = SelectedSkills.Contains(skill);
+                                    <button type="button"
+                                            class="skill-toggle-btn @(active ? "active" : "")"
+                                            @onclick="@(() => ToggleSkill(skill))">
+                                        @if (active)
+                                        {
+                                            <span class="skill-check">✓</span>
+                                        }
+                                        <span>@skill</span>
+                                    </button>
+                                }
+                            </div>
+                        </div>
                     </div>
-                    @if (SelectedSkills.Count > 0)
+
+                    <!-- Status Messages -->
+                    @if (!string.IsNullOrEmpty(SuccessMessage))
                     {
-                        <p style="font-size:0.78rem; color:var(--text-muted); margin:0;">
-                            Selected: @string.Join(", ", SelectedSkills)
-                        </p>
+                        <div class="status-banner success">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <polyline points="9 12 11 14 15 10"/>
+                            </svg>
+                            <div>
+                                <strong>Submission Received!</strong>
+                                <div>@SuccessMessage</div>
+                            </div>
+                        </div>
                     }
-                </div>
 
-                <!-- Success / Error messages -->
-                @if (!string.IsNullOrEmpty(SuccessMessage))
-                {
-                    <div style="background:var(--ghana-green-bg); border:1px solid var(--ghana-green-border); border-radius:var(--radius-sm); padding:12px 16px; color:var(--ghana-green); font-size:0.88rem; font-weight:600;">
-                        ✓ @SuccessMessage
+                    @if (!string.IsNullOrEmpty(ErrorMessage))
+                    {
+                        <div class="status-banner error">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            <div>@ErrorMessage</div>
+                        </div>
+                    }
+
+                    <!-- Submit Footer -->
+                    <div class="form-footer">
+                        <div class="footer-note">
+                            <span class="required">*</span> Mandatory fields for official faculty evaluation.
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <a href="projects/my" class="btn-cancel">Cancel</a>
+                            <button type="submit" class="btn-submit" disabled="@IsSubmitting">
+                                @if (IsSubmitting)
+                                {
+                                    <span class="spinner"></span>
+                                    <span>Submitting Deliverables...</span>
+                                }
+                                else
+                                {
+                                    <span>Submit for Faculty Endorsement →</span>
+                                }
+                            </button>
+                        </div>
                     </div>
-                }
-                @if (!string.IsNullOrEmpty(ErrorMessage))
-                {
-                    <div style="background:var(--accent-red-bg); border:1px solid var(--accent-red-border); border-radius:var(--radius-sm); padding:12px 16px; color:var(--accent-red); font-size:0.88rem; font-weight:600;">
-                        ✗ @ErrorMessage
-                    </div>
-                }
-
-                <!-- Submit -->
-                <div style="display:flex; align-items:center; justify-content:space-between; padding-top:4px; border-top:1px solid var(--border-subtle);">
-                    <span style="font-size:0.8rem; color:var(--text-muted);">* Required fields</span>
-                    <button type="submit"
-                            class="vg-btn-primary"
-                            disabled="@IsSubmitting"
-                            style="padding:10px 24px; border:none; border-radius:var(--radius-sm); cursor:pointer; font-size:0.9rem; font-family:inherit; display:inline-flex; align-items:center; gap:8px;">
-                        @if (IsSubmitting)
-                        {
-                            <span style="width:14px; height:14px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; display:inline-block;"></span>
-                            <span>Submitting...</span>
-                        }
-                        else
-                        {
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                            <span>Submit Project</span>
-                        }
-                    </button>
-                </div>
-
+                </EditForm>
             </div>
-        </EditForm>
+        </div>
+
+        <!-- Guidance Column (Right) -->
+        <div class="guidance-column">
+
+            <!-- Checklist Card -->
+            <div class="guide-card">
+                <div class="guide-header">
+                    <div class="guide-icon green">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="guide-title">Verification Checklist</h4>
+                        <span class="guide-subtitle">Ensure fast approval</span>
+                    </div>
+                </div>
+                <ul class="guide-list">
+                    <li>
+                        <span class="bullet-check">✓</span>
+                        <span>Public GitHub repository with comprehensive README and setup instructions.</span>
+                    </li>
+                    <li>
+                        <span class="bullet-check">✓</span>
+                        <span>Working live URL (Vercel, Render, Railway, or Azure).</span>
+                    </li>
+                    <li>
+                        <span class="bullet-check">✓</span>
+                        <span>Approved capstone document signed by your advisor.</span>
+                    </li>
+                    <li>
+                        <span class="bullet-check">✓</span>
+                        <span>Realistic tech stack tags matching project implementation.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Workflow Timeline Card -->
+            <div class="guide-card">
+                <div class="guide-header">
+                    <div class="guide-icon blue">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="guide-title">Verification Workflow</h4>
+                        <span class="guide-subtitle">What happens next</span>
+                    </div>
+                </div>
+
+                <div class="workflow-steps">
+                    <div class="step-item">
+                        <div class="step-circle active">1</div>
+                        <div class="step-detail">
+                            <span class="step-name">Submitted</span>
+                            <span class="step-sub">Pushed to lecturer review queue</span>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle">2</div>
+                        <div class="step-detail">
+                            <span class="step-name">Faculty Review</span>
+                            <span class="step-sub">Code inspection &amp; viva alignment</span>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle">3</div>
+                        <div class="step-detail">
+                            <span class="step-name">Digital Credential</span>
+                            <span class="step-sub">Cryptographically signed badge issued</span>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-circle">4</div>
+                        <div class="step-detail">
+                            <span class="step-name">Employer Directory</span>
+                            <span class="step-sub">Indexed in recruiter search engine</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
+
 </div>
 
 <style>
-    @@keyframes spin { to { transform: rotate(360deg); } }
-    input:focus, textarea:focus, select:focus {
-        border-color: var(--ghana-black) !important;
-        box-shadow: 0 0 0 3px rgba(9,9,11,0.06);
+    .upload-container {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Header */
+    .upload-header {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .header-breadcrumbs {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: #0284c7;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    .sep { color: #cbd5e1; }
+    .current { color: #64748b; font-weight: 500; }
+
+    .header-title {
+        font-size: 1.55rem;
+        font-weight: 800;
+        color: #09090b;
+        letter-spacing: -0.025em;
+        margin: 0;
+    }
+
+    .header-subtitle {
+        color: #64748b;
+        margin: 0;
+        font-size: 0.88rem;
+    }
+
+    /* Studio Layout */
+    .studio-layout {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 22px;
+        align-items: flex-start;
+    }
+
+    @@media (max-width: 900px) {
+        .studio-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Form Card */
+    .form-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 26px 28px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .form-section {
+        padding-bottom: 22px;
+        margin-bottom: 22px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .form-section:last-of-type {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+
+    .section-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 4px;
+    }
+
+    .step-num {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: #09090b;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.82rem;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .section-heading {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #09090b;
+        margin: 0;
+    }
+
+    .section-sub {
+        font-size: 0.76rem;
+        color: #64748b;
+        margin: 2px 0 0 0;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .form-label {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #334155;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .form-label svg {
+        color: #64748b;
+    }
+
+    .required {
+        color: #dc2626;
+        font-weight: 700;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        color: #09090b;
+        background: #ffffff;
+        outline: none;
+        box-sizing: border-box;
+        font-family: inherit;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .form-input:focus {
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+    }
+
+    .select-input {
+        cursor: pointer;
+        background-color: #ffffff;
+    }
+
+    .input-helper {
+        font-size: 0.72rem;
+        color: #94a3b8;
+    }
+
+    .form-error {
+        font-size: 0.75rem;
+        color: #dc2626;
+        font-weight: 600;
+    }
+
+    .grid-two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    @@media (max-width: 600px) {
+        .grid-two-col {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Skill Cloud */
+    .skill-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+    }
+
+    .skill-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #475569;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 5px 12px;
+        border-radius: 7px;
+        cursor: pointer;
+        transition: all 0.14s ease;
+    }
+
+    .skill-toggle-btn:hover {
+        background: #f1f5f9;
+        color: #09090b;
+        border-color: #cbd5e1;
+    }
+
+    .skill-toggle-btn.active {
+        background: #09090b;
+        border-color: #09090b;
+        color: #ffffff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .skill-check {
+        font-size: 0.7rem;
+        color: #38bdf8;
+    }
+
+    /* Status Banners */
+    .status-banner {
+        border-radius: 9px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        margin-top: 14px;
+    }
+
+    .status-banner.success {
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #065f46;
+    }
+
+    .status-banner.error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+    }
+
+    /* Form Footer */
+    .form-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 18px;
+        margin-top: 18px;
+        border-top: 1px solid #f1f5f9;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .footer-note {
+        font-size: 0.75rem;
+        color: #94a3b8;
+    }
+
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        padding: 9px 16px;
+        border-radius: 8px;
+        font-size: 0.84rem;
+        font-weight: 600;
+        color: #64748b;
+        background: #f1f5f9;
+        text-decoration: none;
+        transition: all 0.12s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #e2e8f0;
+        color: #09090b;
+    }
+
+    .btn-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #09090b;
+        color: #ffffff;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 8px;
+        font-size: 0.86rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        transition: transform 0.14s ease, opacity 0.14s ease;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-1px);
+        opacity: 0.94;
+    }
+
+    .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Guidance Sidebar */
+    .guidance-column {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .guide-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .guide-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .guide-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .guide-icon.green { background: #ecfdf5; color: #059669; }
+    .guide-icon.blue  { background: #e0f2fe; color: #0284c7; }
+
+    .guide-title {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #09090b;
+        margin: 0;
+    }
+
+    .guide-subtitle {
+        font-size: 0.7rem;
+        color: #94a3b8;
+    }
+
+    .guide-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .guide-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 0.78rem;
+        color: #475569;
+        line-height: 1.4;
+    }
+
+    .bullet-check {
+        color: #059669;
+        font-weight: 800;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
+
+    /* Workflow Steps */
+    .workflow-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .step-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .step-circle {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #f1f5f9;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .step-circle.active {
+        background: #0284c7;
+        color: #ffffff;
+    }
+
+    .step-detail {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+    }
+
+    .step-name {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #09090b;
+    }
+
+    .step-sub {
+        font-size: 0.68rem;
+        color: #94a3b8;
     }
 </style>
 
 @code {
-    private UploadModel model = new();
+    private ProjectUploadModel model = new();
     private bool IsSubmitting = false;
-    private string SuccessMessage = "";
-    private string ErrorMessage  = "";
+    private string? SuccessMessage;
+    private string? ErrorMessage;
 
-    private HashSet<string> SelectedSkills = new();
+    private List<string> SelectedSkills = new();
 
-    private static readonly List<string> Supervisors = new()
+    private readonly List<string> Supervisors = new()
     {
         "Dr. Michael Soli",
         "Dr. Isaac Wiafe",
         "Dr. Ebenezer Owusu",
         "Dr. Jamal-Deen Abdulai",
-        "Dr. Amma Gyamfi",
-        "Prof. Kweku Ewusie"
+        "Dr. Percy Okae"
     };
 
-    private static readonly List<string> AllSkills = new()
+    private readonly List<string> AllSkills = new()
     {
-        "C#", "ASP.NET Core", "Blazor", "SQL", "Entity Framework",
-        "React", "TypeScript", "Python", "Machine Learning",
-        "Docker", "Azure", "SignalR", "REST API", "Git"
+        "C#", ".NET", "Blazor", "SQL Server", "Python",
+        "Machine Learning", "React", "TypeScript", "Docker",
+        "SignalR", "PostgreSQL", "TailwindCSS", "Node.js", "FastAPI"
     };
 
     private void ToggleSkill(string skill)
     {
-        if (!SelectedSkills.Remove(skill))
+        if (SelectedSkills.Contains(skill))
+            SelectedSkills.Remove(skill);
+        else
             SelectedSkills.Add(skill);
     }
 
     private async Task HandleSubmit()
     {
-        IsSubmitting   = true;
-        SuccessMessage = "";
-        ErrorMessage   = "";
-        StateHasChanged();
+        IsSubmitting = true;
+        SuccessMessage = null;
+        ErrorMessage = null;
 
-        // Simulate API call — replace with: await Http.PostAsJsonAsync("api/projects", model)
-        await Task.Delay(1200);
+        var dto = new VerifyGH.Shared.DTOs.CreateProjectDto
+        {
+            Title          = model.Title,
+            Description    = model.Description,
+            RepositoryUrl  = model.RepoUrl,
+            LiveDemoUrl    = model.LiveDemoUrl,
+            DocumentUrl    = model.DocumentUrl,
+            Skills         = SelectedSkills
+            // SupervisorLecturerId is resolved server-side by the logged-in lecturer assignment
+        };
 
-        IsSubmitting   = false;
-        SuccessMessage = $"'{model.Title}' submitted successfully! Awaiting lecturer review.";
+        var (project, error) = await ProjectSvc.CreateProjectAsync(dto);
 
-        // Reset form
-        model          = new();
-        SelectedSkills.Clear();
+        IsSubmitting = false;
 
-        StateHasChanged();
-
-        // Redirect after short delay
-        await Task.Delay(2000);
-        Navigation.NavigateTo("projects/my");
+        if (project is not null)
+        {
+            Snackbar.Add($"'{model.Title}' submitted to {model.SupervisorName} for endorsement!", Severity.Success);
+            model = new();
+            SelectedSkills.Clear();
+            Navigation.NavigateTo("projects/my");
+        }
+        else
+        {
+            ErrorMessage = error ?? "Submission failed. Please try again.";
+        }
     }
 
-    private class UploadModel
+    public class ProjectUploadModel
     {
-        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Project title is required.")]
-        [System.ComponentModel.DataAnnotations.MaxLength(200)]
-        public string Title { get; set; } = "";
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Title is required")]
+        [System.ComponentModel.DataAnnotations.StringLength(150, MinimumLength = 3)]
+        public string Title { get; set; } = string.Empty;
 
-        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Description is required.")]
-        public string Description { get; set; } = "";
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Description is required")]
+        [System.ComponentModel.DataAnnotations.StringLength(2000, MinimumLength = 20, ErrorMessage = "Please provide at least 20 characters")]
+        public string Description { get; set; } = string.Empty;
 
-        public string RepoUrl      { get; set; } = "";
-        public string LiveDemoUrl  { get; set; } = "";
-        public string DocumentUrl  { get; set; } = "";
+        public string? RepoUrl { get; set; }
+        public string? LiveDemoUrl { get; set; }
+        public string? DocumentUrl { get; set; }
 
-        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Please select a supervisor.")]
-        public string SupervisorName { get; set; } = "";
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Please select a supervising lecturer")]
+        public string SupervisorName { get; set; } = string.Empty;
     }
 }

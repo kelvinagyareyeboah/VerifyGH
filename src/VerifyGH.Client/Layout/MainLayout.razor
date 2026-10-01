@@ -10,7 +10,7 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<!-- Mobile Drawer Overlay (click-away to close) -->
+<!-- Mobile Drawer Overlay -->
 <div class="drawer-overlay @(DrawerOpen ? "open" : "")" @onclick="CloseDrawer"></div>
 
 <div class="app-shell">
@@ -20,63 +20,40 @@
 
     <div class="main-viewport">
         <header class="top-header">
-            <!-- Mobile hamburger -->
-            <button class="mobile-menu-btn" @onclick="ToggleDrawer" title="Menu" type="button">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                    <line x1="3" y1="6"  x2="21" y2="6" />
-                    <line x1="3" y1="12" x2="21" y2="12" />
-                    <line x1="3" y1="18" x2="21" y2="18" />
-                </svg>
-            </button>
-            <div class="header-search" @onclick='() => Navigation.NavigateTo("search")' title="Click to search projects & talent">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <span>Search talent, skills, verified projects...</span>
-                <span class="search-kbd">Ctrl K</span>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button class="mobile-menu-btn" @onclick="ToggleDrawer" title="Menu" type="button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="3" y1="6"  x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item">VerifyGH</span>
+                    <span class="breadcrumb-sep">/</span>
+                    <span class="breadcrumb-active">@GetRoleTitle(Session.CurrentRole)</span>
+                </div>
             </div>
 
-            <!-- User Status & Sign Out -->
-            <div style="display: flex; align-items: center; gap: 14px;">
+            <!-- Top Actions -->
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="header-search-box" @onclick='() => Navigation.NavigateTo("search")'>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <span>Search talent, skills, projects...</span>
+                </div>
+
                 @if (Session.IsAuthenticated)
                 {
-                    <!-- Notification Bell -->
-                    <button type="button" class="icon-action-btn" title="Live Notifications" @onclick='() => Snackbar.Add("You are connected to live SignalR updates.", Severity.Info)'>
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                        </svg>
-                        <span class="notification-indicator"></span>
-                    </button>
-
-                    <div class="user-badge">
-                        <div class="user-avatar" style="background: @GetAvatarColor(Session.CurrentRole);">
-                            @GetAvatarInitial(Session.CurrentSession.Name)
-                            <span class="avatar-online-dot"></span>
-                        </div>
-                        <div class="user-info">
-                            <span class="user-name">@Session.CurrentSession.Name</span>
-                            <span class="user-role-badge" style="color: @GetAvatarColor(Session.CurrentRole); background: @GetRoleBg(Session.CurrentRole);">
-                                @Session.CurrentSession.Role.ToString()
-                            </span>
-                        </div>
+                    <div class="role-chip" style="background: @GetRoleBg(Session.CurrentRole); color: @GetRoleColor(Session.CurrentRole);">
+                        @Session.CurrentRole.ToString()
                     </div>
-
-                    <button type="button" class="sign-out-btn" @onclick="HandleSignOut" title="Sign Out of VerifyGH">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                            <polyline points="16 17 21 12 16 7"></polyline>
-                            <line x1="21" y1="12" x2="9" y2="12"></line>
-                        </svg>
-                        <span>Sign Out</span>
-                    </button>
                 }
                 else
                 {
-                    <a href="login" class="sign-out-btn" style="color: #0284c7; text-decoration: none;">
-                        <span>Sign In</span>
-                    </a>
+                    <a href="login" class="login-action-btn">Sign In</a>
                 }
             </div>
         </header>
@@ -98,30 +75,28 @@
         Session.OnChange += StateHasChanged;
     }
 
-    private async Task HandleSignOut()
+    private string GetRoleTitle(UserRole role) => role switch
     {
-        await Auth.LogoutAsync();
-        Snackbar.Add("Signed out successfully.", Severity.Info);
-        Navigation.NavigateTo("login");
-    }
+        UserRole.Student => "Student Portal",
+        UserRole.Lecturer => "Faculty Review",
+        UserRole.Employer => "Talent Search",
+        _ => "Dashboard"
+    };
 
-    private string GetAvatarInitial(string name) => 
-        string.IsNullOrWhiteSpace(name) ? "U" : name[0].ToString().ToUpper();
-
-    private string GetAvatarColor(UserRole role) => role switch
+    private string GetRoleColor(UserRole role) => role switch
     {
-        UserRole.Student => "#0284c7",
-        UserRole.Lecturer => "#0d9488",
-        UserRole.Employer => "#d97706",
-        _ => "#6b7280"
+        UserRole.Student => "#0369a1",
+        UserRole.Lecturer => "#0f766e",
+        UserRole.Employer => "#b45309",
+        _ => "#475569"
     };
 
     private string GetRoleBg(UserRole role) => role switch
     {
-        UserRole.Student => "rgba(2, 132, 199, 0.12)",
-        UserRole.Lecturer => "rgba(13, 148, 136, 0.12)",
-        UserRole.Employer => "rgba(217, 119, 6, 0.12)",
-        _ => "rgba(107, 114, 128, 0.12)"
+        UserRole.Student => "#e0f2fe",
+        UserRole.Lecturer => "#ccfbf1",
+        UserRole.Employer => "#fef3c7",
+        _ => "#f1f5f9"
     };
 
     public void Dispose()

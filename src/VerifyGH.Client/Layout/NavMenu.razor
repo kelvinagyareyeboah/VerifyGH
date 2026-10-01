@@ -5,182 +5,112 @@
 @implements IDisposable
 
 <div class="nav-container">
-    
-    <!-- Brand Header -->
-    <div class="nav-brand">
-        <div class="nav-brand-logo">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+
+    <!-- Brand -->
+    <a href="" class="nav-brand">
+        <div class="brand-logo">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <polyline points="9 12 11 14 15 10"/>
             </svg>
         </div>
         <div>
-            <div class="nav-brand-title">VerifyGH</div>
-            <span style="font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: @GetPortalColor(); background: @GetPortalBg(); padding: 2px 7px; border-radius: 4px; display: inline-block;">
-                @GetPortalBadge()
-            </span>
+            <div class="brand-name">VerifyGH</div>
+            <div class="brand-sub">University of Ghana</div>
         </div>
-    </div>
+    </a>
 
-    <!-- Active User Mini-Profile Card -->
-    <div class="nav-profile-card">
-        <div class="nav-profile-avatar">
-            @GetInitial(Session.CurrentSession.Name)
-        </div>
-        <div style="flex: 1; min-width: 0; line-height: 1.25;">
-            <div class="nav-profile-name">@Session.CurrentSession.Name</div>
-            <div class="nav-profile-org">@Session.CurrentSession.Organization</div>
-        </div>
-    </div>
+    <!-- Nav Links -->
+    <nav class="nav-links">
 
-    <!-- Navigation Menu Items -->
-    <div class="nav-links">
-        
         @if (Session.CurrentRole == UserRole.Student)
         {
-            <div class="nav-section-title">Student Workspace</div>
-
-            <NavLink class="nav-link-btn" href="projects/my" Match="NavLinkMatch.All">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <span style="flex: 1;">My Projects</span>
-                <span style="font-size: 0.7rem; background: rgba(0, 230, 118, 0.2); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-weight: 700;">3</span>
+            <div class="nav-section-label">Student</div>
+            <NavLink class="nav-item" href="projects/my" Match="NavLinkMatch.All">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                <span>My Projects</span>
+                <span class="badge">4</span>
             </NavLink>
-
-            <NavLink class="nav-link-btn" href="projects/upload">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-                <span style="flex: 1;">Upload Project</span>
-                <span style="font-size: 0.7rem; background: rgba(255, 255, 255, 0.08); color: var(--text-secondary); padding: 2px 6px; border-radius: 4px; font-weight: 600;">+ New</span>
+            <NavLink class="nav-item" href="projects/upload">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>Submit Capstone</span>
             </NavLink>
-
-            <NavLink class="nav-link-btn" href="credentials">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="8" r="7"></circle>
-                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-                </svg>
-                <span style="flex: 1;">Verified Badges</span>
-                <span style="font-size: 0.7rem; background: rgba(0, 229, 255, 0.15); color: var(--accent-cyan); padding: 2px 6px; border-radius: 4px; font-weight: 700;">Badge</span>
+            <NavLink class="nav-item" href="credentials">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                <span>Verified Badges</span>
+                <span class="badge green">3</span>
             </NavLink>
         }
         else if (Session.CurrentRole == UserRole.Lecturer)
         {
-            <div class="nav-section-title">Faculty Workspace</div>
-
-            <NavLink class="nav-link-btn" href="verification" Match="NavLinkMatch.All">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                <span style="flex: 1;">Review Queue</span>
-                <span style="font-size: 0.7rem; background: rgba(255, 179, 0, 0.2); color: #ffb300; padding: 2px 6px; border-radius: 4px; font-weight: 700;">2 Pending</span>
+            <div class="nav-section-label">Faculty</div>
+            <NavLink class="nav-item" href="verification" Match="NavLinkMatch.All">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span>Review Queue</span>
+            </NavLink>
+            <NavLink class="nav-item" href="search">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span>Talent Directory</span>
             </NavLink>
         }
         else if (Session.CurrentRole == UserRole.Employer)
         {
-            <div class="nav-section-title">Recruiter Workspace</div>
-
-            <NavLink class="nav-link-btn" href="search" Match="NavLinkMatch.All">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <span style="flex: 1;">Search Talent</span>
-                <span style="font-size: 0.7rem; background: rgba(255, 179, 0, 0.2); color: #ffb300; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Directory</span>
+            <div class="nav-section-label">Recruiter</div>
+            <NavLink class="nav-item" href="search" Match="NavLinkMatch.All">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span>Search Talent</span>
+            </NavLink>
+            <NavLink class="nav-item" href="credentials">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                <span>Verify Credentials</span>
             </NavLink>
         }
 
-        <div class="nav-section-title">Account & System</div>
-
-        <a class="nav-link-btn" href="">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-            <span>Public Home</span>
+        <div class="nav-section-label">General</div>
+        <a class="nav-item" href="">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Home</span>
         </a>
+        <NavLink class="nav-item" href="search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span>Explore</span>
+        </NavLink>
 
+    </nav>
+
+    <!-- User Footer -->
+    <div class="nav-footer">
         @if (Session.IsAuthenticated)
         {
-            <button class="nav-link-btn" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit; color: #ef4444;" @onclick="HandleSignOut" type="button">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-                <span>Sign Out</span>
+            <div class="user-avatar">@GetInitial(Session.CurrentSession.Name)</div>
+            <div class="user-meta">
+                <div class="user-name">@Session.CurrentSession.Name</div>
+                <div class="user-role">@Session.CurrentSession.Role.ToString()</div>
+            </div>
+            <button class="logout-btn" @onclick="HandleSignOut" title="Sign out">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             </button>
         }
         else
         {
-            <NavLink class="nav-link-btn" href="login">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                    <polyline points="10 17 15 12 10 7"></polyline>
-                    <line x1="15" y1="12" x2="3" y2="12"></line>
-                </svg>
-                <span>Sign In</span>
-            </NavLink>
+            <a href="login" class="sign-in-btn">Sign In</a>
         }
-
-    </div>
-
-    <!-- Sidebar Footer -->
-    <div class="nav-footer">
-        <div style="display: flex; align-items: center; gap: 6px;">
-            <span class="nav-status-dot"></span>
-            <span>SignalR Active</span>
-        </div>
-        <span class="vg-mono">v1.0</span>
     </div>
 
 </div>
 
 @code {
-    protected override void OnInitialized()
-    {
-        Session.OnChange += StateHasChanged;
-    }
+    protected override void OnInitialized() => Session.OnChange += StateHasChanged;
 
     private async Task HandleSignOut()
     {
         await Auth.LogoutAsync();
-        Snackbar.Add("Signed out successfully.", Severity.Info);
+        Snackbar.Add("Signed out.", Severity.Info);
         Navigation.NavigateTo("login");
     }
-
-    private string GetPortalBadge() => Session.CurrentRole switch
-    {
-        UserRole.Student => "Student Portal",
-        UserRole.Lecturer => "Faculty Portal",
-        UserRole.Employer => "Employer Portal",
-        _ => "System Portal"
-    };
-
-    private string GetPortalColor() => Session.CurrentRole switch
-    {
-        UserRole.Student => "var(--accent)",
-        UserRole.Lecturer => "var(--accent-cyan)",
-        UserRole.Employer => "#ffb300",
-        _ => "#ffffff"
-    };
-
-    private string GetPortalBg() => Session.CurrentRole switch
-    {
-        UserRole.Student => "rgba(0, 230, 118, 0.15)",
-        UserRole.Lecturer => "rgba(0, 229, 255, 0.15)",
-        UserRole.Employer => "rgba(255, 179, 0, 0.15)",
-        _ => "rgba(255, 255, 255, 0.05)"
-    };
 
     private string GetInitial(string name) =>
         string.IsNullOrWhiteSpace(name) ? "U" : name[0].ToString().ToUpper();
 
-    public void Dispose()
-    {
-        Session.OnChange -= StateHasChanged;
-    }
+    public void Dispose() => Session.OnChange -= StateHasChanged;
 }

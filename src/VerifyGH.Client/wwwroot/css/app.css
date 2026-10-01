@@ -7,55 +7,50 @@
    ========================================================= */
 
 :root {
-    /* Backgrounds */
-    --bg-base:           #ffffff;
-    --bg-surface:        #fafafa;
-    --bg-surface-hover:  #f5f5f4;
+    /* ── Cream + Sea Blue Theme ── */
+    --bg-base:           #faf8f4;   /* warm cream */
+    --bg-surface:        #f5f2ec;   /* slightly darker cream */
+    --bg-surface-hover:  #ede9df;
     --bg-card:           #ffffff;
-    --bg-sidebar:        #fafafa;
+    --bg-sidebar:        #ffffff;
+
+    /* Sea Blue */
+    --sea:               #2a7fba;   /* main sea blue */
+    --sea-dark:          #1d5f8e;
+    --sea-light:         #5fa8d3;
+    --sea-bg:            #eaf4fb;
+    --sea-border:        #b3d9ef;
 
     /* Borders */
-    --border-subtle:     #e5e7eb;
-    --border-medium:     #d1d5db;
-    --border-hover:      #09090b;
+    --border-subtle:     #e8e2d6;
+    --border-medium:     #d6cfc0;
 
     /* Typography */
-    --text-primary:      #09090b;
-    --text-secondary:    #4b5563;
-    --text-muted:        #9ca3af;
+    --text-primary:      #1a1714;
+    --text-secondary:    #4a4540;
+    --text-muted:        #9a9088;
     --text-inverse:      #ffffff;
 
-    /* Ghana Black */
-    --ghana-black:       #09090b;
-
-    /* Ghana Gold */
-    --ghana-gold:        #d97706;
-    --ghana-gold-light:  #fde68a;
-    --ghana-gold-bg:     #fffbeb;
-    --ghana-gold-border: #fcd34d;
-
-    /* Ghana Forest Green */
-    --ghana-green:       #059669;
-    --ghana-green-light: #a7f3d0;
-    --ghana-green-bg:    #ecfdf5;
-    --ghana-green-border:#6ee7b7;
-
-    /* Supporting */
-    --accent-red:        #dc2626;
-    --accent-red-bg:     #fef2f2;
-    --accent-red-border: #fca5a5;
-    --accent-blue:       #2563eb;
-    --accent-blue-bg:    #eff6ff;
-    --accent-blue-border:#93c5fd;
+    /* Status colors */
+    --green:             #1a7a52;
+    --green-bg:          #e8f7f0;
+    --gold:              #b07a1a;
+    --gold-bg:           #fdf4e3;
+    --red:               #c0392b;
+    --red-bg:            #fdecea;
 
     /* Legacy aliases */
-    --primary:           var(--ghana-black);
-    --accent:            var(--ghana-green);
-    --accent-cyan:       var(--accent-blue);
-    --brown-accent:      #92400e;
-    --brown-light:       var(--ghana-gold);
-    --accent-emerald:    var(--ghana-green);
-    --accent-rose:       var(--accent-red);
+    --primary:           var(--sea);
+    --accent:            var(--green);
+    --ghana-black:       #1a1714;
+    --ghana-gold:        var(--gold);
+    --ghana-gold-bg:     var(--gold-bg);
+    --ghana-green:       var(--green);
+    --ghana-green-bg:    var(--green-bg);
+    --accent-red:        var(--red);
+    --accent-red-bg:     var(--red-bg);
+    --accent-blue:       var(--sea);
+    --accent-blue-bg:    var(--sea-bg);
 
     /* Radius */
     --radius-sm:   6px;
@@ -65,16 +60,17 @@
     --radius-pill: 999px;
 
     /* Shadows */
-    --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
-    --shadow-sm: 0 1px 4px rgba(0,0,0,0.07);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-    --shadow-lg: 0 8px 24px rgba(0,0,0,0.10);
+    --shadow-xs: 0 1px 2px rgba(26,23,20,0.06);
+    --shadow-sm: 0 1px 4px rgba(26,23,20,0.08);
+    --shadow-md: 0 4px 12px rgba(26,23,20,0.09);
+    --shadow-lg: 0 8px 24px rgba(26,23,20,0.11);
 
     /* Transitions */
     --transition-fast: 0.12s ease;
     --transition-base: 0.18s ease;
     --transition-slow: 0.28s ease;
 }
+
 
 /* ── Reset & Base ── */
 *, *::before, *::after { box-sizing: border-box; }
@@ -739,3 +735,200 @@ button[style*="background:#09090b"] * {
     .vg-card         { padding: 16px; }
     .vg-project-card { padding: 14px 16px; }
 }
+
+/* ── Sidebar Nav (global so Blazor NavLink .active works) ── */
+.nav-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 14px 12px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 6px 16px 6px;
+    border-bottom: 1px solid #e8e2d6;
+    margin-bottom: 6px;
+    text-decoration: none;
+}
+
+.brand-logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #2a7fba;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.brand-name {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #1a1714;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.brand-sub {
+    font-size: 0.67rem;
+    color: #9a9088;
+    font-weight: 500;
+}
+
+.nav-links {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    overflow-y: auto;
+}
+
+.nav-section-label {
+    font-size: 0.63rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #b0a898;
+    padding: 14px 10px 5px 10px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    color: #6a6258;
+    text-decoration: none;
+    font-size: 0.84rem;
+    font-weight: 500;
+    transition: background 0.12s ease, color 0.12s ease;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+}
+
+.nav-item svg {
+    flex-shrink: 0;
+    color: #b0a898;
+    transition: color 0.12s ease;
+}
+
+.nav-item:hover {
+    background: #f5f2ec;
+    color: #1a1714;
+}
+
+.nav-item:hover svg { color: #2a7fba; }
+
+/* ACTIVE STATE — sea blue */
+.nav-item.active {
+    background: #2a7fba !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(42,127,186,0.25);
+}
+
+.nav-item.active svg { color: #ffffff !important; }
+
+.nav-item.active .badge {
+    background: rgba(255,255,255,0.22) !important;
+    color: #ffffff !important;
+}
+
+.nav-item .badge {
+    margin-left: auto;
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: #f5f2ec;
+    color: #6a6258;
+    padding: 1px 7px;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+
+.nav-item .badge.green {
+    background: #e8f7f0;
+    color: #1a7a52;
+}
+
+/* Footer */
+.nav-footer {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding-top: 14px;
+    border-top: 1px solid #e8e2d6;
+    margin-top: 4px;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #2a7fba;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.user-meta { flex: 1; min-width: 0; }
+
+.user-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #1a1714;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-role { font-size: 0.68rem; color: #9a9088; }
+
+.logout-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #b0a898;
+    padding: 5px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    transition: color 0.12s, background 0.12s;
+    flex-shrink: 0;
+}
+
+.logout-btn:hover { color: #c0392b; background: #fdecea; }
+
+.sign-in-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 8px;
+    background: #2a7fba;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.84rem;
+    font-weight: 600;
+    transition: background 0.12s ease;
+}
+
+.sign-in-btn:hover { background: #1d5f8e; }
+
+
+

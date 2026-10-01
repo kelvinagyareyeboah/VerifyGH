@@ -15,8 +15,20 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
+var isSqlite = connectionString.Contains(".db", StringComparison.OrdinalIgnoreCase)
+               || string.Equals(builder.Configuration["DatabaseProvider"], "Sqlite", StringComparison.OrdinalIgnoreCase);
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+{
+    if (isSqlite)
+    {
+        options.UseSqlite(connectionString);
+    }
+    else
+    {
+        options.UseSqlServer(connectionString);
+    }
+});
 
 // 2. ASP.NET Identity with Password Policies
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
