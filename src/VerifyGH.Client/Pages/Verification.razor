@@ -8,7 +8,7 @@
 <div style="display: flex; flex-direction: column; gap: 24px;">
     
     <!-- Page Header -->
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+    <div class="queue-page-header">
         <div>
             <h1 style="font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0 0 4px 0; letter-spacing: -0.02em;">
                 Supervisor Review Queue
@@ -19,16 +19,16 @@
         </div>
 
         <div class="supervisor-pill">
-            <div class="supervisor-avatar">MS</div>
+            <div class="supervisor-avatar">@GetInitial(Session.CurrentSession.Name)</div>
             <div style="line-height: 1.25;">
-                <div style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">Dr. Michael Soli</div>
-                <div style="font-size: 0.72rem; color: #64748b;">Dept. of Computer Science, UG</div>
+                <div style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">@Session.CurrentSession.Name</div>
+                <div style="font-size: 0.72rem; color: #64748b;">@Session.CurrentSession.Organization</div>
             </div>
         </div>
     </div>
 
     <!-- Quick Stats Metric Cards -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+    <div class="verification-stats-grid">
         <div class="stat-card">
             <span class="stat-label" style="color: #d97706;">Awaiting Review</span>
             <span class="stat-value" style="color: #d97706;">
@@ -104,7 +104,7 @@
             {
                 <div class="submission-card">
                     <!-- Top Row: Student Profile & Status -->
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+                    <div class="submission-header-row">
                         
                         <!-- Student Identity -->
                         <div style="display: flex; align-items: center; gap: 12px;">
@@ -112,7 +112,7 @@
                                 @GetInitial(item.StudentName)
                             </div>
                             <div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                                     <span style="font-size: 0.98rem; font-weight: 700; color: #0f172a;">@item.StudentName</span>
                                     <span class="student-id-tag">ID: @item.StudentId</span>
                                 </div>
@@ -174,9 +174,9 @@
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                                     <polyline points="20 6 9 17 4 12"/>
                                 </svg>
-                                <span>Verified &amp; Endorsed by Dr. Michael Soli on @item.VerifiedAt?.ToString("MMM dd, yyyy")</span>
+                                <span>Verified &amp; Endorsed by @(Session.CurrentSession.Name) on @(item.VerifiedAt?.ToString("MMM dd, yyyy") ?? DateTime.Now.ToString("MMM dd, yyyy"))</span>
                             </div>
-                            <span style="font-size: 0.75rem; font-weight: 700;">Credential Active</span>
+                            <span style="font-size: 0.75rem; font-weight: 700; white-space: nowrap;">Credential Active</span>
                         </div>
                     }
                     else if (item.Status == VerificationStatus.NeedsRevision)
@@ -188,7 +188,7 @@
                     }
                     else
                     {
-                        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                        <div class="card-action-buttons">
                             <button type="button" class="btn-secondary" @onclick="() => RequestRevisionAsync(item)">
                                 Request Changes
                             </button>
@@ -206,6 +206,14 @@
 </div>
 
 <style>
+    .queue-page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
     .supervisor-pill {
         background: #ffffff;
         border: 1px solid #e2e8f0;
@@ -226,6 +234,13 @@
         justify-content: center;
         font-weight: 700;
         font-size: 0.84rem;
+        flex-shrink: 0;
+    }
+
+    .verification-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 14px;
     }
 
     .stat-card {
@@ -315,6 +330,14 @@
         gap: 16px;
     }
 
+    .submission-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
     .student-avatar {
         width: 38px;
         height: 38px;
@@ -326,6 +349,7 @@
         justify-content: center;
         font-weight: 700;
         font-size: 0.9rem;
+        flex-shrink: 0;
     }
 
     .student-id-tag {
@@ -397,6 +421,7 @@
         color: #15803d;
         font-size: 0.84rem;
         font-weight: 600;
+        gap: 8px;
     }
 
     .revision-note-box {
@@ -404,6 +429,13 @@
         border: 1px solid #fecaca;
         border-radius: 8px;
         padding: 10px 14px;
+    }
+
+    .card-action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
     }
 
     .btn-secondary {
@@ -442,6 +474,120 @@
         flex-direction: column;
         align-items: center;
     }
+
+    /* ── Mobile Responsiveness (Lecturer & Admin Portal) ── */
+    @@media (max-width: 768px) {
+        .queue-page-header {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .supervisor-pill {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px 12px;
+        }
+
+        .verification-stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px;
+        }
+
+        .stat-card {
+            padding: 12px 10px;
+            gap: 2px;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+        }
+
+        .toolbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        .filter-tabs {
+            width: 100%;
+            overflow-x: auto;
+            scrollbar-width: none;
+            justify-content: flex-start;
+            padding: 4px;
+            box-sizing: border-box;
+        }
+        .filter-tabs::-webkit-scrollbar { display: none; }
+
+        .filter-tab {
+            white-space: nowrap;
+            flex-shrink: 0;
+            padding: 6px 10px;
+            font-size: 0.78rem;
+        }
+
+        .search-input-wrapper {
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .submission-card {
+            padding: 16px 14px;
+            gap: 14px;
+        }
+
+        .submission-header-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .project-details-box {
+            padding: 12px;
+        }
+
+        .project-headline {
+            font-size: 0.96rem;
+        }
+
+        .project-desc {
+            font-size: 0.84rem;
+        }
+
+        .deliverables-row {
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .status-approved-box {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .card-action-buttons {
+            flex-direction: column;
+            width: 100%;
+            gap: 8px;
+        }
+
+        .btn-secondary, .btn-primary-green {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            box-sizing: border-box;
+        }
+    }
 </style>
 
 @code {
@@ -461,7 +607,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await VerifySvc.StartSignalRAsync();
+        _ = VerifySvc.StartSignalRAsync(); // fire-and-forget so the page never waits on the hub
         var apiProjects = await VerifySvc.GetPendingSubmissionsAsync();
         if (apiProjects.Count > 0)
         {

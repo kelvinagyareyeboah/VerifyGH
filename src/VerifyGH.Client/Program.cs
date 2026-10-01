@@ -29,7 +29,8 @@ builder.Services.AddScoped<VerifyGH.Client.Services.VerificationService>();
 var backendApiUrl = builder.Configuration["BackendUrl"] ?? "https://localhost:7296/";
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri(backendApiUrl)
+    BaseAddress = new Uri(backendApiUrl),
+    Timeout = TimeSpan.FromSeconds(15)
 });
 
 await builder.Build().RunAsync();
