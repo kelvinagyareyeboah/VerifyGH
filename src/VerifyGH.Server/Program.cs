@@ -84,11 +84,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("VerifyGHClientPolicy", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:5079",
-                "https://localhost:7270",
-                "http://localhost:5019",
-                "https://localhost:7296")
+        policy.SetIsOriginAllowed(_ => true)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

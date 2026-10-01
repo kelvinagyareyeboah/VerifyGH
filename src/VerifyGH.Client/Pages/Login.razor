@@ -180,11 +180,12 @@
         if (ok)
         {
             Snackbar.Add("Signed in successfully.", Severity.Success);
-            Navigation.NavigateTo(_role switch
+            Navigation.NavigateTo(Session.CurrentRole switch
             {
                 UserRole.Student  => "projects/my",
                 UserRole.Lecturer => "verification",
                 UserRole.Employer => "search",
+                UserRole.Admin    => "projects/my",
                 _                 => ""
             });
         }
