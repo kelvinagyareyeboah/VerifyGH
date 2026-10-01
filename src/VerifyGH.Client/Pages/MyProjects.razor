@@ -802,6 +802,118 @@
         font-weight: 600;
         cursor: pointer;
     }
+
+    /* ── Mobile Responsiveness (Student Portal) ── */
+    @@media (max-width: 768px) {
+        .projects-container {
+            gap: 16px;
+        }
+
+        .portal-hero {
+            padding: 18px 16px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .hero-title {
+            font-size: 1.3rem;
+            line-height: 1.25;
+        }
+
+        .hero-desc {
+            font-size: 0.82rem;
+        }
+
+        .hero-actions {
+            width: 100%;
+        }
+
+        .hero-cta-btn {
+            width: 100%;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 10px 14px;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px;
+        }
+
+        .stat-card {
+            padding: 12px 10px;
+            gap: 10px;
+        }
+
+        .stat-icon-wrap {
+            width: 36px;
+            height: 36px;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+        }
+
+        .stat-sub {
+            display: none;
+        }
+
+        .toolbar-card {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .filter-tabs {
+            width: 100%;
+            overflow-x: auto;
+            justify-content: flex-start;
+            scrollbar-width: none;
+            padding: 3px;
+        }
+        .filter-tabs::-webkit-scrollbar { display: none; }
+
+        .filter-tab {
+            padding: 6px 10px;
+            font-size: 0.76rem;
+            white-space: nowrap;
+        }
+
+        .search-input-wrapper {
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .projects-grid {
+            grid-template-columns: 1fr !important;
+            gap: 14px;
+        }
+
+        .project-card {
+            padding: 16px;
+        }
+
+        .card-actions {
+            flex-wrap: wrap;
+        }
+
+        .badge-cta-btn {
+            margin-left: 0;
+            width: 100%;
+            justify-content: center;
+            margin-top: 4px;
+        }
+    }
 </style>
 
 @code {

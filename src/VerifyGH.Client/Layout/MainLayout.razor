@@ -62,6 +62,38 @@
             @Body
         </main>
     </div>
+
+    <!-- ── Mobile Bottom Navigation Bar ── -->
+    <nav class="mobile-bottom-nav">
+        <a href="projects/my" class="bottom-nav-item @(IsActive("projects/my") ? "active" : "")">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Projects</span>
+        </a>
+        <a href="projects/upload" class="bottom-nav-item @(IsActive("projects/upload") ? "active" : "")">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="16"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+            <span>Submit</span>
+        </a>
+        <a href="credentials" class="bottom-nav-item @(IsActive("credentials") ? "active" : "")">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <polyline points="9 12 11 14 15 10"/>
+            </svg>
+            <span>Badges</span>
+        </a>
+        <a href="search" class="bottom-nav-item @(IsActive("search") ? "active" : "")">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span>Explore</span>
+        </a>
+    </nav>
 </div>
 
 @code {
@@ -73,6 +105,20 @@
     protected override void OnInitialized()
     {
         Session.OnChange += StateHasChanged;
+        Navigation.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        DrawerOpen = false;
+        StateHasChanged();
+    }
+
+    private bool IsActive(string path)
+    {
+        var relative = Navigation.ToBaseRelativePath(Navigation.Uri).TrimEnd('/');
+        return relative.Equals(path.TrimEnd('/'), StringComparison.OrdinalIgnoreCase)
+               || (string.IsNullOrEmpty(relative) && path == "");
     }
 
     private string GetRoleTitle(UserRole role) => role switch
@@ -102,5 +148,6 @@
     public void Dispose()
     {
         Session.OnChange -= StateHasChanged;
+        Navigation.LocationChanged -= OnLocationChanged;
     }
 }

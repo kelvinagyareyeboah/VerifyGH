@@ -83,7 +83,7 @@
     }
     else
     {
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px;">
+        <div class="candidates-grid">
             @foreach (var c in results)
             {
                 <div class="candidate-card">
@@ -306,8 +306,6 @@
         align-items: center;
         gap: 5px;
     }
-    .footer-action-link:hover { text-decoration: underline; }
-
     .empty-state {
         background: #ffffff;
         border: 1px dashed #cbd5e1;
@@ -317,6 +315,37 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+    }
+
+    .candidates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 16px;
+    }
+
+    /* ── Mobile Responsiveness (Explore & Search) ── */
+    @@media (max-width: 768px) {
+        .candidates-grid {
+            grid-template-columns: 1fr !important;
+            gap: 14px;
+        }
+
+        .search-filter-card {
+            padding: 14px;
+        }
+
+        .dropdown-filter {
+            width: 100%;
+        }
+
+        .candidate-card {
+            padding: 16px 14px;
+        }
+
+        .card-footer {
+            flex-wrap: wrap;
+            gap: 10px;
+        }
     }
 </style>
 

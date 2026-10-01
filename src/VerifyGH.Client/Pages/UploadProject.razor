@@ -762,6 +762,74 @@
         font-size: 0.68rem;
         color: #94a3b8;
     }
+
+    /* ── Mobile Responsiveness (Upload Studio) ── */
+    @@media (max-width: 768px) {
+        .upload-container {
+            gap: 16px;
+        }
+
+        .header-title {
+            font-size: 1.35rem;
+            line-height: 1.25;
+        }
+
+        .header-subtitle {
+            font-size: 0.82rem;
+        }
+
+        .form-card {
+            padding: 18px 14px;
+        }
+
+        .form-section {
+            gap: 14px;
+            padding-bottom: 18px;
+            margin-bottom: 18px;
+        }
+
+        .grid-two-col {
+            grid-template-columns: 1fr !important;
+            gap: 12px;
+        }
+
+        .form-footer {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        .form-footer > div {
+            flex-direction: column;
+            width: 100%;
+            gap: 10px !important;
+        }
+
+        .btn-cancel {
+            width: 100%;
+            justify-content: center;
+            box-sizing: border-box;
+            order: 2;
+            text-align: center;
+        }
+
+        .btn-submit {
+            width: 100%;
+            justify-content: center;
+            box-sizing: border-box;
+            order: 1;
+            padding: 12px 18px;
+            text-align: center;
+        }
+
+        .guidance-column {
+            width: 100%;
+        }
+
+        .guide-card {
+            padding: 16px 14px;
+        }
+    }
 </style>
 
 @code {
