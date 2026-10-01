@@ -7,31 +7,31 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<div style="min-height:100vh; display:flex; flex-direction:column; background:#fff; color:#0a0a0a; font-family:'Plus Jakarta Sans',-apple-system,sans-serif;">
+<div class="public-layout-root">
 
     <!-- ── NAVBAR ── -->
-    <header style="position:sticky; top:0; z-index:100; background:rgba(255,255,255,0.92); backdrop-filter:blur(14px); border-bottom:1px solid #f0f0f0;">
-        <div style="max-width:1200px; margin:0 auto; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between;">
+    <header class="public-navbar">
+        <div class="public-navbar-container">
 
             <!-- Brand -->
-            <a href="" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
-                <div style="width:34px; height:34px; background:#0a0a0a; border-radius:8px; display:flex; align-items:center; justify-content:center;">
+            <a href="" class="brand-link">
+                <div class="brand-icon-box">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </div>
-                <span style="font-size:1.1rem; font-weight:800; color:#0a0a0a; letter-spacing:-0.025em;">VerifyGH</span>
+                <span class="brand-text">VerifyGH</span>
             </a>
 
-            <!-- Links -->
-            <nav style="display:flex; align-items:center; gap:32px;">
-                <a href="#features"   class="lp-nav-link">Features</a>
-                <a href="#how"        class="lp-nav-link">How It Works</a>
-                <a href="#portals"    class="lp-nav-link">Portals</a>
-                <a href="#faq"        class="lp-nav-link">FAQ</a>
+            <!-- Links (Hidden on Mobile) -->
+            <nav class="public-nav-links">
+                <a href="#features" class="lp-nav-link">Features</a>
+                <a href="#how" class="lp-nav-link">How It Works</a>
+                <a href="#portals" class="lp-nav-link">Portals</a>
+                <a href="#faq" class="lp-nav-link">FAQ</a>
             </nav>
 
             <!-- CTAs -->
-            <div style="display:flex; gap:10px; align-items:center;">
-                <a href="login"    class="lp-btn-ghost">Sign In</a>
+            <div class="public-nav-ctas">
+                <a href="login" class="lp-btn-ghost">Sign In</a>
                 <a href="register" class="lp-btn-solid">Get Started →</a>
             </div>
         </div>
@@ -43,49 +43,49 @@
     </main>
 
     <!-- ── FOOTER ── -->
-    <footer style="background:#0a0a0a; color:#fff; padding:64px 28px 36px;">
-        <div style="max-width:1200px; margin:0 auto;">
-            <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:48px; padding-bottom:48px; border-bottom:1px solid #1f1f1f;">
+    <footer class="public-footer">
+        <div class="footer-container">
+            <div class="lp-footer-grid">
 
                 <!-- Brand blurb -->
-                <div>
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
-                        <div style="width:30px; height:30px; background:#fff; border-radius:6px; display:flex; align-items:center; justify-content:center;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <div class="footer-col-main">
+                    <div class="footer-brand">
+                        <div class="footer-brand-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         </div>
-                        <span style="font-weight:800; font-size:1.05rem;">VerifyGH</span>
+                        <span class="footer-brand-title">VerifyGH</span>
                     </div>
-                    <p style="color:#a1a1aa; font-size:0.88rem; line-height:1.65; max-width:280px; margin:0 0 20px;">
-                        Ghana's first faculty-endorsed capstone portfolio platform. Replacing unverified CVs with real, verified proof of work.
+                    <p class="footer-desc">
+                        Ghana's premier faculty-endorsed capstone portfolio platform. Replacing unverified resumes with real, faculty-verified proof of work.
                     </p>
-                    <div style="display:flex; gap:10px;">
-                        <span style="font-size:0.75rem; color:#52525b; background:#18181b; border-radius:5px; padding:4px 10px;">ASP.NET Core</span>
-                        <span style="font-size:0.75rem; color:#52525b; background:#18181b; border-radius:5px; padding:4px 10px;">Blazor WASM</span>
-                        <span style="font-size:0.75rem; color:#52525b; background:#18181b; border-radius:5px; padding:4px 10px;">SignalR</span>
+                    <div class="footer-tags">
+                        <span class="tech-tag">ASP.NET Core</span>
+                        <span class="tech-tag">Blazor WASM</span>
+                        <span class="tech-tag">SignalR</span>
                     </div>
                 </div>
 
-                <div>
-                    <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#52525b; margin-bottom:14px;">Platform</div>
-                    <div style="display:flex; flex-direction:column; gap:10px;">
-                        <a href="projects/my"  class="lp-footer-link">Student Portal</a>
+                <div class="footer-col">
+                    <div class="footer-col-title">Platform</div>
+                    <div class="footer-links">
+                        <a href="projects/my" class="lp-footer-link">Student Portal</a>
                         <a href="verification" class="lp-footer-link">Lecturer Queue</a>
-                        <a href="search"       class="lp-footer-link">Employer Search</a>
-                        <a href="credentials"  class="lp-footer-link">Credentials</a>
+                        <a href="search" class="lp-footer-link">Employer Search</a>
+                        <a href="credentials" class="lp-footer-link">Credentials</a>
                     </div>
                 </div>
 
-                <div>
-                    <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#52525b; margin-bottom:14px;">Account</div>
-                    <div style="display:flex; flex-direction:column; gap:10px;">
-                        <a href="login"    class="lp-footer-link">Sign In</a>
+                <div class="footer-col">
+                    <div class="footer-col-title">Account</div>
+                    <div class="footer-links">
+                        <a href="login" class="lp-footer-link">Sign In</a>
                         <a href="register" class="lp-footer-link">Register</a>
                     </div>
                 </div>
 
-                <div>
-                    <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#52525b; margin-bottom:14px;">Academic</div>
-                    <div style="display:flex; flex-direction:column; gap:10px; color:#71717a; font-size:0.86rem;">
+                <div class="footer-col">
+                    <div class="footer-col-title">Academic</div>
+                    <div class="footer-links-text">
                         <span>DCIT 318 — Semester Project</span>
                         <span>Dept. of Computer Science</span>
                         <span>University of Ghana, Legon</span>
@@ -94,9 +94,9 @@
 
             </div>
 
-            <div style="padding-top:28px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; font-size:0.78rem; color:#52525b;">
+            <div class="footer-bottom">
                 <span>© 2026 VerifyGH — University of Ghana · DCIT 318</span>
-                <span>Built with ASP.NET Core 10 · Blazor WebAssembly · SQL Server · SignalR</span>
+                <span>Supervisors: Dr. Michael Soli &amp; Dr. Isaac Wiafe</span>
             </div>
         </div>
     </footer>
@@ -104,48 +104,231 @@
 </div>
 
 <style>
-    .lp-nav-link {
-        color: #52525b;
+    .public-layout-root {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        background: #faf8f4;
+        color: #1e293b;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* Navbar */
+    .public-navbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(250, 248, 244, 0.95);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid #e7e2d6;
+    }
+    .public-navbar-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .brand-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
         text-decoration: none;
-        font-size: 0.875rem;
+    }
+    .brand-icon-box {
+        width: 34px;
+        height: 34px;
+        background: #2a7fba;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .brand-text {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.025em;
+    }
+    .public-nav-links {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+    }
+    .public-nav-ctas {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .lp-nav-link {
+        color: #475569;
+        text-decoration: none;
+        font-size: 0.88rem;
         font-weight: 600;
         transition: color 0.12s;
     }
-    .lp-nav-link:hover { color: #0a0a0a; }
+    .lp-nav-link:hover {
+        color: #2a7fba;
+    }
 
     .lp-btn-ghost {
-        color: #0a0a0a;
+        color: #0f172a;
         text-decoration: none;
-        font-size: 0.875rem;
+        font-size: 0.86rem;
         font-weight: 600;
         padding: 7px 16px;
         border-radius: 7px;
-        border: 1px solid #e5e5e5;
+        border: 1px solid #dcd7cc;
+        background: #ffffff;
         transition: border-color 0.12s;
     }
-    .lp-btn-ghost:hover { border-color: #a1a1aa; }
+    .lp-btn-ghost:hover {
+        border-color: #94a3b8;
+    }
 
     .lp-btn-solid {
-        background: #0284c7;
-        color: #fff;
+        background: #2a7fba;
+        color: #ffffff;
         text-decoration: none;
-        font-size: 0.875rem;
+        font-size: 0.86rem;
         font-weight: 700;
         padding: 8px 18px;
         border-radius: 7px;
-        transition: opacity 0.12s;
+        transition: background 0.12s;
     }
-    .lp-btn-solid:hover { opacity: 0.82; }
+    .lp-btn-solid:hover {
+        background: #236fa5;
+        color: #ffffff;
+    }
 
+    /* Footer */
+    .public-footer {
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 64px 24px 32px;
+    }
+    .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .lp-footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1.2fr;
+        gap: 40px;
+        padding-bottom: 40px;
+        border-bottom: 1px solid #1e293b;
+    }
+    .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+    .footer-brand-icon {
+        width: 30px;
+        height: 30px;
+        background: #2a7fba;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .footer-brand-title {
+        font-weight: 800;
+        font-size: 1.1rem;
+        color: #ffffff;
+    }
+    .footer-desc {
+        color: #94a3b8;
+        font-size: 0.88rem;
+        line-height: 1.65;
+        max-width: 320px;
+        margin: 0 0 18px;
+    }
+    .footer-tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .tech-tag {
+        font-size: 0.74rem;
+        color: #94a3b8;
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        padding: 4px 10px;
+    }
+    .footer-col-title {
+        font-size: 0.74rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #64748b;
+        margin-bottom: 16px;
+    }
+    .footer-links, .footer-links-text {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .footer-links-text {
+        color: #94a3b8;
+        font-size: 0.86rem;
+        line-height: 1.5;
+    }
     .lp-footer-link {
-        color: #a1a1aa;
+        color: #cbd5e1;
         text-decoration: none;
         font-size: 0.86rem;
         transition: color 0.12s;
     }
-    .lp-footer-link:hover { color: #fff; }
+    .lp-footer-link:hover {
+        color: #38bdf8;
+    }
+    .footer-bottom {
+        padding-top: 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 0.8rem;
+        color: #64748b;
+    }
 
-    @@media (max-width: 768px) {
-        nav { display: none !important; }
+    /* Mobile Responsive Header & Footer */
+    @@media (max-width: 860px) {
+        .public-nav-links {
+            display: none !important;
+        }
+        .public-navbar-container {
+            padding: 0 16px;
+        }
+        .brand-text {
+            font-size: 1.05rem;
+        }
+        .lp-btn-ghost, .lp-btn-solid {
+            padding: 6px 12px;
+            font-size: 0.82rem;
+        }
+        .public-footer {
+            padding: 44px 18px 28px;
+        }
+        .lp-footer-grid {
+            grid-template-columns: 1fr;
+            gap: 28px;
+            padding-bottom: 28px;
+        }
+        .footer-desc {
+            max-width: 100%;
+        }
+        .footer-bottom {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
     }
 </style>
