@@ -30,12 +30,12 @@
             <!-- Role selector -->
             <div style="margin-bottom:24px;">
                 <label style="display:block; font-size:0.78rem; font-weight:600; color:#374151; margin-bottom:8px; letter-spacing:0.01em;">Sign in as</label>
-                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; background:#f9fafb; padding:4px; border-radius:9px; border:1px solid #e5e7eb;">
+                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:4px; background:#f9fafb; padding:4px; border-radius:9px; border:1px solid #e5e7eb;">
                     @foreach (var (role, label, icon) in Roles)
                     {
                         var active = _role == role;
                         <button type="button" @onclick="() => SelectRole(role)"
-                                style="border:none; border-radius:6px; padding:9px 6px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.15s; background:@(active ? "#fff" : "transparent"); color:@(active ? "#0a0a0a" : "#9ca3af"); box-shadow:@(active ? "0 1px 4px rgba(0,0,0,0.08)" : "none");">
+                                style="border:none; border-radius:6px; padding:8px 4px; font-size:0.78rem; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.15s; background:@(active ? "#fff" : "transparent"); color:@(active ? "#0a0a0a" : "#9ca3af"); box-shadow:@(active ? "0 1px 4px rgba(0,0,0,0.08)" : "none");">
                             @label
                         </button>
                     }
@@ -138,6 +138,7 @@
         (UserRole.Student,  "Student",  ""),
         (UserRole.Lecturer, "Lecturer", ""),
         (UserRole.Employer, "Employer", ""),
+        (UserRole.Admin,    "Admin",    ""),
     };
 
     private void SelectRole(UserRole role)
@@ -150,6 +151,7 @@
             UserRole.Student  => "student@university.edu.gh",
             UserRole.Lecturer => "lecturer@university.edu.gh",
             UserRole.Employer => "recruiter@company.com",
+            UserRole.Admin    => "admin@verifygh.edu.gh",
             _                 => "you@example.com"
         };
     }
