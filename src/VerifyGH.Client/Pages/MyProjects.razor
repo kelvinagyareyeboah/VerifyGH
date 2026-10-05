@@ -3,6 +3,8 @@
 @inject UserSessionService Session
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject VerificationService VerifySvc
+@implements IDisposable
 
 <PageTitle>My Projects — VerifyGH</PageTitle>
 
@@ -963,6 +965,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        VerifySvc.OnProjectStatusUpdated += HandleLiveStatusUpdated;
+        VerifySvc.OnNewProjectSubmitted  += HandleLiveNewProject;
+        VerifySvc.OnProjectDeleted       += HandleLiveProjectDeleted;
+
+        _ = VerifySvc.StartSignalRAsync();
+
         try
         {
             var apiProjects = await ProjectSvc.GetProjectsAsync();
@@ -1002,6 +1010,67 @@
         {
             // Fallback gracefully to pre-seeded items
         }
+    }
+
+    private void HandleLiveStatusUpdated(int projectId, string status, string? feedback)
+    {
+        InvokeAsync(() =>
+        {
+            var existing = Projects.FirstOrDefault(p => p.Id == projectId);
+            if (existing is not null)
+            {
+                var idx = Projects.IndexOf(existing);
+                Projects[idx] = existing with
+                {
+                    Status = status,
+                    Feedback = feedback ?? existing.Feedback
+                };
+                StateHasChanged();
+            }
+        });
+    }
+
+    private void HandleLiveNewProject(ProjectDto p)
+    {
+        InvokeAsync(() =>
+        {
+            var existing = Projects.FirstOrDefault(proj => proj.Id == p.Id || proj.Title.Equals(p.Title, StringComparison.OrdinalIgnoreCase));
+            if (existing is null)
+            {
+                Projects.Insert(0, new ProjectItem(
+                    p.Id,
+                    p.Title,
+                    string.IsNullOrEmpty(p.SupervisorName) ? "Dr. Isaac Wiafe" : p.SupervisorName,
+                    p.Status.ToString(),
+                    p.CreatedAt.ToString("MMM dd, yyyy"),
+                    p.RepositoryUrl ?? "",
+                    p.LiveDemoUrl ?? "",
+                    p.Skills.ToArray(),
+                    p.LecturerFeedback ?? ""
+                ));
+                StateHasChanged();
+            }
+        });
+    }
+
+    private void HandleLiveProjectDeleted(int projectId)
+    {
+        InvokeAsync(() =>
+        {
+            var existing = Projects.FirstOrDefault(p => p.Id == projectId);
+            if (existing is not null)
+            {
+                Projects.Remove(existing);
+                StateHasChanged();
+            }
+        });
+    }
+
+    public void Dispose()
+    {
+        VerifySvc.OnProjectStatusUpdated -= HandleLiveStatusUpdated;
+        VerifySvc.OnNewProjectSubmitted  -= HandleLiveNewProject;
+        VerifySvc.OnProjectDeleted       -= HandleLiveProjectDeleted;
     }
 
     private async Task HandleDeleteProject(ProjectItem item)

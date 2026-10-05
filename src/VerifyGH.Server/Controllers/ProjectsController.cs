@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using VerifyGH.Server.Hubs;
 using VerifyGH.Server.Models;
 using VerifyGH.Server.Services;
 using VerifyGH.Shared.DTOs;
@@ -12,12 +14,17 @@ namespace VerifyGH.Server.Controllers;
 public class ProjectsController : ControllerBase
 {
     private readonly IProjectService _projectService;
+    private readonly IHubContext<NotificationHub, INotificationClient> _hubContext;
     private readonly ILogger<ProjectsController> _logger;
 
-    public ProjectsController(IProjectService projectService, ILogger<ProjectsController> logger)
+    public ProjectsController(
+        IProjectService projectService,
+        IHubContext<NotificationHub, INotificationClient> hubContext,
+        ILogger<ProjectsController> logger)
     {
         _projectService = projectService;
-        _logger = logger;
+        _hubContext     = hubContext;
+        _logger         = logger;
     }
 
     // ── GET /api/projects?status=Pending&skill=React ──────────────────────────
@@ -109,6 +116,22 @@ public class ProjectsController : ControllerBase
         if (error is not null)
             return BadRequest(new { message = error });
 
+        if (project is not null)
+        {
+            try
+            {
+                await _hubContext.Clients.All.NewProjectSubmitted(project);
+                await _hubContext.Clients.All.ReceiveNotification(
+                    "New Deliverable Submitted",
+                    $"'{project.Title}' was submitted by {project.StudentName}.",
+                    "info");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to broadcast NewProjectSubmitted via SignalR.");
+            }
+        }
+
         return CreatedAtAction(nameof(GetProjectById), new { id = project!.Id }, project);
     }
 
@@ -171,7 +194,18 @@ public class ProjectsController : ControllerBase
 
         var (success, error) = await _projectService.DeleteProjectAsync(id, requestingUserId);
 
-        if (success) return NoContent();
+        if (success)
+        {
+            try
+            {
+                await _hubContext.Clients.All.ProjectDeleted(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to broadcast ProjectDeleted via SignalR.");
+            }
+            return NoContent();
+        }
 
         return error switch
         {

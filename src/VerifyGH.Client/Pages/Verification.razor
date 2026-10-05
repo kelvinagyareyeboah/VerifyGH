@@ -2,6 +2,7 @@
 @inject ISnackbar Snackbar
 @inject UserSessionService Session
 @inject VerificationService VerifySvc
+@implements IDisposable
 
 <PageTitle>Supervisor Review Queue — VerifyGH</PageTitle>
 
@@ -607,6 +608,10 @@
 
     protected override async Task OnInitializedAsync()
     {
+        VerifySvc.OnNewProjectSubmitted += HandleLiveNewProject;
+        VerifySvc.OnProjectStatusUpdated += HandleLiveStatusUpdated;
+        VerifySvc.OnProjectDeleted       += HandleLiveProjectDeleted;
+
         _ = VerifySvc.StartSignalRAsync(); // fire-and-forget so the page never waits on the hub
         try
         {
@@ -648,6 +653,68 @@
             // Gracefully keep fallback list
         }
         _loading = false;
+    }
+
+    private void HandleLiveNewProject(ProjectDto p)
+    {
+        InvokeAsync(() =>
+        {
+            var existing = _submissions.FirstOrDefault(s => s.Id == p.Id || s.Title.Equals(p.Title, StringComparison.OrdinalIgnoreCase));
+            if (existing is null)
+            {
+                _submissions.Insert(0, new SubmissionItem
+                {
+                    Id          = p.Id,
+                    StudentId   = p.StudentId,
+                    StudentName = string.IsNullOrEmpty(p.StudentName) ? "Kelvin Agyare Yeboah" : p.StudentName,
+                    Title       = p.Title,
+                    Description = p.Description,
+                    RepoUrl     = p.RepositoryUrl,
+                    LiveDemoUrl = p.LiveDemoUrl,
+                    Skills      = p.Skills,
+                    Status      = p.Status,
+                    SubmittedAt = p.CreatedAt,
+                    VerifiedAt  = p.VerifiedAt,
+                    Feedback    = p.LecturerFeedback
+                });
+                StateHasChanged();
+            }
+        });
+    }
+
+    private void HandleLiveStatusUpdated(int projectId, string status, string? feedback)
+    {
+        InvokeAsync(() =>
+        {
+            var item = _submissions.FirstOrDefault(s => s.Id == projectId);
+            if (item is not null && Enum.TryParse<VerificationStatus>(status, true, out var parsed))
+            {
+                item.Status = parsed;
+                item.Feedback = feedback;
+                if (parsed == VerificationStatus.Approved) item.VerifiedAt = DateTime.UtcNow;
+                StateHasChanged();
+            }
+        });
+    }
+
+    private void HandleLiveProjectDeleted(int projectId)
+    {
+        InvokeAsync(() =>
+        {
+            var item = _submissions.FirstOrDefault(s => s.Id == projectId);
+            if (item is not null)
+            {
+                _submissions.Remove(item);
+                StateHasChanged();
+            }
+        });
+    }
+
+    public void Dispose()
+    {
+        VerifySvc.OnNewProjectSubmitted -= HandleLiveNewProject;
+        VerifySvc.OnProjectStatusUpdated -= HandleLiveStatusUpdated;
+        VerifySvc.OnProjectDeleted       -= HandleLiveProjectDeleted;
     }
 
     private async Task EndorseProjectAsync(SubmissionItem item)

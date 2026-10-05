@@ -17,6 +17,11 @@ public class VerificationService : IAsyncDisposable
 
     private HubConnection? _hubConnection;
 
+    public event Action<ProjectDto>? OnNewProjectSubmitted;
+    public event Action<int, string, string?>? OnProjectStatusUpdated;
+    public event Action<int>? OnProjectDeleted;
+    public event Action<string, string, string>? OnNotificationReceived;
+
     public VerificationService(HttpClient http, ISnackbar snackbar, AuthService auth)
     {
         _http     = http;
@@ -42,17 +47,32 @@ public class VerificationService : IAsyncDisposable
             .WithAutomaticReconnect()
             .Build();
 
-        // Listen for project status changes
-        _hubConnection.On<int, string>("ProjectStatusUpdated", (projectId, newStatus) =>
+        // Listen for new project submissions
+        _hubConnection.On<ProjectDto>("NewProjectSubmitted", project =>
         {
+            OnNewProjectSubmitted?.Invoke(project);
+            _snackbar.Add($"New Deliverable: '{project.Title}' submitted.", Severity.Info);
+        });
+
+        // Listen for project status changes
+        _hubConnection.On<int, string, string?>("ProjectStatusUpdated", (projectId, newStatus, feedback) =>
+        {
+            OnProjectStatusUpdated?.Invoke(projectId, newStatus, feedback);
             _snackbar.Add(
                 $"Project #{projectId} status updated to: {newStatus}",
-                Severity.Info,
-                config =>
-                {
-                    config.VisibleStateDuration = 5000;
-                    config.ShowCloseIcon        = true;
-                });
+                newStatus.Equals("Approved", StringComparison.OrdinalIgnoreCase) ? Severity.Success : Severity.Warning);
+        });
+
+        // Listen for project deletions
+        _hubConnection.On<int>("ProjectDeleted", projectId =>
+        {
+            OnProjectDeleted?.Invoke(projectId);
+        });
+
+        // Listen for general notifications
+        _hubConnection.On<string, string, string>("ReceiveNotification", (title, message, type) =>
+        {
+            OnNotificationReceived?.Invoke(title, message, type);
         });
 
         try

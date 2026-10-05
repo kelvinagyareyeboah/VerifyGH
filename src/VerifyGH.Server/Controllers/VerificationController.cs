@@ -2,6 +2,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using VerifyGH.Server.Hubs;
 using VerifyGH.Server.Models;
 using VerifyGH.Server.Services;
 using VerifyGH.Shared.DTOs;
@@ -14,15 +16,18 @@ public class VerificationController : ControllerBase
 {
     private readonly IProjectService _projectService;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IHubContext<NotificationHub, INotificationClient> _hubContext;
     private readonly ILogger<VerificationController> _logger;
 
     public VerificationController(
         IProjectService projectService,
         UserManager<ApplicationUser> userManager,
+        IHubContext<NotificationHub, INotificationClient> hubContext,
         ILogger<VerificationController> logger)
     {
         _projectService = projectService;
         _userManager    = userManager;
+        _hubContext     = hubContext;
         _logger         = logger;
     }
 
@@ -95,7 +100,26 @@ public class VerificationController : ControllerBase
 
         var (project, error) = await _projectService.ReviewProjectAsync(id, dto, lecturerUserId);
 
-        if (error is null) return Ok(project);
+        if (error is null && project is not null)
+        {
+            try
+            {
+                await _hubContext.Clients.All.ProjectStatusUpdated(
+                    project.Id,
+                    project.Status.ToString(),
+                    project.LecturerFeedback);
+
+                await _hubContext.Clients.All.ReceiveNotification(
+                    "Project Evaluation Updated",
+                    $"'{project.Title}' status is now {project.Status}.",
+                    "info");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to broadcast ProjectStatusUpdated via SignalR.");
+            }
+            return Ok(project);
+        }
 
         return error switch
         {
