@@ -21,6 +21,7 @@ public class VerificationService : IAsyncDisposable
     public event Action<int, string, string?>? OnProjectStatusUpdated;
     public event Action<int>? OnProjectDeleted;
     public event Action<string, string, string>? OnNotificationReceived;
+    public event Action? OnConnectionStatusChanged;
 
     public VerificationService(HttpClient http, ISnackbar snackbar, AuthService auth)
     {
@@ -34,7 +35,7 @@ public class VerificationService : IAsyncDisposable
     /// <summary>Connect to the notifications hub and listen for project status updates.</summary>
     public async Task StartSignalRAsync()
     {
-        if (_hubConnection is not null) return;
+        if (_hubConnection is not null && _hubConnection.State == HubConnectionState.Connected) return;
 
         var token = await _auth.GetTokenAsync();
 
@@ -47,11 +48,15 @@ public class VerificationService : IAsyncDisposable
             .WithAutomaticReconnect()
             .Build();
 
+        _hubConnection.Reconnecting += _ => { OnConnectionStatusChanged?.Invoke(); return Task.CompletedTask; };
+        _hubConnection.Reconnected  += _ => { OnConnectionStatusChanged?.Invoke(); return Task.CompletedTask; };
+        _hubConnection.Closed       += _ => { OnConnectionStatusChanged?.Invoke(); return Task.CompletedTask; };
+
         // Listen for new project submissions
         _hubConnection.On<ProjectDto>("NewProjectSubmitted", project =>
         {
             OnNewProjectSubmitted?.Invoke(project);
-            _snackbar.Add($"New Deliverable: '{project.Title}' submitted.", Severity.Info);
+            _snackbar.Add($"⚡ Real-Time Deliverable: '{project.Title}' submitted.", Severity.Info);
         });
 
         // Listen for project status changes
@@ -78,11 +83,14 @@ public class VerificationService : IAsyncDisposable
         try
         {
             await _hubConnection.StartAsync();
+            Console.WriteLine($"[SignalR] Connected successfully to {_http.BaseAddress}hubs/notifications");
+            OnConnectionStatusChanged?.Invoke();
         }
-        catch
+        catch (Exception ex)
         {
-            // Hub connection is best-effort; silently fail if backend is offline
+            Console.WriteLine($"[SignalR] Connection note: {ex.Message}");
             _hubConnection = null;
+            OnConnectionStatusChanged?.Invoke();
         }
     }
 

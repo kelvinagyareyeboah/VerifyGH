@@ -26,11 +26,19 @@ builder.Services.AddScoped<VerifyGH.Client.Services.ProjectService>();
 builder.Services.AddScoped<VerifyGH.Client.Services.VerificationService>();
 
 // Configure HttpClient pointing to Backend Web API
-var backendApiUrl = builder.Configuration["BackendUrl"] ?? "https://localhost:7296/";
+var configBackend = builder.Configuration["BackendUrl"];
+var isLocalhost = builder.HostEnvironment.BaseAddress.Contains("localhost") || builder.HostEnvironment.BaseAddress.Contains("127.0.0.1");
+
+var backendApiUrl = isLocalhost 
+    ? "http://localhost:5019/" 
+    : (!string.IsNullOrWhiteSpace(configBackend) && !configBackend.Contains("localhost") 
+        ? configBackend 
+        : "https://verifygh-api-lvws.onrender.com/");
+
 builder.Services.AddScoped(sp => new HttpClient
 {
     BaseAddress = new Uri(backendApiUrl),
-    Timeout = TimeSpan.FromSeconds(15)
+    Timeout = TimeSpan.FromSeconds(30)
 });
 
 await builder.Build().RunAsync();
