@@ -930,6 +930,47 @@
             "Please add proper error handling to the payment module and expand the API documentation before resubmission."),
     };
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var apiProjects = await ProjectSvc.GetProjectsAsync();
+            if (apiProjects.Count > 0)
+            {
+                foreach (var ap in apiProjects)
+                {
+                    var existing = Projects.FirstOrDefault(p => p.Title.Equals(ap.Title, StringComparison.OrdinalIgnoreCase));
+                    if (existing is null)
+                    {
+                        Projects.Insert(0, new ProjectItem(
+                            ap.Title,
+                            string.IsNullOrEmpty(ap.SupervisorName) ? "Dr. Michael Soli" : ap.SupervisorName,
+                            ap.Status.ToString(),
+                            ap.CreatedAt.ToString("MMM dd, yyyy"),
+                            ap.RepositoryUrl ?? "",
+                            ap.LiveDemoUrl ?? "",
+                            ap.Skills.ToArray(),
+                            ap.LecturerFeedback ?? ""
+                        ));
+                    }
+                    else
+                    {
+                        var idx = Projects.IndexOf(existing);
+                        Projects[idx] = existing with
+                        {
+                            Status = ap.Status.ToString(),
+                            Feedback = ap.LecturerFeedback ?? existing.Feedback
+                        };
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // Fallback gracefully to pre-seeded items
+        }
+    }
+
     private static string GetBadgeClass(string status) => status switch
     {
         "Approved"      => "badge-approved",

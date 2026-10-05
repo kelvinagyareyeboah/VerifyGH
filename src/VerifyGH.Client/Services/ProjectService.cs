@@ -7,8 +7,30 @@ namespace VerifyGH.Client.Services;
 public class ProjectService
 {
     private readonly HttpClient _http;
+    private readonly AuthService _auth;
 
-    public ProjectService(HttpClient http) => _http = http;
+    public ProjectService(HttpClient http, AuthService auth)
+    {
+        _http = http;
+        _auth = auth;
+    }
+
+    private async Task AttachTokenAsync()
+    {
+        try
+        {
+            var token = await _auth.GetTokenAsync();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _http.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+        }
+        catch
+        {
+            // Ignore if storage is inaccessible
+        }
+    }
 
     // ── GET /api/projects ─────────────────────────────────────────────────────
 
@@ -46,6 +68,7 @@ public class ProjectService
     {
         try
         {
+            await AttachTokenAsync();
             var response = await _http.PostAsJsonAsync("api/projects", dto);
             if (response.IsSuccessStatusCode)
             {

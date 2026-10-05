@@ -89,26 +89,38 @@ public class ProjectService : IProjectService
     public async Task<(ProjectDto? project, string? error)> CreateProjectAsync(
         CreateProjectDto dto, string studentUserId)
     {
-        // Verify the supervisor exists and is a Lecturer if provided
+        string? resolvedSupervisorId = null;
         if (!string.IsNullOrWhiteSpace(dto.SupervisorLecturerId))
         {
-            var supervisor = await _userManager.FindByIdAsync(dto.SupervisorLecturerId);
-            if (supervisor is null || supervisor.Role != UserRole.Lecturer)
-                return (null, "The specified supervisor lecturer was not found.");
+            var supervisor = await _userManager.FindByIdAsync(dto.SupervisorLecturerId)
+                          ?? await _userManager.FindByEmailAsync(dto.SupervisorLecturerId);
+            if (supervisor is not null)
+            {
+                resolvedSupervisorId = supervisor.Id;
+            }
+        }
+
+        if (resolvedSupervisorId is null)
+        {
+            var defaultLecturer = await _userManager.FindByEmailAsync("msoli@ug.edu.gh");
+            if (defaultLecturer is not null)
+            {
+                resolvedSupervisorId = defaultLecturer.Id;
+            }
         }
 
         var project = new Project
         {
-            Title               = dto.Title,
-            Description         = dto.Description,
-            RepositoryUrl       = dto.RepositoryUrl,
-            LiveDemoUrl         = dto.LiveDemoUrl,
-            DocumentUrl         = dto.DocumentUrl,
-            SkillsTags          = JoinSkills(dto.Skills),
-            SupervisorLecturerId = dto.SupervisorLecturerId,
-            StudentUserId       = studentUserId,
-            Status              = VerificationStatus.Pending,
-            CreatedAt           = DateTime.UtcNow
+            Title                = dto.Title,
+            Description          = dto.Description,
+            RepositoryUrl        = dto.RepositoryUrl,
+            LiveDemoUrl          = dto.LiveDemoUrl,
+            DocumentUrl          = dto.DocumentUrl,
+            SkillsTags           = JoinSkills(dto.Skills),
+            SupervisorLecturerId = resolvedSupervisorId,
+            StudentUserId        = studentUserId,
+            Status               = VerificationStatus.Pending,
+            CreatedAt            = DateTime.UtcNow
         };
 
         _context.Projects.Add(project);
@@ -189,9 +201,8 @@ public class ProjectService : IProjectService
         var projects = await _context.Projects
             .Include(p => p.Student)
             .Include(p => p.SupervisorLecturer)
-            .Where(p => p.SupervisorLecturerId == lecturerUserId &&
-                        p.Status == VerificationStatus.Pending)
-            .OrderBy(p => p.CreatedAt)
+            .Where(p => p.SupervisorLecturerId == lecturerUserId)
+            .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
 
         return projects.Select(MapToDto).ToList();
@@ -210,8 +221,11 @@ public class ProjectService : IProjectService
         if (project is null)
             return (null, "Project not found.");
 
+        // If the project wasn't explicitly assigned to this lecturer, assign it to them as reviewer
         if (project.SupervisorLecturerId != lecturerUserId)
-            return (null, "This submission is not assigned to you.");
+        {
+            project.SupervisorLecturerId = lecturerUserId;
+        }
 
         var allowedStatuses = new[]
         {

@@ -68,12 +68,30 @@ public class VerificationService : IAsyncDisposable
 
     public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
 
+    private async Task AttachTokenAsync()
+    {
+        try
+        {
+            var token = await _auth.GetTokenAsync();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _http.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+        }
+        catch
+        {
+            // Ignore if storage is inaccessible
+        }
+    }
+
     // ── GET /api/verification/pending ─────────────────────────────────────────
 
     public async Task<List<ProjectDto>> GetPendingSubmissionsAsync()
     {
         try
         {
+            await AttachTokenAsync();
             return await _http.GetFromJsonAsync<List<ProjectDto>>("api/verification/pending")
                    ?? new List<ProjectDto>();
         }
@@ -89,6 +107,7 @@ public class VerificationService : IAsyncDisposable
     {
         try
         {
+            await AttachTokenAsync();
             var response = await _http.PostAsJsonAsync($"api/verification/{dto.ProjectId}/review", dto);
 
             if (response.IsSuccessStatusCode)

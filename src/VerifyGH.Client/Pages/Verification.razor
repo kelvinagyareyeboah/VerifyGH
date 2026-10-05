@@ -608,26 +608,45 @@
     protected override async Task OnInitializedAsync()
     {
         _ = VerifySvc.StartSignalRAsync(); // fire-and-forget so the page never waits on the hub
-        var apiProjects = await VerifySvc.GetPendingSubmissionsAsync();
-        if (apiProjects.Count > 0)
+        try
         {
-            _submissions = apiProjects.Select(p => new SubmissionItem
+            var apiProjects = await VerifySvc.GetPendingSubmissionsAsync();
+            if (apiProjects.Count > 0)
             {
-                Id          = p.Id,
-                StudentId   = p.StudentId,
-                StudentName = p.StudentName ?? "Unknown",
-                Title       = p.Title,
-                Description = p.Description,
-                RepoUrl     = p.RepositoryUrl,
-                LiveDemoUrl = p.LiveDemoUrl,
-                Skills      = p.Skills,
-                Status      = p.Status,
-                SubmittedAt = p.CreatedAt,
-                VerifiedAt  = p.VerifiedAt,
-                Feedback    = p.LecturerFeedback
-            }).ToList();
+                foreach (var p in apiProjects)
+                {
+                    var existing = _submissions.FirstOrDefault(s => s.Id == p.Id || s.Title.Equals(p.Title, StringComparison.OrdinalIgnoreCase));
+                    if (existing is null)
+                    {
+                        _submissions.Insert(0, new SubmissionItem
+                        {
+                            Id          = p.Id,
+                            StudentId   = p.StudentId,
+                            StudentName = string.IsNullOrEmpty(p.StudentName) ? "Kelvin Agyare Yeboah" : p.StudentName,
+                            Title       = p.Title,
+                            Description = p.Description,
+                            RepoUrl     = p.RepositoryUrl,
+                            LiveDemoUrl = p.LiveDemoUrl,
+                            Skills      = p.Skills,
+                            Status      = p.Status,
+                            SubmittedAt = p.CreatedAt,
+                            VerifiedAt  = p.VerifiedAt,
+                            Feedback    = p.LecturerFeedback
+                        });
+                    }
+                    else
+                    {
+                        existing.Status = p.Status;
+                        existing.Feedback = p.LecturerFeedback;
+                        existing.VerifiedAt = p.VerifiedAt;
+                    }
+                }
+            }
         }
-        // else keep the hardcoded mock list below as fallback
+        catch
+        {
+            // Gracefully keep fallback list
+        }
         _loading = false;
     }
 

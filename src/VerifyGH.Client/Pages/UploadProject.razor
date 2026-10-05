@@ -870,15 +870,21 @@
         SuccessMessage = null;
         ErrorMessage = null;
 
+        var supervisorEmail = model.SupervisorName switch
+        {
+            "Dr. Isaac Wiafe" => "iwiafe@ug.edu.gh",
+            _ => "msoli@ug.edu.gh"
+        };
+
         var dto = new VerifyGH.Shared.DTOs.CreateProjectDto
         {
-            Title          = model.Title,
-            Description    = model.Description,
-            RepositoryUrl  = model.RepoUrl,
-            LiveDemoUrl    = model.LiveDemoUrl,
-            DocumentUrl    = model.DocumentUrl,
-            Skills         = SelectedSkills
-            // SupervisorLecturerId is resolved server-side by the logged-in lecturer assignment
+            Title                = model.Title,
+            Description          = model.Description,
+            RepositoryUrl        = model.RepoUrl,
+            LiveDemoUrl          = model.LiveDemoUrl,
+            DocumentUrl          = model.DocumentUrl,
+            Skills               = SelectedSkills,
+            SupervisorLecturerId = supervisorEmail
         };
 
         var (project, error) = await ProjectSvc.CreateProjectAsync(dto);
