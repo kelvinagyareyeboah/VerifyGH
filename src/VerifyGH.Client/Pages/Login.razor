@@ -30,7 +30,7 @@
             <!-- Role selector -->
             <div style="margin-bottom:24px;">
                 <label style="display:block; font-size:0.78rem; font-weight:600; color:#374151; margin-bottom:8px; letter-spacing:0.01em;">Sign in as</label>
-                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:4px; background:#f9fafb; padding:4px; border-radius:9px; border:1px solid #e5e7eb;">
+                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:4px; background:#f9fafb; padding:4px; border-radius:9px; border:1px solid #e5e7eb;">
                     @foreach (var (role, label, icon) in Roles)
                     {
                         var active = _role == role;
@@ -138,7 +138,6 @@
         (UserRole.Student,  "Student",  ""),
         (UserRole.Lecturer, "Lecturer", ""),
         (UserRole.Employer, "Employer", ""),
-        (UserRole.Admin,    "Admin",    ""),
     };
 
     private void SelectRole(UserRole role)
@@ -151,7 +150,6 @@
             UserRole.Student  => "student@university.edu.gh",
             UserRole.Lecturer => "lecturer@university.edu.gh",
             UserRole.Employer => "recruiter@company.com",
-            UserRole.Admin    => "admin@verifygh.edu.gh",
             _                 => "you@example.com"
         };
     }
@@ -187,7 +185,6 @@
                 UserRole.Student  => "projects/my",
                 UserRole.Lecturer => "verification",
                 UserRole.Employer => "search",
-                UserRole.Admin    => "projects/my",
                 _                 => ""
             });
         }

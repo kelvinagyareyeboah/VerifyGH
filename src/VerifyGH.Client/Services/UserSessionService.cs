@@ -51,9 +51,9 @@ public class UserSessionService
                 _currentSession.Organization = "Hubtel Ghana";
                 break;
             default:
-                _currentSession.Name = "System Administrator";
-                _currentSession.Email = "admin@verifygh.edu.gh";
-                _currentSession.Organization = "VerifyGH Admin";
+                _currentSession.Name = "Kelvin Yeboah";
+                _currentSession.Email = "kelvin@st.ug.edu.gh";
+                _currentSession.Organization = "University of Ghana";
                 break;
         }
 

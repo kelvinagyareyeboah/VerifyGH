@@ -133,14 +133,14 @@
                         <!-- Supervisor -->
                         <div class="input-group">
                             <label class="form-label">Supervising Lecturer <span class="required">*</span></label>
-                            <InputSelect @bind-Value="model.SupervisorName" class="form-input select-input">
+                            <InputSelect @bind-Value="model.SupervisorId" class="form-input select-input">
                                 <option value="">— Select assigned lecturer —</option>
-                                @foreach (var sv in Supervisors)
+                                @foreach (var sv in AvailableLecturers)
                                 {
-                                    <option value="@sv">@sv (Dept. of Computer Science, UG)</option>
+                                    <option value="@sv.Id">@sv.FullName (@sv.Department)</option>
                                 }
                             </InputSelect>
-                            <ValidationMessage For="@(() => model.SupervisorName)" class="form-error" />
+                            <ValidationMessage For="@(() => model.SupervisorId)" class="form-error" />
                         </div>
 
                         <!-- Applied Skills -->
@@ -839,15 +839,52 @@
     private string? ErrorMessage;
 
     private List<string> SelectedSkills = new();
+    private List<SupervisorOptionDto> AvailableLecturers = new();
 
-    private readonly List<string> Supervisors = new()
+    protected override async Task OnInitializedAsync()
     {
-        "Dr. Michael Soli",
-        "Dr. Isaac Wiafe",
-        "Dr. Ebenezer Owusu",
-        "Dr. Jamal-Deen Abdulai",
-        "Dr. Percy Okae"
-    };
+        PopulateDefaultLecturers();
+        try
+        {
+            var list = await ProjectSvc.GetLecturersAsync();
+            if (list.Count > 0)
+            {
+                foreach (var apiLecturer in list)
+                {
+                    var existing = AvailableLecturers.FirstOrDefault(l => 
+                        (!string.IsNullOrEmpty(apiLecturer.Email) && l.Email.Equals(apiLecturer.Email, StringComparison.OrdinalIgnoreCase)) || 
+                        l.FullName.Equals(apiLecturer.FullName, StringComparison.OrdinalIgnoreCase) ||
+                        l.Id == apiLecturer.Id);
+                    if (existing != null)
+                    {
+                        existing.Id = apiLecturer.Id;
+                        existing.FullName = apiLecturer.FullName;
+                        existing.Department = apiLecturer.Department;
+                    }
+                    else
+                    {
+                        AvailableLecturers.Add(apiLecturer);
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // Keep default list
+        }
+    }
+
+    private void PopulateDefaultLecturers()
+    {
+        AvailableLecturers = new List<SupervisorOptionDto>
+        {
+            new() { Id = "msoli@ug.edu.gh", FullName = "Dr. Michael Soli", Department = "Department of Computer Science" },
+            new() { Id = "iwiafe@ug.edu.gh", FullName = "Dr. Isaac Wiafe", Department = "Department of Computer Science" },
+            new() { Id = "eowusu@ug.edu.gh", FullName = "Dr. Ebenezer Owusu", Department = "Department of Computer Science" },
+            new() { Id = "jabdulai@ug.edu.gh", FullName = "Dr. Jamal-Deen Abdulai", Department = "Department of Computer Science" },
+            new() { Id = "pokae@ug.edu.gh", FullName = "Dr. Percy Okae", Department = "Department of Computer Science" }
+        };
+    }
 
     private readonly List<string> AllSkills = new()
     {
@@ -870,11 +907,9 @@
         SuccessMessage = null;
         ErrorMessage = null;
 
-        var supervisorEmail = model.SupervisorName switch
-        {
-            "Dr. Isaac Wiafe" => "iwiafe@ug.edu.gh",
-            _ => "msoli@ug.edu.gh"
-        };
+        var selectedLecturer = AvailableLecturers.FirstOrDefault(l => l.Id == model.SupervisorId);
+        var supervisorDisplayName = selectedLecturer?.FullName ?? "Assigned Supervisor";
+        var supervisorIdOrEmail = selectedLecturer?.Id ?? model.SupervisorId;
 
         var dto = new VerifyGH.Shared.DTOs.CreateProjectDto
         {
@@ -884,7 +919,7 @@
             LiveDemoUrl          = model.LiveDemoUrl,
             DocumentUrl          = model.DocumentUrl,
             Skills               = SelectedSkills,
-            SupervisorLecturerId = supervisorEmail
+            SupervisorLecturerId = supervisorIdOrEmail
         };
 
         var (project, error) = await ProjectSvc.CreateProjectAsync(dto);
@@ -893,7 +928,7 @@
 
         if (project is not null)
         {
-            Snackbar.Add($"'{model.Title}' submitted to {model.SupervisorName} for endorsement!", Severity.Success);
+            Snackbar.Add($"'{model.Title}' submitted to {supervisorDisplayName} for endorsement!", Severity.Success);
             model = new();
             SelectedSkills.Clear();
             Navigation.NavigateTo("projects/my");
@@ -919,6 +954,6 @@
         public string? DocumentUrl { get; set; }
 
         [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Please select a supervising lecturer")]
-        public string SupervisorName { get; set; } = string.Empty;
+        public string SupervisorId { get; set; } = string.Empty;
     }
 }

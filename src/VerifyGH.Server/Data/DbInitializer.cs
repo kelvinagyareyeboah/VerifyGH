@@ -62,6 +62,30 @@ public static class DbInitializer
             role: UserRole.Lecturer,
             password: "Lecturer@123");
 
+        var lecturer3 = await EnsureUser(userManager, logger,
+            email: "eowusu@ug.edu.gh",
+            fullName: "Dr. Ebenezer Owusu",
+            institution: "University of Ghana",
+            department: "Department of Computer Science",
+            role: UserRole.Lecturer,
+            password: "Lecturer@123");
+
+        var lecturer4 = await EnsureUser(userManager, logger,
+            email: "jabdulai@ug.edu.gh",
+            fullName: "Dr. Jamal-Deen Abdulai",
+            institution: "University of Ghana",
+            department: "Department of Computer Science",
+            role: UserRole.Lecturer,
+            password: "Lecturer@123");
+
+        var lecturer5 = await EnsureUser(userManager, logger,
+            email: "pokae@ug.edu.gh",
+            fullName: "Dr. Percy Okae",
+            institution: "University of Ghana",
+            department: "Department of Computer Science",
+            role: UserRole.Lecturer,
+            password: "Lecturer@123");
+
         // ── 5. Seed Sample Students ───────────────────────────────────────────
         var student1 = await EnsureUser(userManager, logger,
             email: "onlykelvin06@gmail.com",

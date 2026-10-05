@@ -201,7 +201,7 @@ public class ProjectService : IProjectService
         var projects = await _context.Projects
             .Include(p => p.Student)
             .Include(p => p.SupervisorLecturer)
-            .Where(p => p.SupervisorLecturerId == lecturerUserId)
+            .Where(p => p.SupervisorLecturerId == lecturerUserId || string.IsNullOrEmpty(p.SupervisorLecturerId))
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
 

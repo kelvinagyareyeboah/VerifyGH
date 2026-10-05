@@ -33,6 +33,35 @@ public class ProjectsController : ControllerBase
         return Ok(projects);
     }
 
+    // ── GET /api/projects/lecturers ───────────────────────────────────────────
+
+    [HttpGet("lecturers")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(List<SupervisorOptionDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetLecturers(
+        [FromServices] Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> userManager)
+    {
+        var lecturers = await userManager.GetUsersInRoleAsync("Lecturer");
+        var list = lecturers.Select(l => new SupervisorOptionDto
+        {
+            Id         = l.Id,
+            FullName   = l.FullName,
+            Email      = l.Email ?? string.Empty,
+            Department = l.Department ?? "Department of Computer Science"
+        }).OrderBy(l => l.FullName).ToList();
+
+        if (list.Count == 0)
+        {
+            list = new List<SupervisorOptionDto>
+            {
+                new() { Id = "soli", FullName = "Dr. Michael Soli", Email = "msoli@ug.edu.gh", Department = "Department of Computer Science" },
+                new() { Id = "wiafe", FullName = "Dr. Isaac Wiafe", Email = "iwiafe@ug.edu.gh", Department = "Department of Computer Science" }
+            };
+        }
+
+        return Ok(list);
+    }
+
     // ── GET /api/projects/{id} ────────────────────────────────────────────────
 
     [HttpGet("{id:int}")]

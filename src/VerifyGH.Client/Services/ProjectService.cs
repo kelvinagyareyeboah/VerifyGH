@@ -48,6 +48,21 @@ public class ProjectService
         }
     }
 
+    // ── GET /api/projects/lecturers ───────────────────────────────────────────
+
+    public async Task<List<SupervisorOptionDto>> GetLecturersAsync()
+    {
+        try
+        {
+            return await _http.GetFromJsonAsync<List<SupervisorOptionDto>>("api/projects/lecturers")
+                   ?? new List<SupervisorOptionDto>();
+        }
+        catch
+        {
+            return new List<SupervisorOptionDto>();
+        }
+    }
+
     // ── GET /api/projects/{id} ────────────────────────────────────────────────
 
     public async Task<ProjectDto?> GetProjectByIdAsync(int id)

@@ -50,3 +50,11 @@ public class VerifyProjectDto
     public VerificationStatus Status { get; set; }
     public string? Feedback { get; set; }
 }
+
+public class SupervisorOptionDto
+{
+    public string Id { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Department { get; set; } = string.Empty;
+}

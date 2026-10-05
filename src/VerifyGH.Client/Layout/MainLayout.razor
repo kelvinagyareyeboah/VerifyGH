@@ -65,7 +65,7 @@
 
     <!-- ── Mobile Bottom Navigation Bar ── -->
     <nav class="mobile-bottom-nav">
-        @if (Session.CurrentRole == UserRole.Lecturer || Session.CurrentRole == UserRole.Admin)
+        @if (Session.CurrentRole == UserRole.Lecturer)
         {
             <a href="verification" class="bottom-nav-item @(IsActive("verification") ? "active" : "")">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -157,7 +157,6 @@
     {
         UserRole.Student  => "Student Portal",
         UserRole.Lecturer => "Faculty Review",
-        UserRole.Admin    => "System Admin",
         UserRole.Employer => "Talent Search",
         _ => "Dashboard"
     };
@@ -166,7 +165,6 @@
     {
         UserRole.Student  => "#0369a1",
         UserRole.Lecturer => "#0f766e",
-        UserRole.Admin    => "#7c3aed",
         UserRole.Employer => "#b45309",
         _ => "#475569"
     };
@@ -175,7 +173,6 @@
     {
         UserRole.Student  => "#e0f2fe",
         UserRole.Lecturer => "#ccfbf1",
-        UserRole.Admin    => "#f3e8ff",
         UserRole.Employer => "#fef3c7",
         _ => "#f1f5f9"
     };
