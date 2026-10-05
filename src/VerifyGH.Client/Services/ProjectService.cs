@@ -128,6 +128,7 @@ public class ProjectService
     {
         try
         {
+            await AttachTokenAsync();
             var response = await _http.DeleteAsync($"api/projects/{id}");
             if (response.IsSuccessStatusCode) return (true, null);
 

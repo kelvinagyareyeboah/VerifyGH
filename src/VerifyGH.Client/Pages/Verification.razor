@@ -610,7 +610,7 @@
         _ = VerifySvc.StartSignalRAsync(); // fire-and-forget so the page never waits on the hub
         try
         {
-            var apiProjects = await VerifySvc.GetPendingSubmissionsAsync();
+            var apiProjects = await VerifySvc.GetPendingSubmissionsAsync(Session.CurrentSession.Email);
             if (apiProjects.Count > 0)
             {
                 foreach (var p in apiProjects)

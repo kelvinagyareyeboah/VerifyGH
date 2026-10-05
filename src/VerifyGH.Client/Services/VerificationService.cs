@@ -87,12 +87,13 @@ public class VerificationService : IAsyncDisposable
 
     // ── GET /api/verification/pending ─────────────────────────────────────────
 
-    public async Task<List<ProjectDto>> GetPendingSubmissionsAsync()
+    public async Task<List<ProjectDto>> GetPendingSubmissionsAsync(string? lecturerEmail = null)
     {
         try
         {
             await AttachTokenAsync();
-            return await _http.GetFromJsonAsync<List<ProjectDto>>("api/verification/pending")
+            var query = !string.IsNullOrWhiteSpace(lecturerEmail) ? $"?lecturer={Uri.EscapeDataString(lecturerEmail)}" : "";
+            return await _http.GetFromJsonAsync<List<ProjectDto>>($"api/verification/pending{query}")
                    ?? new List<ProjectDto>();
         }
         catch

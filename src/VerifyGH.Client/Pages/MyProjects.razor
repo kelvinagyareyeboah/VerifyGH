@@ -2,6 +2,7 @@
 @inject ProjectService ProjectSvc
 @inject UserSessionService Session
 @inject NavigationManager Navigation
+@inject ISnackbar Snackbar
 
 <PageTitle>My Projects — VerifyGH</PageTitle>
 
@@ -248,6 +249,14 @@
                                 <span>Live Demo</span>
                             </a>
                         }
+
+                        <button type="button" class="action-btn-danger" @onclick="() => HandleDeleteProject(p)" title="Delete submission">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                            <span>Delete</span>
+                        </button>
 
                         <a href="credentials" class="badge-cta-btn">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -734,6 +743,28 @@
         border-color: #cbd5e1;
     }
 
+    .action-btn-danger {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: #dc2626;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 6px;
+        padding: 5px 10px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.12s ease;
+    }
+
+    .action-btn-danger:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+        border-color: #fca5a5;
+    }
+
     .badge-cta-btn {
         display: inline-flex;
         align-items: center;
@@ -923,10 +954,10 @@
     // Student: Kelvin Agyare Yeboah — onlykelvin06@gmail.com
     private List<ProjectItem> Projects = new()
     {
-        new("Blockchain Transcript Verification", "Dr. Michael Soli",   "Approved",      "Sept 10, 2025", "https://github.com/kelvinagyareyeboah/VerifyGH", "https://verifygh.vercel.app", new[]{"C#","Blazor","SQL Server"}),
-        new("AI Lecture Scheduler",               "Dr. Michael Soli",   "Pending",       "Sept 18, 2025", "https://github.com/kelvinagyareyeboah/ai-scheduler", "",             new[]{"Python","ML","REST API"}),
-        new("Campus Bus Tracker",                 "Dr. Michael Soli",   "Under Review",  "Aug 28, 2025",  "https://github.com/kelvinagyareyeboah/bus-tracker",  "https://demo.app",           new[]{"React","TypeScript","SignalR"}),
-        new("E-Hostel Booking System",            "Dr. Michael Soli",   "NeedsRevision", "Aug 15, 2025",  "https://github.com/kelvinagyareyeboah/hostel-booking", "",            new[]{"ASP.NET Core","SQL","Docker"},
+        new(101, "Blockchain Transcript Verification", "Dr. Michael Soli",   "Approved",      "Sept 10, 2025", "https://github.com/kelvinagyareyeboah/VerifyGH", "https://verifygh.vercel.app", new[]{"C#","Blazor","SQL Server"}),
+        new(102, "AI Lecture Scheduler",               "Dr. Isaac Wiafe",    "Pending",       "Sept 18, 2025", "https://github.com/kelvinagyareyeboah/ai-scheduler", "",             new[]{"Python","ML","REST API"}),
+        new(103, "Campus Bus Tracker",                 "Dr. Michael Soli",   "Under Review",  "Aug 28, 2025",  "https://github.com/kelvinagyareyeboah/bus-tracker",  "https://demo.app",           new[]{"React","TypeScript","SignalR"}),
+        new(104, "E-Hostel Booking System",            "Dr. Isaac Wiafe",    "NeedsRevision", "Aug 15, 2025",  "https://github.com/kelvinagyareyeboah/hostel-booking", "",            new[]{"ASP.NET Core","SQL","Docker"},
             "Please add proper error handling to the payment module and expand the API documentation before resubmission."),
     };
 
@@ -939,12 +970,13 @@
             {
                 foreach (var ap in apiProjects)
                 {
-                    var existing = Projects.FirstOrDefault(p => p.Title.Equals(ap.Title, StringComparison.OrdinalIgnoreCase));
+                    var existing = Projects.FirstOrDefault(p => p.Title.Equals(ap.Title, StringComparison.OrdinalIgnoreCase) || p.Id == ap.Id);
                     if (existing is null)
                     {
                         Projects.Insert(0, new ProjectItem(
+                            ap.Id,
                             ap.Title,
-                            string.IsNullOrEmpty(ap.SupervisorName) ? "Dr. Michael Soli" : ap.SupervisorName,
+                            string.IsNullOrEmpty(ap.SupervisorName) ? "Dr. Isaac Wiafe" : ap.SupervisorName,
                             ap.Status.ToString(),
                             ap.CreatedAt.ToString("MMM dd, yyyy"),
                             ap.RepositoryUrl ?? "",
@@ -958,6 +990,7 @@
                         var idx = Projects.IndexOf(existing);
                         Projects[idx] = existing with
                         {
+                            Id = ap.Id,
                             Status = ap.Status.ToString(),
                             Feedback = ap.LecturerFeedback ?? existing.Feedback
                         };
@@ -969,6 +1002,17 @@
         {
             // Fallback gracefully to pre-seeded items
         }
+    }
+
+    private async Task HandleDeleteProject(ProjectItem item)
+    {
+        Projects.Remove(item);
+        StateHasChanged();
+        if (item.Id > 0)
+        {
+            await ProjectSvc.DeleteProjectAsync(item.Id);
+        }
+        Snackbar.Add($"'{item.Title}' has been deleted.", Severity.Success);
     }
 
     private static string GetBadgeClass(string status) => status switch
@@ -996,6 +1040,7 @@
     }
 
     private record ProjectItem(
+        int Id,
         string Title, string Supervisor, string Status, string Date,
         string RepoUrl, string LiveDemoUrl, string[] Skills, string Feedback = "");
 }
